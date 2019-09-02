@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="program"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\usr\;CMake Files\..\..\..\..\..\usr\local\;CMake Files\..\..\..\..\..\usr\local\share\;CMake Files\..\..\..\..\..\usr\local\share\eigen3\;CMake Files\..\..\..\..\..\usr\local\share\eigen3\cmake\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/mengbo/delta/superTAD/program/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/mengbo/delta/superTAD/program/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/mengbo/delta/superTAD/program/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="program">
+				<Option output="/Users/mengbo/delta/superTAD/program/cmake-build-debug/program" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/mengbo/delta/superTAD/program/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/mengbo/delta/superTAD/program/lib"/>
+					<Add directory="/usr/local/Cellar/gcc/8.2.0/lib/gcc/8/gcc/x86_64-apple-darwin18.2.0/8.2.0/../../../../../../include/c++/8.2.0"/>
+					<Add directory="/usr/local/Cellar/gcc/8.2.0/lib/gcc/8/gcc/x86_64-apple-darwin18.2.0/8.2.0/../../../../../../include/c++/8.2.0/x86_64-apple-darwin18.2.0"/>
+					<Add directory="/usr/local/Cellar/gcc/8.2.0/lib/gcc/8/gcc/x86_64-apple-darwin18.2.0/8.2.0/../../../../../../include/c++/8.2.0/backward"/>
+					<Add directory="/usr/local/Cellar/gcc/8.2.0/lib/gcc/8/gcc/x86_64-apple-darwin18.2.0/8.2.0/include"/>
+					<Add directory="/usr/local/Cellar/gcc/8.2.0/lib/gcc/8/gcc/x86_64-apple-darwin18.2.0/8.2.0/include-fixed"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks"/>
+					<Add directory="."/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 program"/>
+					<CompileFile command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="program/fast">
+				<Option output="/Users/mengbo/delta/superTAD/program/cmake-build-debug/program" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/mengbo/delta/superTAD/program/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/Users/mengbo/delta/superTAD/program/lib"/>
+					<Add directory="/usr/local/Cellar/gcc/8.2.0/lib/gcc/8/gcc/x86_64-apple-darwin18.2.0/8.2.0/../../../../../../include/c++/8.2.0"/>
+					<Add directory="/usr/local/Cellar/gcc/8.2.0/lib/gcc/8/gcc/x86_64-apple-darwin18.2.0/8.2.0/../../../../../../include/c++/8.2.0/x86_64-apple-darwin18.2.0"/>
+					<Add directory="/usr/local/Cellar/gcc/8.2.0/lib/gcc/8/gcc/x86_64-apple-darwin18.2.0/8.2.0/../../../../../../include/c++/8.2.0/backward"/>
+					<Add directory="/usr/local/Cellar/gcc/8.2.0/lib/gcc/8/gcc/x86_64-apple-darwin18.2.0/8.2.0/include"/>
+					<Add directory="/usr/local/Cellar/gcc/8.2.0/lib/gcc/8/gcc/x86_64-apple-darwin18.2.0/8.2.0/include-fixed"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks"/>
+					<Add directory="."/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 program/fast"/>
+					<CompileFile command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -j8 -f &quot;/Users/mengbo/delta/superTAD/program/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/binaryTree.cpp">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/binaryTree.h">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/data.cpp">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/data.h">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/detectorBinary.cpp">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/detectorBinary.h">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/inputAndOutput.cpp">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/inputAndOutput.h">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/main.cpp">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/params.cpp">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/params.h">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/utils.cpp">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/utils.h">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/../../../../../usr/local/share/eigen3/cmake/Eigen3Config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\local\share\eigen3\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/../../../../../usr/local/share/eigen3/cmake/Eigen3ConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\local\share\eigen3\cmake\"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/../../../../../usr/local/share/eigen3/cmake/Eigen3Targets.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\..\usr\local\share\eigen3\cmake\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

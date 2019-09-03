@@ -6,6 +6,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/program.dir/binaryTree.cpp.o"
   "CMakeFiles/program.dir/inputAndOutput.cpp.o"
   "CMakeFiles/program.dir/utils.cpp.o"
+  "CMakeFiles/program.dir/detectorMulti.cpp.o"
   "program.pdb"
   "program"
 )

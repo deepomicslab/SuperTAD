@@ -7,6 +7,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/mengbo/delta/superTAD/program/binaryTree.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/binaryTree.cpp.o"
   "/Users/mengbo/delta/superTAD/program/data.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/data.cpp.o"
   "/Users/mengbo/delta/superTAD/program/detectorBinary.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/detectorBinary.cpp.o"
+  "/Users/mengbo/delta/superTAD/program/detectorMulti.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/detectorMulti.cpp.o"
   "/Users/mengbo/delta/superTAD/program/inputAndOutput.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/inputAndOutput.cpp.o"
   "/Users/mengbo/delta/superTAD/program/main.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/main.cpp.o"
   "/Users/mengbo/delta/superTAD/program/params.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/params.cpp.o"

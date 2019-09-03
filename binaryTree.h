@@ -39,6 +39,7 @@ struct TreeNode {
     _parent = copy._parent;
     _D = copy._D;
 //    _size = copy._size;
+    return *this;
   }
   
   bool operator==(const TreeNode &t) const{

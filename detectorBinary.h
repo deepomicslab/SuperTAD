@@ -7,6 +7,7 @@
 
 #include <limits>
 #include <algorithm>
+#include <set>
 #include "params.h"
 #include "data.h"
 #include "binaryTree.h"
@@ -16,13 +17,11 @@
 
 typedef std::numeric_limits<double> infDouble;
 
-bool cmpBoundary (const std::pair<int, int> &p1, const std::pair<int, int> &p2) {
-  return p1.first < p2.first;
-}
+bool cmpBoundary (const std::pair<int, int> &p1, const std::pair<int, int> &p2);
 
 class DetectorBinary {
 private:
-  data::Data *_data;
+  Data *_data;
   
   Eigen::MatrixXd *_edgeCount;
   
@@ -42,10 +41,10 @@ private:
   
 //  std::vector<double> _nodeSize;
   
-  std::vector<std::pair<int, TreeNode *>> _trueNodes;
+  std::set<TreeNode *> _trueNodeList;
   
 public:
-  DetectorBinary (data::Data &data);
+  DetectorBinary (Data &data);
   
   ~DetectorBinary ();
   

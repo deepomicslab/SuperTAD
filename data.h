@@ -15,57 +15,27 @@
 #include <string>
 #include <map>
 #include "params.h"
+#include "inputAndOutput.h"
 
-
-namespace data {
-  class Reader {
-  private:
-    std::ifstream _infile;
-    std::string _fileName;
   
-  public:
-    Reader (std::string fileName);
-    
-    ~Reader () {};
-    
-    int parse (Eigen::MatrixXd &contactMat);
-    
-  };
+class Data {
+private:
+  Eigen::MatrixXd _contactMat;
   
+  // upper tri is intra; lower tri is inter
+  Eigen::MatrixXd _edgeCount;
   
-  class Edges {
-  private:
-    std::map<int, std::map<int, double>> _contacts;
-  public:
-    Edges ();
-    
-    ~Edges ();
-    
-    void init ();
-  };
+  Reader *_reader;
+public:
+  Data (std::string fileName);
   
+  ~Data ();
   
-  class Data {
-  private:
-    Eigen::MatrixXd _contactMat;
-    
-    // upper tri is intra; lower tri is inter
-    Eigen::MatrixXd _edgeCount;
-    
-    Reader *_reader;
-  public:
-    Data (std::string fileName);
-    
-    ~Data ();
-    
-    void init ();
-    
-    Eigen::MatrixXd &edgeCount () { return _edgeCount; }
-    
-    double edgeSum () { return _edgeCount.coeff(0, _N-1); }
-  };
+  void init ();
   
-}
-
+  Eigen::MatrixXd &edgeCount () { return _edgeCount; }
+  
+  double edgeSum () { return _edgeCount.coeff(0, _N-1); }
+};
 
 #endif //PROGRAM_DATA_H

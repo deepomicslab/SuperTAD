@@ -204,6 +204,33 @@ detectorBinary.cpp.s:
 	$(MAKE) -f CMakeFiles/program.dir/build.make CMakeFiles/program.dir/detectorBinary.cpp.s
 .PHONY : detectorBinary.cpp.s
 
+detectorMulti.o: detectorMulti.cpp.o
+
+.PHONY : detectorMulti.o
+
+# target to build an object file
+detectorMulti.cpp.o:
+	$(MAKE) -f CMakeFiles/program.dir/build.make CMakeFiles/program.dir/detectorMulti.cpp.o
+.PHONY : detectorMulti.cpp.o
+
+detectorMulti.i: detectorMulti.cpp.i
+
+.PHONY : detectorMulti.i
+
+# target to preprocess a source file
+detectorMulti.cpp.i:
+	$(MAKE) -f CMakeFiles/program.dir/build.make CMakeFiles/program.dir/detectorMulti.cpp.i
+.PHONY : detectorMulti.cpp.i
+
+detectorMulti.s: detectorMulti.cpp.s
+
+.PHONY : detectorMulti.s
+
+# target to generate assembly for a file
+detectorMulti.cpp.s:
+	$(MAKE) -f CMakeFiles/program.dir/build.make CMakeFiles/program.dir/detectorMulti.cpp.s
+.PHONY : detectorMulti.cpp.s
+
 inputAndOutput.o: inputAndOutput.cpp.o
 
 .PHONY : inputAndOutput.o
@@ -330,6 +357,9 @@ help:
 	@echo "... detectorBinary.o"
 	@echo "... detectorBinary.i"
 	@echo "... detectorBinary.s"
+	@echo "... detectorMulti.o"
+	@echo "... detectorMulti.i"
+	@echo "... detectorMulti.s"
 	@echo "... inputAndOutput.o"
 	@echo "... inputAndOutput.i"
 	@echo "... inputAndOutput.s"

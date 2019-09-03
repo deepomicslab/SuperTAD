@@ -5,7 +5,12 @@
 #include "detectorBinary.h"
 
 
-DetectorBinary::DetectorBinary (data::Data &data)
+bool cmpBoundary (const std::pair<int, int> &p1, const std::pair<int, int> &p2)  {
+  return p1.first < p2.first;
+}
+
+
+DetectorBinary::DetectorBinary (Data &data)
 {
   _data = &data;
   _edgeCount = &data.edgeCount ();
@@ -24,13 +29,26 @@ DetectorBinary::DetectorBinary (data::Data &data)
   }
   _boundary.reserve (_K);
   _binaryTree = new BinaryTree ();
-  
 }
 
 
 DetectorBinary::~DetectorBinary ()
 {
-
+  delete _binaryTree;
+  
+  for (int i = 0; i < _N; i++) {
+    for (int j = 0; j < _N; j++) {
+      delete _table[i][j];
+      delete _minIndexArray[i][j];
+      delete _leftKArray[i][j];
+    }
+    delete _table[i];
+    delete _minIndexArray[i];
+    delete _leftKArray[i];
+  }
+  delete _table;
+  delete _minIndexArray;
+  delete _leftKArray;
 }
 
 
@@ -58,10 +76,10 @@ void DetectorBinary::execute ()
       int currentEnd = _boundary[leaf].second;
       double currentVolumn;
       if (currentStart == currentEnd)
-        currentVolumn = 2 * _edgeCount[currentStart][currentEnd] + _edgeCount[currentEnd][currentStart];
+        currentVolumn = 2 * _edgeCount->coeff(currentStart, currentEnd) + _edgeCount->coeff(currentEnd, currentStart);
       else
-        currentVolumn = _edgeCount[currentEnd][currentStart];
-      leafSum += _edgeCount[currentEnd][currentStart] / (2 * _data->edgeSum ()) * log2(2 * _data->edgeSum () / currentVolumn);
+        currentVolumn = _edgeCount->coeff(currentEnd, currentStart);
+      leafSum += _edgeCount->coeff(currentEnd, currentStart) / (2 * _data->edgeSum ()) * log2(2 * _data->edgeSum () / currentVolumn);
       leafSum += _table[currentStart][currentEnd][0];
     }
     sumOfLeaves.emplace_back (leafSum);
@@ -79,7 +97,12 @@ void DetectorBinary::execute ()
   if (_FILTERING) {
     calculateD (_binaryTree->root ());
     calculateDensity (_binaryTree->root ());
-    
+    filterNodes ();
+    std::vector<TreeNode *> trueNodes;
+    for (auto it=_trueNodeList.begin (); it != _trueNodeList.end (); it++) {
+      trueNodes.emplace_back (it);
+    }
+    _writer->writeTree (_WORK_DIR, "filter_boundaries.txt", trueNodes);
   }
   
 }
@@ -243,23 +266,24 @@ double DetectorBinary::minusParent (double d, TreeNode &node)
 
 void DetectorBinary::filterNodes ()
 {
-//  for (int i = 0; i < _nodeList->size (); i++) {
-//    (*_nodeList)[i]->_size = (*_nodeList)[i]->_val[1] - (*_nodeList)[i]->_val[0] + 1;
-//  }
   Eigen::MatrixXi scoreMat(_nodeList->size (), _nodeList->size ());
   scoreMat.setZero ();
   
-  int time = 0;
-  std::vector<std::pair<int, TreeNode *>> nodeList1, nodeList2;
+  std::vector<std::pair<int, TreeNode *>> nodeList1, nodeList2, trueNodeList;
   nodeList1.reserve (_nodeList->size () / 2);
   nodeList2.reserve (_nodeList->size () / 2);
+  trueNodeList.reserve (_nodeList->size () / 2);
   
   double *ab1 = new double[2];
   double *ab2 = new double[2];
   
-  while (time < 1000) {
+  int totalItr = 1000;
+  int threshold = 900;
+  int time = 0;
+  while (time < totalItr) {
     nodeList1.clear ();
     nodeList2.clear ();
+    _trueNodes.clear ();
     double oldAB1[2] = {0, 0};
     double oldAB2[2] = {0, 0};
     bool converged = false;
@@ -293,16 +317,25 @@ void DetectorBinary::filterNodes ()
     }
     
     if (ab1[0] < ab2[0])
-      _trueNodes = nodeList1;
+      trueNodeList = nodeList1;
     else
-      _trueNodes = nodeList2;
+      trueNodeList = nodeList2;
     
     if (abs(ab1[0] - ab2[0]) > .5) {
       time++;
-      for (int m = 0; m < _trueNodes.size()-1; m++) {
-        for (int n = m+1; n < _trueNodes.size (); n++) {
-          scoreMat(_trueNodes[m].first, _trueNodes[n].first) ++;
+      for (int m = 0; m < trueNodeList.size()-1; m++) {
+        for (int n = m+1; n < trueNodeList.size (); n++) {
+          scoreMat(trueNodeList[m].first, trueNodeList[n].first) ++;
         }
+      }
+    }
+  }
+  
+  for (int i = 0; i < _nodeList->size (); i++) {
+    for (int j = i + 1; j < _nodeList->size (); j++) {
+      if (scoreMat.coeff(i, j) > threshold) {
+        _trueNodeList.emplace (_nodeList[i]);
+        _trueNodeList.emplace (_nodeList[j]);
       }
     }
   }
@@ -335,7 +368,7 @@ void DetectorBinary::simpleLinearRegression (std::vector<std::pair<int, TreeNode
   double covXY = 0;
   double varX = 0;
   for (int i = 0; i < nodeList.size (); i++) {
-    covXY += (getX(*nodeList[i].second) - meanX) * (getY(*nodeList[i]) - meanY);
+    covXY += (getX(*nodeList[i].second) - meanX) * (getY(*nodeList[i].second) - meanY);
     varX += pow(getX(*nodeList[i].second) - meanX, 2);
   }
   

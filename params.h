@@ -7,12 +7,12 @@
 
 #include <string>
 
-extern double _UNDEFIEND_DOUBLE;
-extern int _UNDEFIEND_INT;
+
 extern int _K;
 extern int _N;
 
 extern std::string _WORK_DIR;
+extern std::string _INPUT;
 extern bool _FILTERING;
 
 #endif //PROGRAM_PARAMS_H

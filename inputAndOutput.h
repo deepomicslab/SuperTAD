@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <Eigen/Dense>
 #include "binaryTree.h"
 
 
@@ -16,7 +17,16 @@ std::string concatePath (std::string path1, std::string path2);
 
 
 class Reader {
+private:
+  std::ifstream _infile;
+  std::string _fileName;
 
+public:
+  Reader (std::string fileName);
+  
+  ~Reader () {};
+  
+  int parse (Eigen::MatrixXd &contactMat);
 };
 
 

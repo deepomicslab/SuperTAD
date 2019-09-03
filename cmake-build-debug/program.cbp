@@ -104,6 +104,12 @@
 		<Unit filename="/Users/mengbo/delta/superTAD/program/detectorBinary.h">
 			<Option target="program"/>
 		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/detectorMulti.cpp">
+			<Option target="program"/>
+		</Unit>
+		<Unit filename="/Users/mengbo/delta/superTAD/program/detectorMulti.h">
+			<Option target="program"/>
+		</Unit>
 		<Unit filename="/Users/mengbo/delta/superTAD/program/inputAndOutput.cpp">
 			<Option target="program"/>
 		</Unit>

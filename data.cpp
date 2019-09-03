@@ -5,72 +5,45 @@
 #include "data.h"
 
 
-namespace data {
+Data::Data (std::string fileName)
+{
+  _reader = new Reader (fileName);
+  _N = _reader->parse (_contactMat);
+  std::cout << "N=" << _N << std::endl;
+  if (_K < 0)
+    _K = _N / 5;
+}
+
+
+Data::~Data ()
+{
+  delete _reader;
+}
+
+
+void Data::init ()
+{
+  _edgeCount.resize (_N, _N);
+  for (int i = 0; i < _N; i++) {
+    for (int j = i; j < _N; j++) {
+      int n = j - i + 1;
+//      std::cout << "i=" << i << ", j=" << j << ", n=" << n << std::endl;
+      Eigen::MatrixXd currentMat = _contactMat.block (i, i, n, n);
+      int countIntra = (currentMat.sum () - currentMat.diagonal().sum ()) * .5;
+      
+      double sum1 = _contactMat.block (0, i, i, j-i+1).sum ();
+//      std::cout << "sum1=" << sum1 << std::endl;
   
-  Reader::Reader (std::string fileName)
-  {
-    _fileName = fileName;
-  }
-  
-  
-  int Reader::parse (Eigen::MatrixXd &contactMat)
-  {
-    std::string line;
-    double c;
-    
-    _infile.open (_fileName);
-    bool init = false;
-    int count = 0;
-    int pos1 = 0;
-    while (getline (_infile, line)) {
-      std::istringstream iss (line);
-      if (!init) {
-        std::string lineBack = line;
-        std::istringstream issBack (lineBack);
-        while (issBack >> c) {
-            count++;
-        }
-        contactMat.resize (count, count);
-        init = true;
-      }
-      int pos2 = 0;
-      while (iss >> c) {
-        contactMat(pos1, pos2) = c;
-        pos2++;
-      }
-      pos1++;
-    }
-    _infile.close ();
-    
-    return count;
-  }
-  
-  
-  Data::Data (std::string fileName)
-  {
-    _reader = new Reader (fileName);
-    _N = _reader->parse (_contactMat);
-  }
-  
-  
-  Data::~Data ()
-  {
-    delete _reader;
-  }
-  
-  
-  void Data::init ()
-  {
-    _edgeCount.resize (_N, _N);
-    for (int i = 0; i < _N; i++) {
-      for (int j = i; j < _N; j++) {
-        int n = j - i + 1;
-        Eigen::MatrixXd currentMat = _contactMat.block (i, j, n, n);
-        int countIntra = (currentMat.sum () - currentMat.diagonal().sum ()) * .5;
-        int countInter = _contactMat.block (0, i, i, j-i+1).sum () + _contactMat.block (i, j+1, j-i+1, n-j).sum ();
-        _edgeCount(i, j) = countIntra;
-        _edgeCount(j, i) = countInter;
-      }
+      double sum2;
+      if (j + 1 < _N)
+        sum2 = _contactMat.block (i, j+1, j-i+1, _N-1-j).sum ();
+      else
+        sum2 = 0;
+//      std::cout << "sum2=" << sum2 << std::endl;
+      int countInter = sum1 + sum2;
+      _edgeCount(i, j) = countIntra;
+      _edgeCount(j, i) = countInter;
     }
   }
+//  std::cout << "_edgeCount:\n" << _edgeCount << std::endl;
 }

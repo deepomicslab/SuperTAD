@@ -4,10 +4,13 @@
 #include "binaryTree.h"
 #include "data.h"
 #include "utils.h"
+#include <ctime>
 
 
 int main (int argc, char *argv[])
 {
+  std::clock_t t = std::clock ();
+  
   int i = 0;
   while (i < argc) {
     if (std::string (*(argv + i)) == std::string ("-k")) {
@@ -26,6 +29,7 @@ int main (int argc, char *argv[])
     }
   
     if (std::string (*(argv + i)) == std::string ("--filter")) {
+      _FILTERING = true;
       std::cout << "do filtering\n";
     }
     
@@ -40,6 +44,9 @@ int main (int argc, char *argv[])
   
   DetectorBinary db (data);
   db.execute ();
+  
+  t = std::clock() - t;
+  std::cout << "time=" << (float)t/CLOCKS_PER_SEC << std::endl;
   
   return 0;
 }

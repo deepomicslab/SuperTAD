@@ -6,39 +6,39 @@
 
 #IncludeRegexTransform: 
 
-../lib/Eigen/Cholesky
+../Eigen/Cholesky
 Core
-../lib/Eigen/Core
+../Eigen/Core
 Jacobi
-../lib/Eigen/Jacobi
+../Eigen/Jacobi
 src/Core/util/DisableStupidWarnings.h
-../lib/Eigen/src/Core/util/DisableStupidWarnings.h
+../Eigen/src/Core/util/DisableStupidWarnings.h
 src/Cholesky/LLT.h
-../lib/Eigen/src/Cholesky/LLT.h
+../Eigen/src/Cholesky/LLT.h
 src/Cholesky/LDLT.h
-../lib/Eigen/src/Cholesky/LDLT.h
+../Eigen/src/Cholesky/LDLT.h
 mkl_lapacke.h
-../lib/Eigen/mkl_lapacke.h
+../Eigen/mkl_lapacke.h
 src/misc/lapacke.h
-../lib/Eigen/src/misc/lapacke.h
+../Eigen/src/misc/lapacke.h
 src/Cholesky/LLT_LAPACKE.h
-../lib/Eigen/src/Cholesky/LLT_LAPACKE.h
+../Eigen/src/Cholesky/LLT_LAPACKE.h
 src/Core/util/ReenableStupidWarnings.h
-../lib/Eigen/src/Core/util/ReenableStupidWarnings.h
+../Eigen/src/Core/util/ReenableStupidWarnings.h
 
-../lib/Eigen/Core
+../Eigen/Core
 src/Core/util/DisableStupidWarnings.h
-../lib/Eigen/src/Core/util/DisableStupidWarnings.h
+../Eigen/src/Core/util/DisableStupidWarnings.h
 cuda_runtime.h
 -
 new
 -
 src/Core/util/Macros.h
-../lib/Eigen/src/Core/util/Macros.h
+../Eigen/src/Core/util/Macros.h
 complex
 -
 src/Core/util/MKL_support.h
-../lib/Eigen/src/Core/util/MKL_support.h
+../Eigen/src/Core/util/MKL_support.h
 malloc.h
 -
 immintrin.h
@@ -106,789 +106,789 @@ iostream
 intrin.h
 -
 src/Core/util/Constants.h
-../lib/Eigen/src/Core/util/Constants.h
+../Eigen/src/Core/util/Constants.h
 src/Core/util/Meta.h
-../lib/Eigen/src/Core/util/Meta.h
+../Eigen/src/Core/util/Meta.h
 src/Core/util/ForwardDeclarations.h
-../lib/Eigen/src/Core/util/ForwardDeclarations.h
+../Eigen/src/Core/util/ForwardDeclarations.h
 src/Core/util/StaticAssert.h
-../lib/Eigen/src/Core/util/StaticAssert.h
+../Eigen/src/Core/util/StaticAssert.h
 src/Core/util/XprHelper.h
-../lib/Eigen/src/Core/util/XprHelper.h
+../Eigen/src/Core/util/XprHelper.h
 src/Core/util/Memory.h
-../lib/Eigen/src/Core/util/Memory.h
+../Eigen/src/Core/util/Memory.h
 src/Core/NumTraits.h
-../lib/Eigen/src/Core/NumTraits.h
+../Eigen/src/Core/NumTraits.h
 src/Core/MathFunctions.h
-../lib/Eigen/src/Core/MathFunctions.h
+../Eigen/src/Core/MathFunctions.h
 src/Core/GenericPacketMath.h
-../lib/Eigen/src/Core/GenericPacketMath.h
+../Eigen/src/Core/GenericPacketMath.h
 src/Core/MathFunctionsImpl.h
-../lib/Eigen/src/Core/MathFunctionsImpl.h
+../Eigen/src/Core/MathFunctionsImpl.h
 src/Core/arch/Default/ConjHelper.h
-../lib/Eigen/src/Core/arch/Default/ConjHelper.h
+../Eigen/src/Core/arch/Default/ConjHelper.h
 src/Core/arch/SSE/PacketMath.h
-../lib/Eigen/src/Core/arch/SSE/PacketMath.h
+../Eigen/src/Core/arch/SSE/PacketMath.h
 src/Core/arch/AVX/PacketMath.h
-../lib/Eigen/src/Core/arch/AVX/PacketMath.h
+../Eigen/src/Core/arch/AVX/PacketMath.h
 src/Core/arch/AVX512/PacketMath.h
-../lib/Eigen/src/Core/arch/AVX512/PacketMath.h
+../Eigen/src/Core/arch/AVX512/PacketMath.h
 src/Core/arch/AVX512/MathFunctions.h
-../lib/Eigen/src/Core/arch/AVX512/MathFunctions.h
+../Eigen/src/Core/arch/AVX512/MathFunctions.h
 src/Core/arch/SSE/PacketMath.h
-../lib/Eigen/src/Core/arch/SSE/PacketMath.h
+../Eigen/src/Core/arch/SSE/PacketMath.h
 src/Core/arch/SSE/Complex.h
-../lib/Eigen/src/Core/arch/SSE/Complex.h
+../Eigen/src/Core/arch/SSE/Complex.h
 src/Core/arch/SSE/MathFunctions.h
-../lib/Eigen/src/Core/arch/SSE/MathFunctions.h
+../Eigen/src/Core/arch/SSE/MathFunctions.h
 src/Core/arch/AVX/PacketMath.h
-../lib/Eigen/src/Core/arch/AVX/PacketMath.h
+../Eigen/src/Core/arch/AVX/PacketMath.h
 src/Core/arch/AVX/MathFunctions.h
-../lib/Eigen/src/Core/arch/AVX/MathFunctions.h
+../Eigen/src/Core/arch/AVX/MathFunctions.h
 src/Core/arch/AVX/Complex.h
-../lib/Eigen/src/Core/arch/AVX/Complex.h
+../Eigen/src/Core/arch/AVX/Complex.h
 src/Core/arch/AVX/TypeCasting.h
-../lib/Eigen/src/Core/arch/AVX/TypeCasting.h
+../Eigen/src/Core/arch/AVX/TypeCasting.h
 src/Core/arch/SSE/TypeCasting.h
-../lib/Eigen/src/Core/arch/SSE/TypeCasting.h
+../Eigen/src/Core/arch/SSE/TypeCasting.h
 src/Core/arch/SSE/PacketMath.h
-../lib/Eigen/src/Core/arch/SSE/PacketMath.h
+../Eigen/src/Core/arch/SSE/PacketMath.h
 src/Core/arch/SSE/MathFunctions.h
-../lib/Eigen/src/Core/arch/SSE/MathFunctions.h
+../Eigen/src/Core/arch/SSE/MathFunctions.h
 src/Core/arch/SSE/Complex.h
-../lib/Eigen/src/Core/arch/SSE/Complex.h
+../Eigen/src/Core/arch/SSE/Complex.h
 src/Core/arch/SSE/TypeCasting.h
-../lib/Eigen/src/Core/arch/SSE/TypeCasting.h
+../Eigen/src/Core/arch/SSE/TypeCasting.h
 src/Core/arch/AltiVec/PacketMath.h
-../lib/Eigen/src/Core/arch/AltiVec/PacketMath.h
+../Eigen/src/Core/arch/AltiVec/PacketMath.h
 src/Core/arch/AltiVec/MathFunctions.h
-../lib/Eigen/src/Core/arch/AltiVec/MathFunctions.h
+../Eigen/src/Core/arch/AltiVec/MathFunctions.h
 src/Core/arch/AltiVec/Complex.h
-../lib/Eigen/src/Core/arch/AltiVec/Complex.h
+../Eigen/src/Core/arch/AltiVec/Complex.h
 src/Core/arch/NEON/PacketMath.h
-../lib/Eigen/src/Core/arch/NEON/PacketMath.h
+../Eigen/src/Core/arch/NEON/PacketMath.h
 src/Core/arch/NEON/MathFunctions.h
-../lib/Eigen/src/Core/arch/NEON/MathFunctions.h
+../Eigen/src/Core/arch/NEON/MathFunctions.h
 src/Core/arch/NEON/Complex.h
-../lib/Eigen/src/Core/arch/NEON/Complex.h
+../Eigen/src/Core/arch/NEON/Complex.h
 src/Core/arch/ZVector/PacketMath.h
-../lib/Eigen/src/Core/arch/ZVector/PacketMath.h
+../Eigen/src/Core/arch/ZVector/PacketMath.h
 src/Core/arch/ZVector/MathFunctions.h
-../lib/Eigen/src/Core/arch/ZVector/MathFunctions.h
+../Eigen/src/Core/arch/ZVector/MathFunctions.h
 src/Core/arch/ZVector/Complex.h
-../lib/Eigen/src/Core/arch/ZVector/Complex.h
+../Eigen/src/Core/arch/ZVector/Complex.h
 src/Core/arch/CUDA/Half.h
-../lib/Eigen/src/Core/arch/CUDA/Half.h
+../Eigen/src/Core/arch/CUDA/Half.h
 src/Core/arch/CUDA/PacketMathHalf.h
-../lib/Eigen/src/Core/arch/CUDA/PacketMathHalf.h
+../Eigen/src/Core/arch/CUDA/PacketMathHalf.h
 src/Core/arch/CUDA/TypeCasting.h
-../lib/Eigen/src/Core/arch/CUDA/TypeCasting.h
+../Eigen/src/Core/arch/CUDA/TypeCasting.h
 src/Core/arch/CUDA/PacketMath.h
-../lib/Eigen/src/Core/arch/CUDA/PacketMath.h
+../Eigen/src/Core/arch/CUDA/PacketMath.h
 src/Core/arch/CUDA/MathFunctions.h
-../lib/Eigen/src/Core/arch/CUDA/MathFunctions.h
+../Eigen/src/Core/arch/CUDA/MathFunctions.h
 src/Core/arch/Default/Settings.h
-../lib/Eigen/src/Core/arch/Default/Settings.h
+../Eigen/src/Core/arch/Default/Settings.h
 src/Core/functors/TernaryFunctors.h
-../lib/Eigen/src/Core/functors/TernaryFunctors.h
+../Eigen/src/Core/functors/TernaryFunctors.h
 src/Core/functors/BinaryFunctors.h
-../lib/Eigen/src/Core/functors/BinaryFunctors.h
+../Eigen/src/Core/functors/BinaryFunctors.h
 src/Core/functors/UnaryFunctors.h
-../lib/Eigen/src/Core/functors/UnaryFunctors.h
+../Eigen/src/Core/functors/UnaryFunctors.h
 src/Core/functors/NullaryFunctors.h
-../lib/Eigen/src/Core/functors/NullaryFunctors.h
+../Eigen/src/Core/functors/NullaryFunctors.h
 src/Core/functors/StlFunctors.h
-../lib/Eigen/src/Core/functors/StlFunctors.h
+../Eigen/src/Core/functors/StlFunctors.h
 src/Core/functors/AssignmentFunctors.h
-../lib/Eigen/src/Core/functors/AssignmentFunctors.h
+../Eigen/src/Core/functors/AssignmentFunctors.h
 src/Core/arch/CUDA/Complex.h
-../lib/Eigen/src/Core/arch/CUDA/Complex.h
+../Eigen/src/Core/arch/CUDA/Complex.h
 src/Core/IO.h
-../lib/Eigen/src/Core/IO.h
+../Eigen/src/Core/IO.h
 src/Core/DenseCoeffsBase.h
-../lib/Eigen/src/Core/DenseCoeffsBase.h
+../Eigen/src/Core/DenseCoeffsBase.h
 src/Core/DenseBase.h
-../lib/Eigen/src/Core/DenseBase.h
+../Eigen/src/Core/DenseBase.h
 src/Core/MatrixBase.h
-../lib/Eigen/src/Core/MatrixBase.h
+../Eigen/src/Core/MatrixBase.h
 src/Core/EigenBase.h
-../lib/Eigen/src/Core/EigenBase.h
+../Eigen/src/Core/EigenBase.h
 src/Core/Product.h
-../lib/Eigen/src/Core/Product.h
+../Eigen/src/Core/Product.h
 src/Core/CoreEvaluators.h
-../lib/Eigen/src/Core/CoreEvaluators.h
+../Eigen/src/Core/CoreEvaluators.h
 src/Core/AssignEvaluator.h
-../lib/Eigen/src/Core/AssignEvaluator.h
+../Eigen/src/Core/AssignEvaluator.h
 src/Core/Assign.h
-../lib/Eigen/src/Core/Assign.h
+../Eigen/src/Core/Assign.h
 src/Core/ArrayBase.h
-../lib/Eigen/src/Core/ArrayBase.h
+../Eigen/src/Core/ArrayBase.h
 src/Core/util/BlasUtil.h
-../lib/Eigen/src/Core/util/BlasUtil.h
+../Eigen/src/Core/util/BlasUtil.h
 src/Core/DenseStorage.h
-../lib/Eigen/src/Core/DenseStorage.h
+../Eigen/src/Core/DenseStorage.h
 src/Core/NestByValue.h
-../lib/Eigen/src/Core/NestByValue.h
+../Eigen/src/Core/NestByValue.h
 src/Core/ReturnByValue.h
-../lib/Eigen/src/Core/ReturnByValue.h
+../Eigen/src/Core/ReturnByValue.h
 src/Core/NoAlias.h
-../lib/Eigen/src/Core/NoAlias.h
+../Eigen/src/Core/NoAlias.h
 src/Core/PlainObjectBase.h
-../lib/Eigen/src/Core/PlainObjectBase.h
+../Eigen/src/Core/PlainObjectBase.h
 src/Core/Matrix.h
-../lib/Eigen/src/Core/Matrix.h
+../Eigen/src/Core/Matrix.h
 src/Core/Array.h
-../lib/Eigen/src/Core/Array.h
+../Eigen/src/Core/Array.h
 src/Core/CwiseTernaryOp.h
-../lib/Eigen/src/Core/CwiseTernaryOp.h
+../Eigen/src/Core/CwiseTernaryOp.h
 src/Core/CwiseBinaryOp.h
-../lib/Eigen/src/Core/CwiseBinaryOp.h
+../Eigen/src/Core/CwiseBinaryOp.h
 src/Core/CwiseUnaryOp.h
-../lib/Eigen/src/Core/CwiseUnaryOp.h
+../Eigen/src/Core/CwiseUnaryOp.h
 src/Core/CwiseNullaryOp.h
-../lib/Eigen/src/Core/CwiseNullaryOp.h
+../Eigen/src/Core/CwiseNullaryOp.h
 src/Core/CwiseUnaryView.h
-../lib/Eigen/src/Core/CwiseUnaryView.h
+../Eigen/src/Core/CwiseUnaryView.h
 src/Core/SelfCwiseBinaryOp.h
-../lib/Eigen/src/Core/SelfCwiseBinaryOp.h
+../Eigen/src/Core/SelfCwiseBinaryOp.h
 src/Core/Dot.h
-../lib/Eigen/src/Core/Dot.h
+../Eigen/src/Core/Dot.h
 src/Core/StableNorm.h
-../lib/Eigen/src/Core/StableNorm.h
+../Eigen/src/Core/StableNorm.h
 src/Core/Stride.h
-../lib/Eigen/src/Core/Stride.h
+../Eigen/src/Core/Stride.h
 src/Core/MapBase.h
-../lib/Eigen/src/Core/MapBase.h
+../Eigen/src/Core/MapBase.h
 src/Core/Map.h
-../lib/Eigen/src/Core/Map.h
+../Eigen/src/Core/Map.h
 src/Core/Ref.h
-../lib/Eigen/src/Core/Ref.h
+../Eigen/src/Core/Ref.h
 src/Core/Block.h
-../lib/Eigen/src/Core/Block.h
+../Eigen/src/Core/Block.h
 src/Core/VectorBlock.h
-../lib/Eigen/src/Core/VectorBlock.h
+../Eigen/src/Core/VectorBlock.h
 src/Core/Transpose.h
-../lib/Eigen/src/Core/Transpose.h
+../Eigen/src/Core/Transpose.h
 src/Core/DiagonalMatrix.h
-../lib/Eigen/src/Core/DiagonalMatrix.h
+../Eigen/src/Core/DiagonalMatrix.h
 src/Core/Diagonal.h
-../lib/Eigen/src/Core/Diagonal.h
+../Eigen/src/Core/Diagonal.h
 src/Core/DiagonalProduct.h
-../lib/Eigen/src/Core/DiagonalProduct.h
+../Eigen/src/Core/DiagonalProduct.h
 src/Core/Redux.h
-../lib/Eigen/src/Core/Redux.h
+../Eigen/src/Core/Redux.h
 src/Core/Visitor.h
-../lib/Eigen/src/Core/Visitor.h
+../Eigen/src/Core/Visitor.h
 src/Core/Fuzzy.h
-../lib/Eigen/src/Core/Fuzzy.h
+../Eigen/src/Core/Fuzzy.h
 src/Core/Swap.h
-../lib/Eigen/src/Core/Swap.h
+../Eigen/src/Core/Swap.h
 src/Core/CommaInitializer.h
-../lib/Eigen/src/Core/CommaInitializer.h
+../Eigen/src/Core/CommaInitializer.h
 src/Core/GeneralProduct.h
-../lib/Eigen/src/Core/GeneralProduct.h
+../Eigen/src/Core/GeneralProduct.h
 src/Core/Solve.h
-../lib/Eigen/src/Core/Solve.h
+../Eigen/src/Core/Solve.h
 src/Core/Inverse.h
-../lib/Eigen/src/Core/Inverse.h
+../Eigen/src/Core/Inverse.h
 src/Core/SolverBase.h
-../lib/Eigen/src/Core/SolverBase.h
+../Eigen/src/Core/SolverBase.h
 src/Core/PermutationMatrix.h
-../lib/Eigen/src/Core/PermutationMatrix.h
+../Eigen/src/Core/PermutationMatrix.h
 src/Core/Transpositions.h
-../lib/Eigen/src/Core/Transpositions.h
+../Eigen/src/Core/Transpositions.h
 src/Core/TriangularMatrix.h
-../lib/Eigen/src/Core/TriangularMatrix.h
+../Eigen/src/Core/TriangularMatrix.h
 src/Core/SelfAdjointView.h
-../lib/Eigen/src/Core/SelfAdjointView.h
+../Eigen/src/Core/SelfAdjointView.h
 src/Core/products/GeneralBlockPanelKernel.h
-../lib/Eigen/src/Core/products/GeneralBlockPanelKernel.h
+../Eigen/src/Core/products/GeneralBlockPanelKernel.h
 src/Core/products/Parallelizer.h
-../lib/Eigen/src/Core/products/Parallelizer.h
+../Eigen/src/Core/products/Parallelizer.h
 src/Core/ProductEvaluators.h
-../lib/Eigen/src/Core/ProductEvaluators.h
+../Eigen/src/Core/ProductEvaluators.h
 src/Core/products/GeneralMatrixVector.h
-../lib/Eigen/src/Core/products/GeneralMatrixVector.h
+../Eigen/src/Core/products/GeneralMatrixVector.h
 src/Core/products/GeneralMatrixMatrix.h
-../lib/Eigen/src/Core/products/GeneralMatrixMatrix.h
+../Eigen/src/Core/products/GeneralMatrixMatrix.h
 src/Core/SolveTriangular.h
-../lib/Eigen/src/Core/SolveTriangular.h
+../Eigen/src/Core/SolveTriangular.h
 src/Core/products/GeneralMatrixMatrixTriangular.h
-../lib/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h
+../Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h
 src/Core/products/SelfadjointMatrixVector.h
-../lib/Eigen/src/Core/products/SelfadjointMatrixVector.h
+../Eigen/src/Core/products/SelfadjointMatrixVector.h
 src/Core/products/SelfadjointMatrixMatrix.h
-../lib/Eigen/src/Core/products/SelfadjointMatrixMatrix.h
+../Eigen/src/Core/products/SelfadjointMatrixMatrix.h
 src/Core/products/SelfadjointProduct.h
-../lib/Eigen/src/Core/products/SelfadjointProduct.h
+../Eigen/src/Core/products/SelfadjointProduct.h
 src/Core/products/SelfadjointRank2Update.h
-../lib/Eigen/src/Core/products/SelfadjointRank2Update.h
+../Eigen/src/Core/products/SelfadjointRank2Update.h
 src/Core/products/TriangularMatrixVector.h
-../lib/Eigen/src/Core/products/TriangularMatrixVector.h
+../Eigen/src/Core/products/TriangularMatrixVector.h
 src/Core/products/TriangularMatrixMatrix.h
-../lib/Eigen/src/Core/products/TriangularMatrixMatrix.h
+../Eigen/src/Core/products/TriangularMatrixMatrix.h
 src/Core/products/TriangularSolverMatrix.h
-../lib/Eigen/src/Core/products/TriangularSolverMatrix.h
+../Eigen/src/Core/products/TriangularSolverMatrix.h
 src/Core/products/TriangularSolverVector.h
-../lib/Eigen/src/Core/products/TriangularSolverVector.h
+../Eigen/src/Core/products/TriangularSolverVector.h
 src/Core/BandMatrix.h
-../lib/Eigen/src/Core/BandMatrix.h
+../Eigen/src/Core/BandMatrix.h
 src/Core/CoreIterators.h
-../lib/Eigen/src/Core/CoreIterators.h
+../Eigen/src/Core/CoreIterators.h
 src/Core/ConditionEstimator.h
-../lib/Eigen/src/Core/ConditionEstimator.h
+../Eigen/src/Core/ConditionEstimator.h
 src/Core/BooleanRedux.h
-../lib/Eigen/src/Core/BooleanRedux.h
+../Eigen/src/Core/BooleanRedux.h
 src/Core/Select.h
-../lib/Eigen/src/Core/Select.h
+../Eigen/src/Core/Select.h
 src/Core/VectorwiseOp.h
-../lib/Eigen/src/Core/VectorwiseOp.h
+../Eigen/src/Core/VectorwiseOp.h
 src/Core/Random.h
-../lib/Eigen/src/Core/Random.h
+../Eigen/src/Core/Random.h
 src/Core/Replicate.h
-../lib/Eigen/src/Core/Replicate.h
+../Eigen/src/Core/Replicate.h
 src/Core/Reverse.h
-../lib/Eigen/src/Core/Reverse.h
+../Eigen/src/Core/Reverse.h
 src/Core/ArrayWrapper.h
-../lib/Eigen/src/Core/ArrayWrapper.h
+../Eigen/src/Core/ArrayWrapper.h
 src/Core/products/GeneralMatrixMatrix_BLAS.h
-../lib/Eigen/src/Core/products/GeneralMatrixMatrix_BLAS.h
+../Eigen/src/Core/products/GeneralMatrixMatrix_BLAS.h
 src/Core/products/GeneralMatrixVector_BLAS.h
-../lib/Eigen/src/Core/products/GeneralMatrixVector_BLAS.h
+../Eigen/src/Core/products/GeneralMatrixVector_BLAS.h
 src/Core/products/GeneralMatrixMatrixTriangular_BLAS.h
-../lib/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_BLAS.h
+../Eigen/src/Core/products/GeneralMatrixMatrixTriangular_BLAS.h
 src/Core/products/SelfadjointMatrixMatrix_BLAS.h
-../lib/Eigen/src/Core/products/SelfadjointMatrixMatrix_BLAS.h
+../Eigen/src/Core/products/SelfadjointMatrixMatrix_BLAS.h
 src/Core/products/SelfadjointMatrixVector_BLAS.h
-../lib/Eigen/src/Core/products/SelfadjointMatrixVector_BLAS.h
+../Eigen/src/Core/products/SelfadjointMatrixVector_BLAS.h
 src/Core/products/TriangularMatrixMatrix_BLAS.h
-../lib/Eigen/src/Core/products/TriangularMatrixMatrix_BLAS.h
+../Eigen/src/Core/products/TriangularMatrixMatrix_BLAS.h
 src/Core/products/TriangularMatrixVector_BLAS.h
-../lib/Eigen/src/Core/products/TriangularMatrixVector_BLAS.h
+../Eigen/src/Core/products/TriangularMatrixVector_BLAS.h
 src/Core/products/TriangularSolverMatrix_BLAS.h
-../lib/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h
+../Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h
 src/Core/Assign_MKL.h
-../lib/Eigen/src/Core/Assign_MKL.h
+../Eigen/src/Core/Assign_MKL.h
 src/Core/GlobalFunctions.h
-../lib/Eigen/src/Core/GlobalFunctions.h
+../Eigen/src/Core/GlobalFunctions.h
 src/Core/util/ReenableStupidWarnings.h
-../lib/Eigen/src/Core/util/ReenableStupidWarnings.h
+../Eigen/src/Core/util/ReenableStupidWarnings.h
 
-../lib/Eigen/Dense
+../Eigen/Dense
 Core
-../lib/Eigen/Core
+../Eigen/Core
 LU
-../lib/Eigen/LU
+../Eigen/LU
 Cholesky
-../lib/Eigen/Cholesky
+../Eigen/Cholesky
 QR
-../lib/Eigen/QR
+../Eigen/QR
 SVD
-../lib/Eigen/SVD
+../Eigen/SVD
 Geometry
-../lib/Eigen/Geometry
+../Eigen/Geometry
 Eigenvalues
-../lib/Eigen/Eigenvalues
+../Eigen/Eigenvalues
 
-../lib/Eigen/Eigenvalues
+../Eigen/Eigenvalues
 Core
-../lib/Eigen/Core
+../Eigen/Core
 src/Core/util/DisableStupidWarnings.h
-../lib/Eigen/src/Core/util/DisableStupidWarnings.h
+../Eigen/src/Core/util/DisableStupidWarnings.h
 Cholesky
-../lib/Eigen/Cholesky
+../Eigen/Cholesky
 Jacobi
-../lib/Eigen/Jacobi
+../Eigen/Jacobi
 Householder
-../lib/Eigen/Householder
+../Eigen/Householder
 LU
-../lib/Eigen/LU
+../Eigen/LU
 Geometry
-../lib/Eigen/Geometry
+../Eigen/Geometry
 src/misc/RealSvd2x2.h
-../lib/Eigen/src/misc/RealSvd2x2.h
+../Eigen/src/misc/RealSvd2x2.h
 src/Eigenvalues/Tridiagonalization.h
-../lib/Eigen/src/Eigenvalues/Tridiagonalization.h
+../Eigen/src/Eigenvalues/Tridiagonalization.h
 src/Eigenvalues/RealSchur.h
-../lib/Eigen/src/Eigenvalues/RealSchur.h
+../Eigen/src/Eigenvalues/RealSchur.h
 src/Eigenvalues/EigenSolver.h
-../lib/Eigen/src/Eigenvalues/EigenSolver.h
+../Eigen/src/Eigenvalues/EigenSolver.h
 src/Eigenvalues/SelfAdjointEigenSolver.h
-../lib/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h
+../Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h
 src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h
-../lib/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h
+../Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h
 src/Eigenvalues/HessenbergDecomposition.h
-../lib/Eigen/src/Eigenvalues/HessenbergDecomposition.h
+../Eigen/src/Eigenvalues/HessenbergDecomposition.h
 src/Eigenvalues/ComplexSchur.h
-../lib/Eigen/src/Eigenvalues/ComplexSchur.h
+../Eigen/src/Eigenvalues/ComplexSchur.h
 src/Eigenvalues/ComplexEigenSolver.h
-../lib/Eigen/src/Eigenvalues/ComplexEigenSolver.h
+../Eigen/src/Eigenvalues/ComplexEigenSolver.h
 src/Eigenvalues/RealQZ.h
-../lib/Eigen/src/Eigenvalues/RealQZ.h
+../Eigen/src/Eigenvalues/RealQZ.h
 src/Eigenvalues/GeneralizedEigenSolver.h
-../lib/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h
+../Eigen/src/Eigenvalues/GeneralizedEigenSolver.h
 src/Eigenvalues/MatrixBaseEigenvalues.h
-../lib/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h
+../Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h
 mkl_lapacke.h
-../lib/Eigen/mkl_lapacke.h
+../Eigen/mkl_lapacke.h
 src/misc/lapacke.h
-../lib/Eigen/src/misc/lapacke.h
+../Eigen/src/misc/lapacke.h
 src/Eigenvalues/RealSchur_LAPACKE.h
-../lib/Eigen/src/Eigenvalues/RealSchur_LAPACKE.h
+../Eigen/src/Eigenvalues/RealSchur_LAPACKE.h
 src/Eigenvalues/ComplexSchur_LAPACKE.h
-../lib/Eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h
+../Eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h
 src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h
-../lib/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h
+../Eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h
 src/Core/util/ReenableStupidWarnings.h
-../lib/Eigen/src/Core/util/ReenableStupidWarnings.h
+../Eigen/src/Core/util/ReenableStupidWarnings.h
 
-../lib/Eigen/Geometry
+../Eigen/Geometry
 Core
-../lib/Eigen/Core
+../Eigen/Core
 src/Core/util/DisableStupidWarnings.h
-../lib/Eigen/src/Core/util/DisableStupidWarnings.h
+../Eigen/src/Core/util/DisableStupidWarnings.h
 SVD
-../lib/Eigen/SVD
+../Eigen/SVD
 LU
-../lib/Eigen/LU
+../Eigen/LU
 limits
 -
 src/Geometry/OrthoMethods.h
-../lib/Eigen/src/Geometry/OrthoMethods.h
+../Eigen/src/Geometry/OrthoMethods.h
 src/Geometry/EulerAngles.h
-../lib/Eigen/src/Geometry/EulerAngles.h
+../Eigen/src/Geometry/EulerAngles.h
 src/Geometry/Homogeneous.h
-../lib/Eigen/src/Geometry/Homogeneous.h
+../Eigen/src/Geometry/Homogeneous.h
 src/Geometry/RotationBase.h
-../lib/Eigen/src/Geometry/RotationBase.h
+../Eigen/src/Geometry/RotationBase.h
 src/Geometry/Rotation2D.h
-../lib/Eigen/src/Geometry/Rotation2D.h
+../Eigen/src/Geometry/Rotation2D.h
 src/Geometry/Quaternion.h
-../lib/Eigen/src/Geometry/Quaternion.h
+../Eigen/src/Geometry/Quaternion.h
 src/Geometry/AngleAxis.h
-../lib/Eigen/src/Geometry/AngleAxis.h
+../Eigen/src/Geometry/AngleAxis.h
 src/Geometry/Transform.h
-../lib/Eigen/src/Geometry/Transform.h
+../Eigen/src/Geometry/Transform.h
 src/Geometry/Translation.h
-../lib/Eigen/src/Geometry/Translation.h
+../Eigen/src/Geometry/Translation.h
 src/Geometry/Scaling.h
-../lib/Eigen/src/Geometry/Scaling.h
+../Eigen/src/Geometry/Scaling.h
 src/Geometry/Hyperplane.h
-../lib/Eigen/src/Geometry/Hyperplane.h
+../Eigen/src/Geometry/Hyperplane.h
 src/Geometry/ParametrizedLine.h
-../lib/Eigen/src/Geometry/ParametrizedLine.h
+../Eigen/src/Geometry/ParametrizedLine.h
 src/Geometry/AlignedBox.h
-../lib/Eigen/src/Geometry/AlignedBox.h
+../Eigen/src/Geometry/AlignedBox.h
 src/Geometry/Umeyama.h
-../lib/Eigen/src/Geometry/Umeyama.h
+../Eigen/src/Geometry/Umeyama.h
 src/Geometry/arch/Geometry_SSE.h
-../lib/Eigen/src/Geometry/arch/Geometry_SSE.h
+../Eigen/src/Geometry/arch/Geometry_SSE.h
 src/Core/util/ReenableStupidWarnings.h
-../lib/Eigen/src/Core/util/ReenableStupidWarnings.h
+../Eigen/src/Core/util/ReenableStupidWarnings.h
 
-../lib/Eigen/Householder
+../Eigen/Householder
 Core
-../lib/Eigen/Core
+../Eigen/Core
 src/Core/util/DisableStupidWarnings.h
-../lib/Eigen/src/Core/util/DisableStupidWarnings.h
+../Eigen/src/Core/util/DisableStupidWarnings.h
 src/Householder/Householder.h
-../lib/Eigen/src/Householder/Householder.h
+../Eigen/src/Householder/Householder.h
 src/Householder/HouseholderSequence.h
-../lib/Eigen/src/Householder/HouseholderSequence.h
+../Eigen/src/Householder/HouseholderSequence.h
 src/Householder/BlockHouseholder.h
-../lib/Eigen/src/Householder/BlockHouseholder.h
+../Eigen/src/Householder/BlockHouseholder.h
 src/Core/util/ReenableStupidWarnings.h
-../lib/Eigen/src/Core/util/ReenableStupidWarnings.h
+../Eigen/src/Core/util/ReenableStupidWarnings.h
 
-../lib/Eigen/Jacobi
+../Eigen/Jacobi
 Core
-../lib/Eigen/Core
+../Eigen/Core
 src/Core/util/DisableStupidWarnings.h
-../lib/Eigen/src/Core/util/DisableStupidWarnings.h
+../Eigen/src/Core/util/DisableStupidWarnings.h
 src/Jacobi/Jacobi.h
-../lib/Eigen/src/Jacobi/Jacobi.h
+../Eigen/src/Jacobi/Jacobi.h
 src/Core/util/ReenableStupidWarnings.h
-../lib/Eigen/src/Core/util/ReenableStupidWarnings.h
+../Eigen/src/Core/util/ReenableStupidWarnings.h
 
-../lib/Eigen/LU
+../Eigen/LU
 Core
-../lib/Eigen/Core
+../Eigen/Core
 src/Core/util/DisableStupidWarnings.h
-../lib/Eigen/src/Core/util/DisableStupidWarnings.h
+../Eigen/src/Core/util/DisableStupidWarnings.h
 src/misc/Kernel.h
-../lib/Eigen/src/misc/Kernel.h
+../Eigen/src/misc/Kernel.h
 src/misc/Image.h
-../lib/Eigen/src/misc/Image.h
+../Eigen/src/misc/Image.h
 src/LU/FullPivLU.h
-../lib/Eigen/src/LU/FullPivLU.h
+../Eigen/src/LU/FullPivLU.h
 src/LU/PartialPivLU.h
-../lib/Eigen/src/LU/PartialPivLU.h
+../Eigen/src/LU/PartialPivLU.h
 mkl_lapacke.h
-../lib/Eigen/mkl_lapacke.h
+../Eigen/mkl_lapacke.h
 src/misc/lapacke.h
-../lib/Eigen/src/misc/lapacke.h
+../Eigen/src/misc/lapacke.h
 src/LU/PartialPivLU_LAPACKE.h
-../lib/Eigen/src/LU/PartialPivLU_LAPACKE.h
+../Eigen/src/LU/PartialPivLU_LAPACKE.h
 src/LU/Determinant.h
-../lib/Eigen/src/LU/Determinant.h
+../Eigen/src/LU/Determinant.h
 src/LU/InverseImpl.h
-../lib/Eigen/src/LU/InverseImpl.h
+../Eigen/src/LU/InverseImpl.h
 src/LU/arch/Inverse_SSE.h
-../lib/Eigen/src/LU/arch/Inverse_SSE.h
+../Eigen/src/LU/arch/Inverse_SSE.h
 src/Core/util/ReenableStupidWarnings.h
-../lib/Eigen/src/Core/util/ReenableStupidWarnings.h
+../Eigen/src/Core/util/ReenableStupidWarnings.h
 
-../lib/Eigen/QR
+../Eigen/QR
 Core
-../lib/Eigen/Core
+../Eigen/Core
 src/Core/util/DisableStupidWarnings.h
-../lib/Eigen/src/Core/util/DisableStupidWarnings.h
+../Eigen/src/Core/util/DisableStupidWarnings.h
 Cholesky
-../lib/Eigen/Cholesky
+../Eigen/Cholesky
 Jacobi
-../lib/Eigen/Jacobi
+../Eigen/Jacobi
 Householder
-../lib/Eigen/Householder
+../Eigen/Householder
 src/QR/HouseholderQR.h
-../lib/Eigen/src/QR/HouseholderQR.h
+../Eigen/src/QR/HouseholderQR.h
 src/QR/FullPivHouseholderQR.h
-../lib/Eigen/src/QR/FullPivHouseholderQR.h
+../Eigen/src/QR/FullPivHouseholderQR.h
 src/QR/ColPivHouseholderQR.h
-../lib/Eigen/src/QR/ColPivHouseholderQR.h
+../Eigen/src/QR/ColPivHouseholderQR.h
 src/QR/CompleteOrthogonalDecomposition.h
-../lib/Eigen/src/QR/CompleteOrthogonalDecomposition.h
+../Eigen/src/QR/CompleteOrthogonalDecomposition.h
 mkl_lapacke.h
-../lib/Eigen/mkl_lapacke.h
+../Eigen/mkl_lapacke.h
 src/misc/lapacke.h
-../lib/Eigen/src/misc/lapacke.h
+../Eigen/src/misc/lapacke.h
 src/QR/HouseholderQR_LAPACKE.h
-../lib/Eigen/src/QR/HouseholderQR_LAPACKE.h
+../Eigen/src/QR/HouseholderQR_LAPACKE.h
 src/QR/ColPivHouseholderQR_LAPACKE.h
-../lib/Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h
+../Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h
 src/Core/util/ReenableStupidWarnings.h
-../lib/Eigen/src/Core/util/ReenableStupidWarnings.h
+../Eigen/src/Core/util/ReenableStupidWarnings.h
 
-../lib/Eigen/SVD
+../Eigen/SVD
 QR
-../lib/Eigen/QR
+../Eigen/QR
 Householder
-../lib/Eigen/Householder
+../Eigen/Householder
 Jacobi
-../lib/Eigen/Jacobi
+../Eigen/Jacobi
 src/Core/util/DisableStupidWarnings.h
-../lib/Eigen/src/Core/util/DisableStupidWarnings.h
+../Eigen/src/Core/util/DisableStupidWarnings.h
 src/misc/RealSvd2x2.h
-../lib/Eigen/src/misc/RealSvd2x2.h
+../Eigen/src/misc/RealSvd2x2.h
 src/SVD/UpperBidiagonalization.h
-../lib/Eigen/src/SVD/UpperBidiagonalization.h
+../Eigen/src/SVD/UpperBidiagonalization.h
 src/SVD/SVDBase.h
-../lib/Eigen/src/SVD/SVDBase.h
+../Eigen/src/SVD/SVDBase.h
 src/SVD/JacobiSVD.h
-../lib/Eigen/src/SVD/JacobiSVD.h
+../Eigen/src/SVD/JacobiSVD.h
 src/SVD/BDCSVD.h
-../lib/Eigen/src/SVD/BDCSVD.h
+../Eigen/src/SVD/BDCSVD.h
 mkl_lapacke.h
-../lib/Eigen/mkl_lapacke.h
+../Eigen/mkl_lapacke.h
 src/misc/lapacke.h
-../lib/Eigen/src/misc/lapacke.h
+../Eigen/src/misc/lapacke.h
 src/SVD/JacobiSVD_LAPACKE.h
-../lib/Eigen/src/SVD/JacobiSVD_LAPACKE.h
+../Eigen/src/SVD/JacobiSVD_LAPACKE.h
 src/Core/util/ReenableStupidWarnings.h
-../lib/Eigen/src/Core/util/ReenableStupidWarnings.h
+../Eigen/src/Core/util/ReenableStupidWarnings.h
 
-../lib/Eigen/src/Cholesky/LDLT.h
+../Eigen/src/Cholesky/LDLT.h
 
-../lib/Eigen/src/Cholesky/LLT.h
+../Eigen/src/Cholesky/LLT.h
 
-../lib/Eigen/src/Cholesky/LLT_LAPACKE.h
+../Eigen/src/Cholesky/LLT_LAPACKE.h
 
-../lib/Eigen/src/Core/Array.h
+../Eigen/src/Core/Array.h
 
-../lib/Eigen/src/Core/ArrayBase.h
+../Eigen/src/Core/ArrayBase.h
 ../plugins/CommonCwiseUnaryOps.h
-../lib/Eigen/src/plugins/CommonCwiseUnaryOps.h
+../Eigen/src/plugins/CommonCwiseUnaryOps.h
 ../plugins/MatrixCwiseUnaryOps.h
-../lib/Eigen/src/plugins/MatrixCwiseUnaryOps.h
+../Eigen/src/plugins/MatrixCwiseUnaryOps.h
 ../plugins/ArrayCwiseUnaryOps.h
-../lib/Eigen/src/plugins/ArrayCwiseUnaryOps.h
+../Eigen/src/plugins/ArrayCwiseUnaryOps.h
 ../plugins/CommonCwiseBinaryOps.h
-../lib/Eigen/src/plugins/CommonCwiseBinaryOps.h
+../Eigen/src/plugins/CommonCwiseBinaryOps.h
 ../plugins/MatrixCwiseBinaryOps.h
-../lib/Eigen/src/plugins/MatrixCwiseBinaryOps.h
+../Eigen/src/plugins/MatrixCwiseBinaryOps.h
 ../plugins/ArrayCwiseBinaryOps.h
-../lib/Eigen/src/plugins/ArrayCwiseBinaryOps.h
+../Eigen/src/plugins/ArrayCwiseBinaryOps.h
 
-../lib/Eigen/src/Core/ArrayWrapper.h
+../Eigen/src/Core/ArrayWrapper.h
 
-../lib/Eigen/src/Core/Assign.h
+../Eigen/src/Core/Assign.h
 
-../lib/Eigen/src/Core/AssignEvaluator.h
+../Eigen/src/Core/AssignEvaluator.h
 
-../lib/Eigen/src/Core/Assign_MKL.h
+../Eigen/src/Core/Assign_MKL.h
 
-../lib/Eigen/src/Core/BandMatrix.h
+../Eigen/src/Core/BandMatrix.h
 
-../lib/Eigen/src/Core/Block.h
+../Eigen/src/Core/Block.h
 
-../lib/Eigen/src/Core/BooleanRedux.h
+../Eigen/src/Core/BooleanRedux.h
 
-../lib/Eigen/src/Core/CommaInitializer.h
+../Eigen/src/Core/CommaInitializer.h
 
-../lib/Eigen/src/Core/ConditionEstimator.h
+../Eigen/src/Core/ConditionEstimator.h
 
-../lib/Eigen/src/Core/CoreEvaluators.h
+../Eigen/src/Core/CoreEvaluators.h
 
-../lib/Eigen/src/Core/CoreIterators.h
+../Eigen/src/Core/CoreIterators.h
 
-../lib/Eigen/src/Core/CwiseBinaryOp.h
+../Eigen/src/Core/CwiseBinaryOp.h
 
-../lib/Eigen/src/Core/CwiseNullaryOp.h
+../Eigen/src/Core/CwiseNullaryOp.h
 
-../lib/Eigen/src/Core/CwiseTernaryOp.h
+../Eigen/src/Core/CwiseTernaryOp.h
 
-../lib/Eigen/src/Core/CwiseUnaryOp.h
+../Eigen/src/Core/CwiseUnaryOp.h
 
-../lib/Eigen/src/Core/CwiseUnaryView.h
+../Eigen/src/Core/CwiseUnaryView.h
 
-../lib/Eigen/src/Core/DenseBase.h
+../Eigen/src/Core/DenseBase.h
 ../plugins/BlockMethods.h
-../lib/Eigen/src/plugins/BlockMethods.h
+../Eigen/src/plugins/BlockMethods.h
 
-../lib/Eigen/src/Core/DenseCoeffsBase.h
+../Eigen/src/Core/DenseCoeffsBase.h
 
-../lib/Eigen/src/Core/DenseStorage.h
+../Eigen/src/Core/DenseStorage.h
 
-../lib/Eigen/src/Core/Diagonal.h
+../Eigen/src/Core/Diagonal.h
 
-../lib/Eigen/src/Core/DiagonalMatrix.h
+../Eigen/src/Core/DiagonalMatrix.h
 
-../lib/Eigen/src/Core/DiagonalProduct.h
+../Eigen/src/Core/DiagonalProduct.h
 
-../lib/Eigen/src/Core/Dot.h
+../Eigen/src/Core/Dot.h
 
-../lib/Eigen/src/Core/EigenBase.h
+../Eigen/src/Core/EigenBase.h
 
-../lib/Eigen/src/Core/Fuzzy.h
+../Eigen/src/Core/Fuzzy.h
 
-../lib/Eigen/src/Core/GeneralProduct.h
+../Eigen/src/Core/GeneralProduct.h
 
-../lib/Eigen/src/Core/GenericPacketMath.h
+../Eigen/src/Core/GenericPacketMath.h
 
-../lib/Eigen/src/Core/GlobalFunctions.h
+../Eigen/src/Core/GlobalFunctions.h
 
-../lib/Eigen/src/Core/IO.h
+../Eigen/src/Core/IO.h
 
-../lib/Eigen/src/Core/Inverse.h
+../Eigen/src/Core/Inverse.h
 
-../lib/Eigen/src/Core/Map.h
+../Eigen/src/Core/Map.h
 
-../lib/Eigen/src/Core/MapBase.h
+../Eigen/src/Core/MapBase.h
 
-../lib/Eigen/src/Core/MathFunctions.h
+../Eigen/src/Core/MathFunctions.h
 
-../lib/Eigen/src/Core/MathFunctionsImpl.h
+../Eigen/src/Core/MathFunctionsImpl.h
 
-../lib/Eigen/src/Core/Matrix.h
+../Eigen/src/Core/Matrix.h
 
-../lib/Eigen/src/Core/MatrixBase.h
+../Eigen/src/Core/MatrixBase.h
 ../plugins/CommonCwiseUnaryOps.h
-../lib/Eigen/src/plugins/CommonCwiseUnaryOps.h
+../Eigen/src/plugins/CommonCwiseUnaryOps.h
 ../plugins/CommonCwiseBinaryOps.h
-../lib/Eigen/src/plugins/CommonCwiseBinaryOps.h
+../Eigen/src/plugins/CommonCwiseBinaryOps.h
 ../plugins/MatrixCwiseUnaryOps.h
-../lib/Eigen/src/plugins/MatrixCwiseUnaryOps.h
+../Eigen/src/plugins/MatrixCwiseUnaryOps.h
 ../plugins/MatrixCwiseBinaryOps.h
-../lib/Eigen/src/plugins/MatrixCwiseBinaryOps.h
+../Eigen/src/plugins/MatrixCwiseBinaryOps.h
 
-../lib/Eigen/src/Core/NestByValue.h
+../Eigen/src/Core/NestByValue.h
 
-../lib/Eigen/src/Core/NoAlias.h
+../Eigen/src/Core/NoAlias.h
 
-../lib/Eigen/src/Core/NumTraits.h
+../Eigen/src/Core/NumTraits.h
 
-../lib/Eigen/src/Core/PermutationMatrix.h
+../Eigen/src/Core/PermutationMatrix.h
 
-../lib/Eigen/src/Core/PlainObjectBase.h
+../Eigen/src/Core/PlainObjectBase.h
 
-../lib/Eigen/src/Core/Product.h
+../Eigen/src/Core/Product.h
 
-../lib/Eigen/src/Core/ProductEvaluators.h
+../Eigen/src/Core/ProductEvaluators.h
 
-../lib/Eigen/src/Core/Random.h
+../Eigen/src/Core/Random.h
 
-../lib/Eigen/src/Core/Redux.h
+../Eigen/src/Core/Redux.h
 
-../lib/Eigen/src/Core/Ref.h
+../Eigen/src/Core/Ref.h
 
-../lib/Eigen/src/Core/Replicate.h
+../Eigen/src/Core/Replicate.h
 
-../lib/Eigen/src/Core/ReturnByValue.h
+../Eigen/src/Core/ReturnByValue.h
 
-../lib/Eigen/src/Core/Reverse.h
+../Eigen/src/Core/Reverse.h
 
-../lib/Eigen/src/Core/Select.h
+../Eigen/src/Core/Select.h
 
-../lib/Eigen/src/Core/SelfAdjointView.h
+../Eigen/src/Core/SelfAdjointView.h
 
-../lib/Eigen/src/Core/SelfCwiseBinaryOp.h
+../Eigen/src/Core/SelfCwiseBinaryOp.h
 
-../lib/Eigen/src/Core/Solve.h
+../Eigen/src/Core/Solve.h
 
-../lib/Eigen/src/Core/SolveTriangular.h
+../Eigen/src/Core/SolveTriangular.h
 
-../lib/Eigen/src/Core/SolverBase.h
+../Eigen/src/Core/SolverBase.h
 
-../lib/Eigen/src/Core/StableNorm.h
+../Eigen/src/Core/StableNorm.h
 
-../lib/Eigen/src/Core/Stride.h
+../Eigen/src/Core/Stride.h
 
-../lib/Eigen/src/Core/Swap.h
+../Eigen/src/Core/Swap.h
 
-../lib/Eigen/src/Core/Transpose.h
+../Eigen/src/Core/Transpose.h
 
-../lib/Eigen/src/Core/Transpositions.h
+../Eigen/src/Core/Transpositions.h
 
-../lib/Eigen/src/Core/TriangularMatrix.h
+../Eigen/src/Core/TriangularMatrix.h
 
-../lib/Eigen/src/Core/VectorBlock.h
+../Eigen/src/Core/VectorBlock.h
 
-../lib/Eigen/src/Core/VectorwiseOp.h
+../Eigen/src/Core/VectorwiseOp.h
 
-../lib/Eigen/src/Core/Visitor.h
+../Eigen/src/Core/Visitor.h
 
-../lib/Eigen/src/Core/arch/AVX/Complex.h
+../Eigen/src/Core/arch/AVX/Complex.h
 
-../lib/Eigen/src/Core/arch/AVX/MathFunctions.h
+../Eigen/src/Core/arch/AVX/MathFunctions.h
 
-../lib/Eigen/src/Core/arch/AVX/PacketMath.h
+../Eigen/src/Core/arch/AVX/PacketMath.h
 
-../lib/Eigen/src/Core/arch/AVX/TypeCasting.h
+../Eigen/src/Core/arch/AVX/TypeCasting.h
 
-../lib/Eigen/src/Core/arch/AVX512/MathFunctions.h
+../Eigen/src/Core/arch/AVX512/MathFunctions.h
 
-../lib/Eigen/src/Core/arch/AVX512/PacketMath.h
+../Eigen/src/Core/arch/AVX512/PacketMath.h
 
-../lib/Eigen/src/Core/arch/AltiVec/Complex.h
+../Eigen/src/Core/arch/AltiVec/Complex.h
 
-../lib/Eigen/src/Core/arch/AltiVec/MathFunctions.h
+../Eigen/src/Core/arch/AltiVec/MathFunctions.h
 
-../lib/Eigen/src/Core/arch/AltiVec/PacketMath.h
+../Eigen/src/Core/arch/AltiVec/PacketMath.h
 
-../lib/Eigen/src/Core/arch/CUDA/Complex.h
+../Eigen/src/Core/arch/CUDA/Complex.h
 
-../lib/Eigen/src/Core/arch/CUDA/Half.h
+../Eigen/src/Core/arch/CUDA/Half.h
 
-../lib/Eigen/src/Core/arch/CUDA/MathFunctions.h
+../Eigen/src/Core/arch/CUDA/MathFunctions.h
 
-../lib/Eigen/src/Core/arch/CUDA/PacketMath.h
+../Eigen/src/Core/arch/CUDA/PacketMath.h
 
-../lib/Eigen/src/Core/arch/CUDA/PacketMathHalf.h
+../Eigen/src/Core/arch/CUDA/PacketMathHalf.h
 
-../lib/Eigen/src/Core/arch/CUDA/TypeCasting.h
+../Eigen/src/Core/arch/CUDA/TypeCasting.h
 
-../lib/Eigen/src/Core/arch/Default/ConjHelper.h
+../Eigen/src/Core/arch/Default/ConjHelper.h
 
-../lib/Eigen/src/Core/arch/Default/Settings.h
+../Eigen/src/Core/arch/Default/Settings.h
 
-../lib/Eigen/src/Core/arch/NEON/Complex.h
+../Eigen/src/Core/arch/NEON/Complex.h
 
-../lib/Eigen/src/Core/arch/NEON/MathFunctions.h
+../Eigen/src/Core/arch/NEON/MathFunctions.h
 
-../lib/Eigen/src/Core/arch/NEON/PacketMath.h
+../Eigen/src/Core/arch/NEON/PacketMath.h
 
-../lib/Eigen/src/Core/arch/SSE/Complex.h
+../Eigen/src/Core/arch/SSE/Complex.h
 
-../lib/Eigen/src/Core/arch/SSE/MathFunctions.h
+../Eigen/src/Core/arch/SSE/MathFunctions.h
 
-../lib/Eigen/src/Core/arch/SSE/PacketMath.h
+../Eigen/src/Core/arch/SSE/PacketMath.h
 
-../lib/Eigen/src/Core/arch/SSE/TypeCasting.h
+../Eigen/src/Core/arch/SSE/TypeCasting.h
 
-../lib/Eigen/src/Core/arch/ZVector/Complex.h
+../Eigen/src/Core/arch/ZVector/Complex.h
 
-../lib/Eigen/src/Core/arch/ZVector/MathFunctions.h
+../Eigen/src/Core/arch/ZVector/MathFunctions.h
 
-../lib/Eigen/src/Core/arch/ZVector/PacketMath.h
+../Eigen/src/Core/arch/ZVector/PacketMath.h
 stdint.h
 -
 
-../lib/Eigen/src/Core/functors/AssignmentFunctors.h
+../Eigen/src/Core/functors/AssignmentFunctors.h
 
-../lib/Eigen/src/Core/functors/BinaryFunctors.h
+../Eigen/src/Core/functors/BinaryFunctors.h
 
-../lib/Eigen/src/Core/functors/NullaryFunctors.h
+../Eigen/src/Core/functors/NullaryFunctors.h
 
-../lib/Eigen/src/Core/functors/StlFunctors.h
+../Eigen/src/Core/functors/StlFunctors.h
 
-../lib/Eigen/src/Core/functors/TernaryFunctors.h
+../Eigen/src/Core/functors/TernaryFunctors.h
 
-../lib/Eigen/src/Core/functors/UnaryFunctors.h
+../Eigen/src/Core/functors/UnaryFunctors.h
 
-../lib/Eigen/src/Core/products/GeneralBlockPanelKernel.h
+../Eigen/src/Core/products/GeneralBlockPanelKernel.h
 
-../lib/Eigen/src/Core/products/GeneralMatrixMatrix.h
+../Eigen/src/Core/products/GeneralMatrixMatrix.h
 
-../lib/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h
+../Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h
 
-../lib/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_BLAS.h
+../Eigen/src/Core/products/GeneralMatrixMatrixTriangular_BLAS.h
 
-../lib/Eigen/src/Core/products/GeneralMatrixMatrix_BLAS.h
+../Eigen/src/Core/products/GeneralMatrixMatrix_BLAS.h
 
-../lib/Eigen/src/Core/products/GeneralMatrixVector.h
+../Eigen/src/Core/products/GeneralMatrixVector.h
 
-../lib/Eigen/src/Core/products/GeneralMatrixVector_BLAS.h
+../Eigen/src/Core/products/GeneralMatrixVector_BLAS.h
 
-../lib/Eigen/src/Core/products/Parallelizer.h
+../Eigen/src/Core/products/Parallelizer.h
 
-../lib/Eigen/src/Core/products/SelfadjointMatrixMatrix.h
+../Eigen/src/Core/products/SelfadjointMatrixMatrix.h
 
-../lib/Eigen/src/Core/products/SelfadjointMatrixMatrix_BLAS.h
+../Eigen/src/Core/products/SelfadjointMatrixMatrix_BLAS.h
 
-../lib/Eigen/src/Core/products/SelfadjointMatrixVector.h
+../Eigen/src/Core/products/SelfadjointMatrixVector.h
 
-../lib/Eigen/src/Core/products/SelfadjointMatrixVector_BLAS.h
+../Eigen/src/Core/products/SelfadjointMatrixVector_BLAS.h
 
-../lib/Eigen/src/Core/products/SelfadjointProduct.h
+../Eigen/src/Core/products/SelfadjointProduct.h
 
-../lib/Eigen/src/Core/products/SelfadjointRank2Update.h
+../Eigen/src/Core/products/SelfadjointRank2Update.h
 
-../lib/Eigen/src/Core/products/TriangularMatrixMatrix.h
+../Eigen/src/Core/products/TriangularMatrixMatrix.h
 
-../lib/Eigen/src/Core/products/TriangularMatrixMatrix_BLAS.h
+../Eigen/src/Core/products/TriangularMatrixMatrix_BLAS.h
 
-../lib/Eigen/src/Core/products/TriangularMatrixVector.h
+../Eigen/src/Core/products/TriangularMatrixVector.h
 
-../lib/Eigen/src/Core/products/TriangularMatrixVector_BLAS.h
+../Eigen/src/Core/products/TriangularMatrixVector_BLAS.h
 
-../lib/Eigen/src/Core/products/TriangularSolverMatrix.h
+../Eigen/src/Core/products/TriangularSolverMatrix.h
 
-../lib/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h
+../Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h
 
-../lib/Eigen/src/Core/products/TriangularSolverVector.h
+../Eigen/src/Core/products/TriangularSolverVector.h
 
-../lib/Eigen/src/Core/util/BlasUtil.h
+../Eigen/src/Core/util/BlasUtil.h
 
-../lib/Eigen/src/Core/util/Constants.h
+../Eigen/src/Core/util/Constants.h
 
-../lib/Eigen/src/Core/util/DisableStupidWarnings.h
+../Eigen/src/Core/util/DisableStupidWarnings.h
 
-../lib/Eigen/src/Core/util/ForwardDeclarations.h
+../Eigen/src/Core/util/ForwardDeclarations.h
 
-../lib/Eigen/src/Core/util/MKL_support.h
+../Eigen/src/Core/util/MKL_support.h
 mkl.h
 -
 ../../misc/blas.h
-../lib/Eigen/src/misc/blas.h
+../Eigen/src/misc/blas.h
 
-../lib/Eigen/src/Core/util/Macros.h
+../Eigen/src/Core/util/Macros.h
 cstdlib
 -
 iostream
 -
 
-../lib/Eigen/src/Core/util/Memory.h
+../Eigen/src/Core/util/Memory.h
 
-../lib/Eigen/src/Core/util/Meta.h
+../Eigen/src/Core/util/Meta.h
 cfloat
 -
 math_constants.h
@@ -896,151 +896,137 @@ math_constants.h
 cstdint
 -
 
-../lib/Eigen/src/Core/util/ReenableStupidWarnings.h
+../Eigen/src/Core/util/ReenableStupidWarnings.h
 
-../lib/Eigen/src/Core/util/StaticAssert.h
+../Eigen/src/Core/util/StaticAssert.h
 
-../lib/Eigen/src/Core/util/XprHelper.h
+../Eigen/src/Core/util/XprHelper.h
 
-../lib/Eigen/src/Eigenvalues/./ComplexSchur.h
-./HessenbergDecomposition.h
-../lib/Eigen/src/Eigenvalues/././HessenbergDecomposition.h
-
-../lib/Eigen/src/Eigenvalues/./HessenbergDecomposition.h
-
-../lib/Eigen/src/Eigenvalues/./RealQZ.h
-
-../lib/Eigen/src/Eigenvalues/./RealSchur.h
-./HessenbergDecomposition.h
-../lib/Eigen/src/Eigenvalues/././HessenbergDecomposition.h
-
-../lib/Eigen/src/Eigenvalues/./Tridiagonalization.h
-
-../lib/Eigen/src/Eigenvalues/ComplexEigenSolver.h
+../Eigen/src/Eigenvalues/ComplexEigenSolver.h
 ./ComplexSchur.h
-../lib/Eigen/src/Eigenvalues/./ComplexSchur.h
+../Eigen/src/Eigenvalues/ComplexSchur.h
 
-../lib/Eigen/src/Eigenvalues/ComplexSchur.h
+../Eigen/src/Eigenvalues/ComplexSchur.h
 ./HessenbergDecomposition.h
-../lib/Eigen/src/Eigenvalues/./HessenbergDecomposition.h
+../Eigen/src/Eigenvalues/HessenbergDecomposition.h
 
-../lib/Eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h
+../Eigen/src/Eigenvalues/ComplexSchur_LAPACKE.h
 
-../lib/Eigen/src/Eigenvalues/EigenSolver.h
+../Eigen/src/Eigenvalues/EigenSolver.h
 ./RealSchur.h
-../lib/Eigen/src/Eigenvalues/./RealSchur.h
+../Eigen/src/Eigenvalues/RealSchur.h
 
-../lib/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h
+../Eigen/src/Eigenvalues/GeneralizedEigenSolver.h
 ./RealQZ.h
-../lib/Eigen/src/Eigenvalues/./RealQZ.h
+../Eigen/src/Eigenvalues/RealQZ.h
 
-../lib/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h
+../Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h
 ./Tridiagonalization.h
-../lib/Eigen/src/Eigenvalues/./Tridiagonalization.h
+../Eigen/src/Eigenvalues/Tridiagonalization.h
 
-../lib/Eigen/src/Eigenvalues/HessenbergDecomposition.h
+../Eigen/src/Eigenvalues/HessenbergDecomposition.h
 
-../lib/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h
+../Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h
 
-../lib/Eigen/src/Eigenvalues/RealQZ.h
+../Eigen/src/Eigenvalues/RealQZ.h
 
-../lib/Eigen/src/Eigenvalues/RealSchur.h
+../Eigen/src/Eigenvalues/RealSchur.h
 ./HessenbergDecomposition.h
-../lib/Eigen/src/Eigenvalues/./HessenbergDecomposition.h
+../Eigen/src/Eigenvalues/HessenbergDecomposition.h
 
-../lib/Eigen/src/Eigenvalues/RealSchur_LAPACKE.h
+../Eigen/src/Eigenvalues/RealSchur_LAPACKE.h
 
-../lib/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h
+../Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h
 ./Tridiagonalization.h
-../lib/Eigen/src/Eigenvalues/./Tridiagonalization.h
+../Eigen/src/Eigenvalues/Tridiagonalization.h
 
-../lib/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h
+../Eigen/src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h
 
-../lib/Eigen/src/Eigenvalues/Tridiagonalization.h
+../Eigen/src/Eigenvalues/Tridiagonalization.h
 
-../lib/Eigen/src/Geometry/AlignedBox.h
+../Eigen/src/Geometry/AlignedBox.h
 
-../lib/Eigen/src/Geometry/AngleAxis.h
+../Eigen/src/Geometry/AngleAxis.h
 
-../lib/Eigen/src/Geometry/EulerAngles.h
+../Eigen/src/Geometry/EulerAngles.h
 
-../lib/Eigen/src/Geometry/Homogeneous.h
+../Eigen/src/Geometry/Homogeneous.h
 
-../lib/Eigen/src/Geometry/Hyperplane.h
+../Eigen/src/Geometry/Hyperplane.h
 
-../lib/Eigen/src/Geometry/OrthoMethods.h
+../Eigen/src/Geometry/OrthoMethods.h
 
-../lib/Eigen/src/Geometry/ParametrizedLine.h
+../Eigen/src/Geometry/ParametrizedLine.h
 
-../lib/Eigen/src/Geometry/Quaternion.h
+../Eigen/src/Geometry/Quaternion.h
 
-../lib/Eigen/src/Geometry/Rotation2D.h
+../Eigen/src/Geometry/Rotation2D.h
 
-../lib/Eigen/src/Geometry/RotationBase.h
+../Eigen/src/Geometry/RotationBase.h
 
-../lib/Eigen/src/Geometry/Scaling.h
+../Eigen/src/Geometry/Scaling.h
 
-../lib/Eigen/src/Geometry/Transform.h
+../Eigen/src/Geometry/Transform.h
 
-../lib/Eigen/src/Geometry/Translation.h
+../Eigen/src/Geometry/Translation.h
 
-../lib/Eigen/src/Geometry/Umeyama.h
+../Eigen/src/Geometry/Umeyama.h
 
-../lib/Eigen/src/Geometry/arch/Geometry_SSE.h
+../Eigen/src/Geometry/arch/Geometry_SSE.h
 
-../lib/Eigen/src/Householder/BlockHouseholder.h
+../Eigen/src/Householder/BlockHouseholder.h
 
-../lib/Eigen/src/Householder/Householder.h
+../Eigen/src/Householder/Householder.h
 
-../lib/Eigen/src/Householder/HouseholderSequence.h
+../Eigen/src/Householder/HouseholderSequence.h
 
-../lib/Eigen/src/Jacobi/Jacobi.h
+../Eigen/src/Jacobi/Jacobi.h
 
-../lib/Eigen/src/LU/Determinant.h
+../Eigen/src/LU/Determinant.h
 
-../lib/Eigen/src/LU/FullPivLU.h
+../Eigen/src/LU/FullPivLU.h
 
-../lib/Eigen/src/LU/InverseImpl.h
+../Eigen/src/LU/InverseImpl.h
 
-../lib/Eigen/src/LU/PartialPivLU.h
+../Eigen/src/LU/PartialPivLU.h
 
-../lib/Eigen/src/LU/PartialPivLU_LAPACKE.h
+../Eigen/src/LU/PartialPivLU_LAPACKE.h
 
-../lib/Eigen/src/LU/arch/Inverse_SSE.h
+../Eigen/src/LU/arch/Inverse_SSE.h
 
-../lib/Eigen/src/QR/ColPivHouseholderQR.h
+../Eigen/src/QR/ColPivHouseholderQR.h
 
-../lib/Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h
+../Eigen/src/QR/ColPivHouseholderQR_LAPACKE.h
 
-../lib/Eigen/src/QR/CompleteOrthogonalDecomposition.h
+../Eigen/src/QR/CompleteOrthogonalDecomposition.h
 
-../lib/Eigen/src/QR/FullPivHouseholderQR.h
+../Eigen/src/QR/FullPivHouseholderQR.h
 
-../lib/Eigen/src/QR/HouseholderQR.h
+../Eigen/src/QR/HouseholderQR.h
 
-../lib/Eigen/src/QR/HouseholderQR_LAPACKE.h
+../Eigen/src/QR/HouseholderQR_LAPACKE.h
 
-../lib/Eigen/src/SVD/BDCSVD.h
+../Eigen/src/SVD/BDCSVD.h
 
-../lib/Eigen/src/SVD/JacobiSVD.h
+../Eigen/src/SVD/JacobiSVD.h
 
-../lib/Eigen/src/SVD/JacobiSVD_LAPACKE.h
+../Eigen/src/SVD/JacobiSVD_LAPACKE.h
 
-../lib/Eigen/src/SVD/SVDBase.h
+../Eigen/src/SVD/SVDBase.h
 
-../lib/Eigen/src/SVD/UpperBidiagonalization.h
+../Eigen/src/SVD/UpperBidiagonalization.h
 
-../lib/Eigen/src/misc/Image.h
+../Eigen/src/misc/Image.h
 
-../lib/Eigen/src/misc/Kernel.h
+../Eigen/src/misc/Kernel.h
 
-../lib/Eigen/src/misc/RealSvd2x2.h
+../Eigen/src/misc/RealSvd2x2.h
 
-../lib/Eigen/src/misc/blas.h
+../Eigen/src/misc/blas.h
 
-../lib/Eigen/src/misc/lapacke.h
+../Eigen/src/misc/lapacke.h
 lapacke_config.h
-../lib/Eigen/src/misc/lapacke_config.h
+../Eigen/src/misc/lapacke_config.h
 stdlib.h
 -
 complex.h
@@ -1048,23 +1034,23 @@ complex.h
 complex.h
 -
 lapacke_mangling.h
-../lib/Eigen/src/misc/lapacke_mangling.h
+../Eigen/src/misc/lapacke_mangling.h
 
-../lib/Eigen/src/misc/lapacke_mangling.h
+../Eigen/src/misc/lapacke_mangling.h
 
-../lib/Eigen/src/plugins/ArrayCwiseBinaryOps.h
+../Eigen/src/plugins/ArrayCwiseBinaryOps.h
 
-../lib/Eigen/src/plugins/ArrayCwiseUnaryOps.h
+../Eigen/src/plugins/ArrayCwiseUnaryOps.h
 
-../lib/Eigen/src/plugins/BlockMethods.h
+../Eigen/src/plugins/BlockMethods.h
 
-../lib/Eigen/src/plugins/CommonCwiseBinaryOps.h
+../Eigen/src/plugins/CommonCwiseBinaryOps.h
 
-../lib/Eigen/src/plugins/CommonCwiseUnaryOps.h
+../Eigen/src/plugins/CommonCwiseUnaryOps.h
 
-../lib/Eigen/src/plugins/MatrixCwiseBinaryOps.h
+../Eigen/src/plugins/MatrixCwiseBinaryOps.h
 
-../lib/Eigen/src/plugins/MatrixCwiseUnaryOps.h
+../Eigen/src/plugins/MatrixCwiseUnaryOps.h
 
 /Users/mengbo/delta/superTAD/program/binaryTree.h
 vector
@@ -1105,6 +1091,8 @@ limits
 -
 algorithm
 -
+set
+-
 params.h
 /Users/mengbo/delta/superTAD/program/params.h
 data.h
@@ -1123,30 +1111,10 @@ iostream
 -
 fstream
 -
-filesystem
--
 Eigen/Dense
 -
 binaryTree.h
 /Users/mengbo/delta/superTAD/program/binaryTree.h
-
-/Users/mengbo/delta/superTAD/program/main.cpp
-iostream
--
-params.h
-/Users/mengbo/delta/superTAD/program/params.h
-detectorBinary.h
-/Users/mengbo/delta/superTAD/program/detectorBinary.h
-binaryTree.h
-/Users/mengbo/delta/superTAD/program/binaryTree.h
-data.h
-/Users/mengbo/delta/superTAD/program/data.h
-utils.h
-/Users/mengbo/delta/superTAD/program/utils.h
-
-/Users/mengbo/delta/superTAD/program/params.cpp
-params.h
-/Users/mengbo/delta/superTAD/program/params.h
 
 /Users/mengbo/delta/superTAD/program/params.h
 string

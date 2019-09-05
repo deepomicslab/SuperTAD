@@ -19,30 +19,24 @@ typedef std::numeric_limits<double> infDouble;
 
 bool cmpBoundary (const std::pair<int, int> &p1, const std::pair<int, int> &p2);
 
+bool doubleArrayEqual (double a1[], double a2[], int n);
+
+void copyDoubleArray (double from[], double to[], int n);
+
 class DetectorBinary {
 private:
   Data *_data;
-  
   Eigen::MatrixXd *_edgeCount;
-  
-  Writer *_writer;
-  
-  BinaryTree *_binaryTree;
-  
-  std::vector<TreeNode *> *_nodeList;
-  
+  Writer _writer;
+  binary::Tree *_binaryTree;
+  std::vector<binary::TreeNode *> *_nodeList;
   double ***_table;
-  
   int ***_minIndexArray;
-  
   int ***_leftKArray;
-  
   std::vector<std::pair<int, int>> _boundary;
-  
-//  std::vector<double> _nodeSize;
-  
-  std::set<TreeNode *> _trueNodeList;
-  
+  std::set<binary::TreeNode *> _trueNodeList;
+  std::map<int, int> _kToIdx;
+
 public:
   DetectorBinary (Data &data);
   
@@ -54,23 +48,25 @@ public:
   
   void fillTable ();
   
+  int indexK (int k) { return _kToIdx.find(k)->second; };
+  
   void backTrace (int k, bool add=false);
   
   void binarySplit (int start, int end, int k, bool add=false);
   
-  void calculateD (TreeNode &node);
+  void calculateD (binary::TreeNode &node);
   
-  void calculateDensity (TreeNode &node);
+  void calculateDensity (binary::TreeNode &node);
   
-  double minusParent (double d, TreeNode &node);
+  double minusParent (double d, binary::TreeNode &node);
   
   void filterNodes ();
   
-  double getX (TreeNode &node);
+  double getX (binary::TreeNode &node);
   
-  double getY (TreeNode &node);
+  double getY (binary::TreeNode &node);
   
-  void simpleLinearRegression (std::vector<std::pair<int, TreeNode *>> &nodeList, double *ab);
+  bool simpleLinearRegression (std::vector<std::pair<int, binary::TreeNode *>> &nodeList, double ab[]);
 };
 
 

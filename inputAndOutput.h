@@ -8,9 +8,10 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <filesystem>
+//#include <filesystem>
 #include <Eigen/Dense>
 #include "binaryTree.h"
+#include "multiTree.h"
 
 
 std::string concatePath (std::string path1, std::string path2);
@@ -37,10 +38,11 @@ private:
 public:
   Writer ();
 
-  ~Writer ();
+  ~Writer () {};
   
-  void writeTree (std::string workDir, std::string fileName, std::vector<TreeNode *> &nodeList);
+  void writeTree (std::string workDir, std::string fileName, std::vector<binary::TreeNode *> &nodeList);
   
+  void writeTree (std::string workDir, std::string fileName, std::vector<multi::TreeNode *> &nodeList);
 };
 
 #endif //PROGRAM_INPUTANDOUTPUT_H

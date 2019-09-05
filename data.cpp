@@ -47,3 +47,12 @@ void Data::init ()
   }
 //  std::cout << "_edgeCount:\n" << _edgeCount << std::endl;
 }
+
+
+double Data::getVol (int s, int e)
+{
+  if (s != e)
+    return 2. * _edgeCount.coeff(s, e) + _edgeCount.coeff(e, s);
+  else
+    return _edgeCount.coeff (e, s);
+}

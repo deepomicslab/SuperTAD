@@ -10,6 +10,7 @@
 
 extern int _K;
 extern int _N;
+extern int _H;
 
 extern std::string _WORK_DIR;
 extern std::string _INPUT;

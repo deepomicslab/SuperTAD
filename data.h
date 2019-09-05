@@ -26,6 +26,7 @@ private:
   Eigen::MatrixXd _edgeCount;
   
   Reader *_reader;
+  
 public:
   Data (std::string fileName);
   
@@ -34,6 +35,8 @@ public:
   void init ();
   
   Eigen::MatrixXd &edgeCount () { return _edgeCount; }
+  
+  double getVol (int s, int e);
   
   double edgeSum () { return _edgeCount.coeff(0, _N-1); }
 };

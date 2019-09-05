@@ -10,14 +10,17 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/mengbo/delta/superTAD/program/detectorMulti.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/detectorMulti.cpp.o"
   "/Users/mengbo/delta/superTAD/program/inputAndOutput.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/inputAndOutput.cpp.o"
   "/Users/mengbo/delta/superTAD/program/main.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/main.cpp.o"
+  "/Users/mengbo/delta/superTAD/program/multiTree.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/multiTree.cpp.o"
   "/Users/mengbo/delta/superTAD/program/params.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/params.cpp.o"
+  "/Users/mengbo/delta/superTAD/program/test.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/test.cpp.o"
   "/Users/mengbo/delta/superTAD/program/utils.cpp" "/Users/mengbo/delta/superTAD/program/cmake-build-debug/CMakeFiles/program.dir/utils.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "../lib"
+  "."
+  "../"
   )
 
 # Targets to which this target links.

@@ -52,9 +52,15 @@ int Reader::parse (Eigen::MatrixXd &contactMat)
 }
 
 
-void Writer::writeTree (std::string workDir, std::string fileName, std::vector<TreeNode *> &nodeList)
+Writer::Writer ()
+{
+}
+
+
+void Writer::writeTree (std::string workDir, std::string fileName, std::vector<binary::TreeNode *> &nodeList)
 {
   std::string path = workDir + fileName;
+  std::cout << "path=" << path << "\n";
   _outfile.open (path);
   for (int i = 0; i < nodeList.size (); i++) {
     for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
@@ -64,3 +70,16 @@ void Writer::writeTree (std::string workDir, std::string fileName, std::vector<T
   _outfile.close ();
 }
 
+
+void Writer::writeTree (std::string workDir, std::string fileName, std::vector<multi::TreeNode *> &nodeList)
+{
+  std::string path = workDir + fileName;
+  std::cout << "path=" << path << "\n";
+  _outfile.open (path);
+  for (int i = 0; i < nodeList.size (); i++) {
+    for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
+      _outfile << std::to_string (j + 1) << " ";
+    _outfile << "\n";
+  }
+  _outfile.close ();
+}

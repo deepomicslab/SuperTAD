@@ -1,4 +1,0 @@
-/usr/local/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/usr/local/bin/gmake -DCMAKE_C_COMPILER=/usr/local/bin/gcc -DCMAKE_CXX_COMPILER=/usr/local/bin/g++ -G "CodeBlocks - Unix Makefiles" /Users/mengbo/delta/superTAD/program
--- Configuring done
--- Generating done
--- Build files have been written to: /Users/mengbo/delta/superTAD/program/cmake-build-debug

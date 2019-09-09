@@ -8,6 +8,9 @@
 #include <string>
 
 
+extern bool _BINARY;
+extern bool _MULTI;
+
 extern int _K;
 extern int _N;
 extern int _H;

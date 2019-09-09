@@ -7,7 +7,9 @@
 
 #include <vector>
 #include <set>
+#include <iostream>
 #include "params.h"
+
 
 namespace multi {
   
@@ -38,6 +40,8 @@ namespace multi {
   
   
   bool operator<(const TreeNode &t1, const TreeNode &t2);
+  
+  std::ostream& operator<< (std::ostream &os, const TreeNode &node);
   
   
   class Tree {

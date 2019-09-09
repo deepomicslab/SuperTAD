@@ -11,43 +11,48 @@
 #include "inputAndOutput.h"
 #include "multiTree.h"
 #include <map>
+#include "utils.h"
 
 
-bool cmpBoundary (const std::pair<int, int> &p1, const std::pair<int, int> &p2);
-
-class DetectorMulti {
-private:
-  Data *_data;
-  Eigen::MatrixXd *_edgeCount;
-  Writer _writer;
-  multi::Tree _multiTree;
-  std::vector<multi::TreeNode *> *_nodeList;
-  double *****_table;
-  int *****_minIndexArray;
-  int *****_leftKArray;
-  std::vector<std::pair<int, int>> _boundary;
-  std::map<int, int> _kToIdx;
+namespace multi {
   
-public:
-  DetectorMulti (Data &data);
-
-  ~DetectorMulti ();
+  class Detector {
+  private:
+    Data *_data;
+    Eigen::MatrixXd *_edgeCount;
+    Writer _writer;
+    multi::Tree _multiTree;
+    std::vector<multi::TreeNode *> *_nodeList;
+    double *****_table;
+    int *****_minIndexArray;
+    int *****_leftKArray;
+    std::map<int, int> _kToIdx;
+    std::vector<utils::boundary> _boundary;
   
-  int indexK (int k) { return _kToIdx.find(k)->second; }
+  public:
+    Detector (Data &data);
+    
+    ~Detector ();
+    
+    int indexK (int k) { return _kToIdx.find (k)->second; }
+    
+    double getSE (int x, int y, double a, double b);
+    
+    double getSE (double x, double a, double b);
+    
+    void execute ();
+    
+    void initK ();
+    
+    void fillTable ();
+    
+    void initH (int h);
+    
+    void backTrace (int k, int h, bool add = false);
+    
+    void multiSplit (int start, int end, int k, int h, int parentEnd, bool add = false);
+  };
   
-  double getSE (int x, int y, double a, double b);
-  
-  double getSE (double x, double a, double b);
-  
-  void execute ();
-  
-  void fillTable ();
-  
-  void initH (int h);
-  
-  void backTrace (int k, int h, bool add=false);
-  
-  void multiSplit (int start, int end, int k, int h, int parentEnd, bool add=false);
-};
+}
 
 #endif //PROGRAM_DETECTORMULTI_H

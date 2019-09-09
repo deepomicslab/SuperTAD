@@ -17,7 +17,7 @@
 #include "params.h"
 #include "inputAndOutput.h"
 
-  
+
 class Data {
 private:
   Eigen::MatrixXd _contactMat;

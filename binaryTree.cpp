@@ -6,9 +6,15 @@
 
 
 namespace binary {
-  std::ostream& operator<< (std::ostream &o, const TreeNode &node)
+  
+  std::ostream& operator<< (std::ostream &os, const TreeNode &node)
   {
-    return o << "start=" << node._val[0] << ", end=" << node._val[1];
+    os << "self=(" << node._val[0] << ", " << node._val[1] << ")";
+    if (node._left != NULL && node._right != NULL) {
+      os << ", left=(" << node._left->_val[0] << ", " << node._left->_val[1] << ")";
+      os << ", right=(" << node._right->_val[0] << ", " << node._right->_val[1] << ")";
+    }
+    return os;
   }
   
 
@@ -42,7 +48,8 @@ namespace binary {
         treeNode->_parent = treeExistNode;
         _t.pop ();
       }
-    } else {
+    }
+    else {
       if (_root == NULL) {
         _root = treeNode;
         _t.push (_root);
@@ -53,7 +60,8 @@ namespace binary {
           treeExistNode->_left = treeNode;
           treeNode->_parent = treeExistNode;
           _t.push (treeExistNode->_left);
-        } else {
+        }
+        else {
           treeExistNode->_right = treeNode;
           treeNode->_parent = treeExistNode;
           _t.pop ();
@@ -61,6 +69,7 @@ namespace binary {
         }
       }
     }
-    _nodeList.emplace_back (treeNode);
+    if (treeNode != _root)
+      _nodeList.emplace_back (treeNode);
   }
 }

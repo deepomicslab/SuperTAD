@@ -45,18 +45,25 @@ void modifyIntArray (int a[], int n)
   a[0] = -999;
 }
 
-int main () {
-  int t1[2] {};
-  int t2[2] {0, 1};
-  if (intArrayEqual (t1, t2, 2))
-    std::cout << "true" << std::endl;
-  else
-    std::cout << "false" << std::endl;
-  
-  modifyIntArray (t1, 2);
-  std::cout << t1[0] << " " << t1[1] << std::endl;
-  
+
+int main ()
+{
+
 }
+
+
+//int main () {
+//  int t1[2] {};
+//  int t2[2] {0, 1};
+//  if (intArrayEqual (t1, t2, 2))
+//    std::cout << "true" << std::endl;
+//  else
+//    std::cout << "false" << std::endl;
+//
+//  modifyIntArray (t1, 2);
+//  std::cout << t1[0] << " " << t1[1] << std::endl;
+//
+//}
 
 
 //int main () {

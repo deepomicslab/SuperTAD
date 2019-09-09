@@ -13,18 +13,34 @@ std::string concatePath (std::string path1, std::string path2)
 }
 
 
+bool isPathExist (const std::string &s)
+{
+  struct stat buffer;
+  return (stat (s.c_str(), &buffer) == 0);
+}
+
+
 Reader::Reader (std::string fileName)
 {
   _fileName = fileName;
 }
 
 
-int Reader::parse (Eigen::MatrixXd &contactMat)
+int Reader::parse (Eigen::MatrixXd &contactMat, std::string fileName)
 {
   std::string line;
   double c;
   
-  _infile.open (_fileName);
+  if (fileName == "")
+    fileName = _fileName;
+  
+  if (!isPathExist (fileName)) {
+    std::cerr << "file '" << fileName << "'not exist\n";
+    exit (1);
+  }
+    
+  _infile.open (fileName);
+  
   bool init = false;
   int count = 0;
   int pos1 = 0;
@@ -49,11 +65,6 @@ int Reader::parse (Eigen::MatrixXd &contactMat)
   _infile.close ();
   
   return count;
-}
-
-
-Writer::Writer ()
-{
 }
 
 

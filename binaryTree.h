@@ -12,6 +12,7 @@
 
 
 namespace binary {
+  
   struct TreeNode {
     int _val[2];
     TreeNode *_left;
@@ -50,7 +51,7 @@ namespace binary {
     }
   };
   
-  std::ostream& operator<< (std::ostream &o, const TreeNode &node);
+  std::ostream& operator<< (std::ostream &os, const TreeNode &node);
   
   class Tree {
   private:

@@ -8,7 +8,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-//#include <filesystem>
+#include <sys/stat.h>
 #include <Eigen/Dense>
 #include "binaryTree.h"
 #include "multiTree.h"
@@ -16,6 +16,7 @@
 
 std::string concatePath (std::string path1, std::string path2);
 
+bool isPathExist (const std::string &s);
 
 class Reader {
 private:
@@ -27,7 +28,7 @@ public:
   
   ~Reader () {};
   
-  int parse (Eigen::MatrixXd &contactMat);
+  int parse (Eigen::MatrixXd &contactMat, std::string fileName="");
 };
 
 
@@ -36,7 +37,7 @@ private:
   std::ofstream _outfile;
 
 public:
-  Writer ();
+  Writer () {};
 
   ~Writer () {};
   

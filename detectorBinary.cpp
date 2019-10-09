@@ -105,24 +105,24 @@ namespace binary {
     for (int i = 0; i < normLeaves.size (); i++) {
       std::cout << normLeaves[i].first << ", " << normLeaves[i].second << std::endl;
     }
-    sort (normLeaves.begin (), normLeaves.end (), cmpNormLeaf ());
+    sort (normLeaves.begin(), normLeaves.end(), cmpNormLeaf());
     int index = normLeaves[0].first;
     std::cout << "k chosen=" << index << std::endl;
-    backTrace (index, true);
+    backTrace(index, true);
     
     _nodeList = &_binaryTree->nodeList ();
-    _writer.writeTree (_WORK_DIR, "original_boundaries.txt", *_nodeList);
+    _writer.writeTree(_WORK_DIR, "original_boundaries.txt", *_nodeList);
     
     // filtering
     if (_FILTERING) {
-      calculateD (_binaryTree->root ());
-      calculateDensity (_binaryTree->root ());
-      filterNodes ();
+      calculateD (_binaryTree->root());
+      calculateDensity(_binaryTree->root());
+      filterNodes();
       std::vector<binary::TreeNode *> trueNodes;
-      for (auto it = _trueNodeList.begin (); it != _trueNodeList.end (); it++) {
-        trueNodes.emplace_back ((*it));
+      for (auto it = _trueNodeList.begin(); it != _trueNodeList.end(); it++) {
+        trueNodes.emplace_back((*it));
       }
-      _writer.writeTree (_WORK_DIR, "filter_boundaries.txt", trueNodes);
+      _writer.writeTree(_WORK_DIR, "filter_boundaries.txt", trueNodes);
     }
   }
   

@@ -10,7 +10,7 @@ bool _MULTI = false;
 
 int _K = -999;
 int _N = -999;
-int _H = 2;
+int _H = 1;
 
 std::string _WORK_DIR = "./";
 std::string _INPUT = "";

@@ -33,49 +33,51 @@ int main (int argc, char *argv[])
         <<"****************************************************************************************\n";
     std::cerr << "USAGE: " << argv[0] << " [-option value]\n";
     std::cerr << "OPTIONS:\n";
-    std::cerr << "\t-f: Input Contact Matrix File Path\n";
-    std::cerr << "\t-w: Working Directory Path\n";
-    std::cerr << "\t-b: Binary Version\n";
-    std::cerr << "\t-m: Multiple Version\n";
+    std::cerr << "\t-f: Input contact matrix file path\n";
+    std::cerr << "\t-w: Working directory path\n";
+    std::cerr << "\t-b: Binary version\n";
+    std::cerr << "\t-m: Multiple version\n";
     std::cerr << "\t-k: \n";
-    std::cerr << "\t-h: \n";
-    std::cerr << "\t--filter: Do Filtering Or Not (True By Default)";
+    std::cerr << "\t-h: Hierarchy number\n";
+    std::cerr << "\t--filter: Filter TADs or not (default: true)";
     return 0;
   }
   
   int i = 0;
   while (i < argc) {
-    if (std::string (*(argv + i)) == std::string ("-f")) {
+    if (std::string(*(argv + i)) == std::string("-f")) {
       _INPUT = std::string (*(argv + ++i));
       std::cout << "input: " << _INPUT << std::endl;
     }
   
-    if (std::string (*(argv + i)) == std::string ("-w")) {
+    if (std::string(*(argv + i)) == std::string("-w")) {
       _WORK_DIR = std::string (*(argv + ++i));
       std::cout << "work dir:" << _WORK_DIR << std::endl;
     }
   
-    if (std::string (*(argv + i)) == std::string ("-b")) {
+    if (std::string(*(argv + i)) == std::string("-b")) {
       _BINARY = true;
       std::cout << "do binary\n";
     }
   
-    if (std::string (*(argv + i)) == std::string ("-m")) {
+    if (std::string(*(argv + i)) == std::string("-m")) {
       _MULTI = true;
+      _BINARY = false;
       std::cout << "do multi\n";
     }
     
-    if (std::string (*(argv + i)) == std::string ("-k")) {
-      _K = atoi (*(argv + ++i));
-      std::cout << "k=" << _K << std::endl;
+    if (std::string(*(argv + i)) == std::string("-k")) {
+      _K = atoi(*(argv + ++i));
+      std::cout << "k=" << _K << "\n";
     }
   
-    if (std::string (*(argv + i)) == std::string ("-h")) {
-      _H = atoi (*(argv + ++i));
-      std::cout << "h=" << _H << std::endl;
+    if (std::string(*(argv + i)) == std::string("-h")) {
+      int h = atoi(*(argv + ++i));
+      std::cout << "h=" << h << "\n";
+      _H = h;
     }
     
-    if (std::string (*(argv + i)) == std::string ("--filter")) {
+    if (std::string(*(argv + i)) == std::string("--filter")) {
       std::string tmp = std::string (*(argv + ++i));
       if (tmp == "true" or  tmp == "True" or tmp == "TRUE") {
         _FILTERING = true;
@@ -92,19 +94,21 @@ int main (int argc, char *argv[])
   
   if (_INPUT == "") {
     std::cerr << "input must be provided\n";
-    exit (1);
+    exit(1);
   }
   
-  Data data (_INPUT);
-  data.init ();
+  Data data(_INPUT);
+  data.init();
   
   if (_BINARY) {
-    binary::Detector db (data);
-    db.execute ();
+    std::cout << "do binary\n";
+    binary::Detector db(data);
+    db.execute();
   }
   else if (_MULTI) {
-    multi::Detector dm (data);
-    dm.execute ();
+    std::cout << "do multi\n";
+    multi::Detector dm(data);
+    dm.execute();
   }
   
   t = std::clock() - t;

@@ -9,7 +9,7 @@ Data::Data (std::string fileName)
 {
   _reader = new Reader (fileName);
   _N = _reader->parse (_contactMat);
-  std::cout << "N=" << _N << std::endl;
+//  std::cout << "N=" << _N << std::endl;
   if (_K < 0)
     _K = _N / 5;
 }

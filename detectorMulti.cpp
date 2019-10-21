@@ -93,12 +93,15 @@ namespace multi {
     std::cout << "fillTable took: " << (float)t/CLOCKS_PER_SEC << "s\n";
     
     // determine K
-    std::vector<double> sumOfEntropy;
+//    std::vector<double> sumOfEntropy;
+    std::vector<utils::intDoublePair> sumOfEntropy;
     std::vector<double> sumOfLeaves;
-    std::vector<utils::normLeaf> normLeaves;
+    std::vector<utils::intDoublePair> normLeaves;
     
     for (int num = 2; num < _K + 1; num++) {
-      sumOfEntropy.emplace_back(_table[0][_N-1][indexK(num)][_H-1][_N-1]);
+      printf("--------\nk=%d\n", num);
+//      sumOfEntropy.emplace_back(_table[0][_N-1][indexK(num)][_H-1][_N-1]);
+      sumOfEntropy.emplace_back(num, _table[0][_N-1][indexK(num)][_H-1][_N-1]);
       
       backTrace(num, _H);
       
@@ -107,16 +110,31 @@ namespace multi {
         int currentStart = _boundary[leaf].first;
         int currentEnd = _boundary[leaf].second;
         double currentVol = _data->getVol(currentStart, currentEnd);
-        leafSum += getSE(currentEnd, currentStart, 2 * _data->edgeSum (), currentVol);
+        leafSum += getSE(currentEnd, currentStart, 2 * _data->edgeSum(), currentVol);
         std::cout << "currentStart=" << currentStart << ", currentEnd=" << currentEnd << "\n";
         leafSum += _table[currentStart][currentEnd][0][0][currentEnd];
       }
       sumOfLeaves.emplace_back(leafSum);
-      double divisor = log2(_N / (double)num) + (_N * (num - 1) / (double)(num * (_N - 1))) * log2(num);
-      normLeaves.emplace_back(num, leafSum / divisor);
+      double divisor = log2(_N / (double)num) + (_N * (num - 1) / (double)(num * (_N - 1))) * log2((double)num);
+      normLeaves.emplace_back(num, leafSum/divisor);
     }
-    sort (normLeaves.begin(), normLeaves.end(), utils::cmpNormLeaf);
-    int index = normLeaves[0].first;
+    printf("sumOfEntropy:\n");
+    for (int i=0; i<sumOfEntropy.size(); i++)
+      printf("(%d, %f)\n", sumOfEntropy[i].first, sumOfEntropy[i].second);
+    
+    printf("normLeaves:\n");
+    for (int i=0; i<normLeaves.size(); i++)
+      printf("(%d, %f)\n", normLeaves[i].first, normLeaves[i].second);
+  
+    int index = -1;
+    if (_H == 1 || _H == 2) {
+      sort(sumOfEntropy.begin(), sumOfEntropy.end(), utils::cmpIntDoublePair);
+      index = sumOfEntropy[0].first;
+    }
+    else {
+      sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePair);
+      index = normLeaves[0].first;
+    }
     std::cout << "k chosen=" << index << std::endl;
     backTrace (index, _H, true);
     
@@ -134,12 +152,20 @@ namespace multi {
     for (int start = 0; start < _N; start++) {
       for (int end = start; end < _N; end++) {
         double currentVolume = _data->getVol(start, end);
+//        printf("currentVolume=%f\n", currentVolume);
         for (int leaf = start; leaf < end + 1; leaf++) {
           double leafDegree = _data->getVol(leaf, leaf);
-          _table[start][end][0][0][end] += getSE(leafDegree, currentVolume, leafDegree);
+//          printf("leafDegree=%f\n", leafDegree);
+          double SE = getSE(leafDegree, currentVolume, leafDegree);
+//          printf("SE=%f\n", SE);
+          _table[start][end][0][0][end] += SE;
         }
       }
     }
+//    for (int i = 0; i < _N; i++) {
+//      std::cout << _table[0][i][0][0][i] << " ";
+//    }
+//    std::cout << "\n";
     t = std::clock() - t;
     std::cout << "part1 took: " << (float)t/CLOCKS_PER_SEC << "s\n";
     
@@ -157,14 +183,13 @@ namespace multi {
                 tmp = _table[start][i][cluster - 1][0][i];
                 double leftVolume = _data->getVol(start, i);
                 tmp += getSE(i, start, parentVol, leftVolume);
-              }
-              else {
+              } else {
                 tmp = _table[start][i][cluster - 1][0][parentEnd];
               }
-              
+      
               double currentVolume = _data->getVol(i + 1, end);
               tmp += getSE(end, i + 1, parentVol, currentVolume);
-              
+      
               tmp += _table[i + 1][end][0][0][end];
               if (tmp <= minTmp) {
                 minTmp = tmp;
@@ -174,9 +199,17 @@ namespace multi {
             _minIndexArray[start][end][cluster][0][parentEnd] = minIdx;
             _table[start][end][cluster][0][parentEnd] = minTmp;
           }
+//          for (int tmpIdx = start; tmpIdx < parentEnd + 1; tmpIdx++) {
+//            std::cout << _table[start][tmpIdx][cluster][0][parentEnd] << " ";
+//          }
+//          std::cout << "\n";
         }
       }
     }
+    for (int cluster = 0; cluster < _K; cluster++) {
+      std::cout << _table[0][_N-1][cluster][0][_N-1] << " ";
+    }
+    std::cout << "\n";
     t = std::clock() - t;
     std::cout << "part2 took: " << (float)t/CLOCKS_PER_SEC << "s\n";
   
@@ -256,7 +289,7 @@ namespace multi {
     
     multiSplit(0, _N-1, k, h-1, _N-1, add);
     _boundary.emplace_back(0, 0);
-    sort (_boundary.begin(), _boundary.end(), utils::cmpBoundary);
+    sort(_boundary.begin(), _boundary.end(), utils::cmpBoundary);
     
     for (int i = 0; i < _boundary.size(); i++) {
       if (i == _boundary.size() - 1) {
@@ -284,6 +317,7 @@ namespace multi {
     if (k == 1) {
       if (add)
         _multiTree.insert(start, end);
+      printf("filling-------------%d %d %d %d k=1, parentEnd: %d %f\n", start, end, k, h, parentEnd, _table[start][end][indexK(k)][h][parentEnd]);
       return;
     }
     else {
@@ -294,6 +328,7 @@ namespace multi {
         if (leftK == 0) {
           if (add)
             _multiTree.insert(start, end);
+          printf("filling-------------%d %d %d %d leftK=1, parentEnd: %d %f\n", start, end, k, h, parentEnd, _table[start][end][indexK(k)][h][parentEnd]);
           multiSplit(start, end, k, h-1, end, add);
         }
         else {
@@ -303,6 +338,7 @@ namespace multi {
           _boundary.emplace_back(midPos+1, 0);
           if (add)
             _multiTree.insert(midPos+1, end);
+          printf("filling-------------%d %d %d %d h!=1, parentEnd: %d %f\n", start, end, k, h, parentEnd, _table[start][end][indexK(k)][h][parentEnd]);
           multiSplit(start, midPos, leftK, h, parentEnd, add);
           multiSplit(midPos + 1, end, k-leftK, h-1, end, add);
         }
@@ -314,6 +350,7 @@ namespace multi {
         _boundary.emplace_back(midPos+1, 0);
         if (add)
           _multiTree.insert(midPos+1, end);
+        printf("filling-------------%d %d %d %d h=1, parentEnd: %d %f\n", start, end, k, h, parentEnd, _table[start][end][indexK(k)][h][parentEnd]);
         multiSplit(start, midPos, k-1, h, parentEnd, add);
       }
     }

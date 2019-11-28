@@ -33,13 +33,13 @@ int main (int argc, char *argv[])
         <<"****************************************************************************************\n";
     std::cerr << "USAGE: " << argv[0] << " [-option value]\n";
     std::cerr << "OPTIONS:\n";
-    std::cerr << "\t-f: Input contact matrix file path\n";
-    std::cerr << "\t-w: Working directory path\n";
+    std::cerr << "\t-f <input path>: Input contact matrix file path\n";
+    std::cerr << "\t-w <working directory path>: Working directory path (default current working directory)\n";
     std::cerr << "\t-b: Binary version\n";
     std::cerr << "\t-m: Multiple version\n";
-    std::cerr << "\t-k: \n";
-    std::cerr << "\t-h: Hierarchy number\n";
-    std::cerr << "\t--filter: Filter TADs or not (default: true)";
+    std::cerr << "\t-k <int>: Number of leaves in candidate coding tree (default NAN)\n";
+    std::cerr << "\t-h <int>: Hierarchy number (default 2)\n";
+    std::cerr << "\t--filter <true/True/TRUE/false/False/FALSE>: Filter TADs or not (default: true)";
     return 0;
   }
   

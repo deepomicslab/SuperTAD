@@ -14,6 +14,7 @@
 #include <cmath>
 #include <string>
 #include <map>
+#include <ctime>
 #include "params.h"
 #include "inputAndOutput.h"
 
@@ -28,17 +29,19 @@ private:
   Reader *_reader;
   
 public:
-  Data (std::string fileName);
+  Data(std::string fileName);
   
-  ~Data ();
+  ~Data();
   
-  void init ();
+  void init();
+
+  void init2();
+
+  Eigen::MatrixXd &edgeCount() { return _edgeCount; }
   
-  Eigen::MatrixXd &edgeCount () { return _edgeCount; }
+  double getVol(int s, int e);
   
-  double getVol (int s, int e);
-  
-  double edgeSum () { return _edgeCount.coeff(0, _N-1); }
+  double edgeSum() { return _edgeCount.coeff(0, _N-1); }
 };
 
 #endif //PROGRAM_DATA_H

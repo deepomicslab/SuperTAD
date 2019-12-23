@@ -12,6 +12,8 @@ int _K = -999;
 int _N = -999;
 int _H = 2;
 
-std::string _WORK_DIR = "./";
+//std::string _WORK_DIR = "./";
 std::string _INPUT = "";
 bool _FILTERING = true;
+
+bool _VERBOSE = true;

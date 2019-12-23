@@ -14,36 +14,41 @@
 #include "multiTree.h"
 
 
-std::string concatePath (std::string path1, std::string path2);
+std::string concatePath(std::string path1, std::string path2);
 
-bool isPathExist (const std::string &s);
+bool isPathExist(const std::string &s);
 
 class Reader {
 private:
-  std::ifstream _infile;
-  std::string _fileName;
+    std::ifstream _infile;
+    std::string _fileName;
+    std::vector<std::string> _fileNames;
 
 public:
-  Reader (std::string fileName);
-  
-  ~Reader () {};
-  
-  int parse (Eigen::MatrixXd &contactMat, std::string fileName="");
+    Reader(std::string fileName);
+
+    ~Reader() {};
+
+    int parse(Eigen::MatrixXd &contactMat, std::string fileName="");
+
+    int parseTree(Eigen::MatrixXd &contactMat, std::vector<std::string> &fileNames);
 };
 
 
 class Writer {
 private:
-  std::ofstream _outfile;
+    std::ofstream _outfile;
 
 public:
-  Writer () {};
+    Writer() {};
 
-  ~Writer () {};
-  
-  void writeTree (std::string workDir, std::string fileName, std::vector<binary::TreeNode *> &nodeList);
-  
-  void writeTree (std::string workDir, std::string fileName, std::vector<multi::TreeNode *> &nodeList);
+    ~Writer() {};
+
+    void writeTree(std::string filePath, std::vector<binary::TreeNode *> &nodeList);
+
+    void writeTree(std::string filePath, std::vector<multi::TreeNode *> &nodeList);
+
+    static void dumpMatrix(Eigen::MatrixXd &mat, std::string outpath);
 };
 
 #endif //PROGRAM_INPUTANDOUTPUT_H

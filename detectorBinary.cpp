@@ -110,8 +110,8 @@ namespace binary {
     std::cout << "k chosen=" << index << std::endl;
     backTrace(index, true);
     
-    _nodeList = &_binaryTree->nodeList ();
-    _writer.writeTree(_WORK_DIR, "original_boundaries.txt", *_nodeList);
+    _nodeList = &_binaryTree->nodeList();
+    _writer.writeTree(_INPUT+".original_boundaries.txt", *_nodeList);
     
     // filtering
     if (_FILTERING) {
@@ -122,7 +122,7 @@ namespace binary {
       for (auto it = _trueNodeList.begin(); it != _trueNodeList.end(); it++) {
         trueNodes.emplace_back((*it));
       }
-      _writer.writeTree(_WORK_DIR, "filter_boundaries.txt", trueNodes);
+      _writer.writeTree(_INPUT+".filter_boundaries.txt", trueNodes);
     }
   }
   

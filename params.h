@@ -15,8 +15,10 @@ extern int _K;
 extern int _N;
 extern int _H;
 
-extern std::string _WORK_DIR;
+//extern std::string _WORK_DIR;
 extern std::string _INPUT;
 extern bool _FILTERING;
+
+extern bool _VERBOSE;
 
 #endif //PROGRAM_PARAMS_H

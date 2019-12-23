@@ -9,88 +9,123 @@ std::string concatePath (std::string path1, std::string path2)
 {
 //  if (path1[path1.length ()-11] == '/')
 //    path1 = path1[]
-  return "";
+    return "";
 }
 
 
-bool isPathExist (const std::string &s)
+bool isPathExist(const std::string &s)
 {
-  struct stat buffer;
-  return (stat (s.c_str(), &buffer) == 0);
+    struct stat buffer;
+    return (stat (s.c_str(), &buffer) == 0);
 }
 
 
-Reader::Reader (std::string fileName)
+Reader::Reader(std::string fileName)
 {
-  _fileName = fileName;
+    _fileName = fileName;
 }
 
 
-int Reader::parse (Eigen::MatrixXd &contactMat, std::string fileName)
+int Reader::parse(Eigen::MatrixXd &contactMat, std::string fileName)
 {
-  std::string line;
-  double c;
-  
-  if (fileName == "")
-    fileName = _fileName;
-  
-  if (!isPathExist (fileName)) {
-    std::cerr << "file '" << fileName << "'not exist\n";
-    exit (1);
-  }
-    
-  _infile.open (fileName);
-  
-  bool init = false;
-  int count = 0;
-  int pos1 = 0;
-  while (getline (_infile, line)) {
-    std::istringstream iss (line);
-    if (!init) {
-      std::string lineBack = line;
-      std::istringstream issBack (lineBack);
-      while (issBack >> c) {
-        count++;
-      }
-      contactMat.resize (count, count);
-      init = true;
+    if (_VERBOSE)
+        std::cout << "start parsing input\n";
+    std::string line;
+    double c;
+
+    if (fileName == "")
+        fileName = _fileName;
+
+    if (!isPathExist (fileName)) {
+        std::cerr << fileName << "not exist\n";
+        exit (1);
     }
-    int pos2 = 0;
-    while (iss >> c) {
-      contactMat(pos1, pos2) = c;
-      pos2++;
+
+    _infile.open(fileName);
+
+    bool init = false;
+    int count = 0;
+    int pos1 = 0;
+    while (getline (_infile, line)) {
+        std::istringstream iss (line);
+        if (!init) {
+            std::string lineBack = line;
+            std::istringstream issBack (lineBack);
+            while (issBack >> c) {
+                count++;
+            }
+            contactMat.resize (count, count);
+            init = true;
+        }
+        int pos2 = 0;
+        while (iss >> c) {
+            contactMat(pos1, pos2) = c;
+            pos2++;
+        }
+        pos1++;
     }
-    pos1++;
-  }
-  _infile.close ();
-  
-  return count;
+    _infile.close ();
+    if (_VERBOSE)
+        std::cout << "finish parsing input\n";
+
+    return count;
 }
 
 
-void Writer::writeTree (std::string workDir, std::string fileName, std::vector<binary::TreeNode *> &nodeList)
+int Reader::parseTree(Eigen::MatrixXd &contactMat, std::vector<std::string> &fileNames)
 {
-  std::string path = workDir + fileName;
-  std::cout << "path=" << path << "\n";
-  _outfile.open (path);
-  for (int i = 0; i < nodeList.size (); i++) {
-    for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
-      _outfile << std::to_string (j + 1) << " ";
-    _outfile << "\n";
-  }
-  _outfile.close ();
+    for (int i=0; i<fileNames.size(); i++) {
+        _infile.open(fileNames[i]);
+
+        _infile.close();
+    }
 }
 
 
-void Writer::writeTree (std::string workDir, std::string fileName, std::vector<multi::TreeNode *> &nodeList)
+void Writer::writeTree(std::string filePath, std::vector<binary::TreeNode *> &nodeList)
 {
-  std::string path = workDir + fileName;
-  std::cout << "path=" << path << "\n";
-  _outfile.open (path);
-  for (int i = 0; i < nodeList.size (); i++) {
-    for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
-      _outfile << std::to_string (j + 1) << " ";
-    _outfile << "\n";
-  }
-  _outfile.close ();
+    if (_VERBOSE)
+        std::cout << "start dumping binary tree\n";
+    if (_VERBOSE)
+        std::cout << "output path: " << filePath << "\n";
+    _outfile.open(filePath);
+    for (int i = 0; i < nodeList.size (); i++) {
+        for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
+            _outfile << std::to_string (j + 1) << " ";
+        _outfile << "\n";
+    }
+    _outfile.close ();
+    if (_VERBOSE)
+        std::cout << "finish dumping binary tree\n";
+}
+
+
+void Writer::writeTree(std::string filePath, std::vector<multi::TreeNode *> &nodeList)
+{
+    if (_VERBOSE)
+        std::cout << "start dumping multi-nary tree\n"; fflush(stdout);
+    if (_VERBOSE)
+        std::cout << "output path: " << filePath << "\n"; fflush(stdout);
+    _outfile.open(filePath);
+    for (int i = 0; i < nodeList.size (); i++) {
+        for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
+            _outfile << std::to_string (j + 1) << " ";
+        _outfile << "\n";
+    }
+    _outfile.close ();
+    if (_VERBOSE)
+        std::cout << "finish dumping multi-nary tree\n"; fflush(stdout);
+}
+
+
+void Writer::dumpMatrix(Eigen::MatrixXd &mat, std::string outpath)
+{
+    std::ofstream file(outpath);
+    if (file.is_open())
+    {
+        std::cout << "dump matrix to:" << outpath << '\n';
+        file << mat << '\n';
+    } else {
+        std::cerr << "cannot dump matrix to:" << outpath << "\n";
+    }
 }

@@ -39,7 +39,7 @@ int main (int argc, char *argv[])
         std::cerr << "\t-m: Multiple version\n";
         std::cerr << "\t-k <int>: Number of leaves in candidate coding tree (default NAN)\n";
         std::cerr << "\t-h <int>: Hierarchy number (default 2)\n";
-        std::cerr << "\t--filter <true/True/TRUE/false/False/FALSE>: Filter TADs or not (default: true)";
+        std::cerr << "\t--filter <true/True/TRUE/false/False/FALSE>: Filter TADs or not (default: true)\n";
         std::cerr << "\t-v/--verbose <int>: Print verbose\n";
         return 0;
     }

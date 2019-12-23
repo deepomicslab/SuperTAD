@@ -16,4 +16,4 @@ int _H = 2;
 std::string _INPUT = "";
 bool _FILTERING = true;
 
-bool _VERBOSE = true;
+bool _VERBOSE = false;

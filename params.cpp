@@ -9,6 +9,7 @@ bool _BINARY = true;
 bool _MULTI = false;
 
 int _K = -999;
+bool _DETERMINE_K = true;
 int _N = -999;
 int _H = 2;
 

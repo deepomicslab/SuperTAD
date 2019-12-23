@@ -35,23 +35,23 @@ namespace multi {
     
     ~Detector ();
     
-    int indexK (int k) { return _kToIdx.find (k)->second; }
+    int indexK(int k) { return _kToIdx.find (k)->second; }
     
-    double getSE (int x, int y, double a, double b);
+    double getSE(int x, int y, double a, double b);
     
-    double getSE (double x, double a, double b);
+    double getSE(double x, double a, double b);
     
-    void execute ();
+    void execute();
     
-    void initK ();
+    void initK();
     
-    void fillTable ();
+    void fillTable();
     
-    void initH (int h);
+    void initH(int h);
     
-    void backTrace (int k, int h, bool add = false);
+    void backTrace(int k, int h, bool add = false);
     
-    void multiSplit (int start, int end, int k, int h, int parentEnd, bool add = false);
+    void multiSplit(int start, int end, int k, int h, int parentEnd, bool add = false);
   };
   
 }

@@ -12,6 +12,7 @@ Data::Data(std::string fileName)
   std::cout << "#bins: " << _N << std::endl;
   if (_K < 0)
     _K = _N / 5;
+  std::cout << "_K=" << _K << "\n";
 }
 
 

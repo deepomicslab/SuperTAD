@@ -12,6 +12,7 @@ extern bool _BINARY;
 extern bool _MULTI;
 
 extern int _K;
+extern bool _DETERMINE_K;
 extern int _N;
 extern int _H;
 

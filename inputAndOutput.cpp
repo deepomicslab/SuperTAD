@@ -89,14 +89,18 @@ void Writer::writeTree(std::string filePath, std::vector<binary::TreeNode *> &no
     if (_VERBOSE)
         std::cout << "output path: " << filePath << "\n";
     _outfile.open(filePath);
-    for (int i = 0; i < nodeList.size (); i++) {
-        for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
-            _outfile << std::to_string (j + 1) << " ";
-        _outfile << "\n";
+    if (_outfile.is_open()) {
+        for (int i = 0; i < nodeList.size(); i++) {
+            for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
+                _outfile << std::to_string(j + 1) << " ";
+            _outfile << "\n";
+        }
+        _outfile.close();
+        if (_VERBOSE)
+            std::cout << "finish dumping binary tree\n";
+    } else {
+        std::cerr << "cannot open file " << filePath << "\n";
     }
-    _outfile.close ();
-    if (_VERBOSE)
-        std::cout << "finish dumping binary tree\n";
 }
 
 
@@ -107,14 +111,18 @@ void Writer::writeTree(std::string filePath, std::vector<multi::TreeNode *> &nod
     if (_VERBOSE)
         std::cout << "output path: " << filePath << "\n"; fflush(stdout);
     _outfile.open(filePath);
-    for (int i = 0; i < nodeList.size (); i++) {
-        for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
-            _outfile << std::to_string (j + 1) << " ";
-        _outfile << "\n";
+    if (_outfile.is_open()) {
+        for (int i = 0; i < nodeList.size(); i++) {
+            for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
+                _outfile << std::to_string(j + 1) << " ";
+            _outfile << "\n";
+        }
+        _outfile.close();
+        if (_VERBOSE)
+            std::cout << "finish dumping multi-nary tree\n"; fflush(stdout);
+    } else {
+        std::cerr << "cannot open file " << filePath << "\n";
     }
-    _outfile.close ();
-    if (_VERBOSE)
-        std::cout << "finish dumping multi-nary tree\n"; fflush(stdout);
 }
 
 

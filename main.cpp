@@ -74,6 +74,7 @@ int main (int argc, char *argv[])
 
         if (std::string(*(argv + i)) == std::string("-k")) {
             _K = atoi(*(argv + ++i));
+            _DETERMINE_K = false;
             std::cout << "k=" << _K << "\n";
         }
 
@@ -108,12 +109,10 @@ int main (int argc, char *argv[])
     data.init2();
 
     if (_BINARY) {
-        std::cout << "do binary\n";
         binary::Detector db(data);
         db.execute();
     }
     else if (_MULTI) {
-        std::cout << "do multi\n";
         multi::Detector dm(data);
         dm.execute();
     }

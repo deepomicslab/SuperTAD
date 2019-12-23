@@ -25,8 +25,8 @@ namespace binary {
                 _leftKArray[i][j] = new int[_K]{};
             }
         }
-        _boundary.reserve (_K);
-        _binaryTree = new binary::Tree ();
+        _boundary.reserve(_K);
+        _binaryTree = new binary::Tree();
 
         int k = 1;
         for (int i = 0; i < _K; i++) {
@@ -59,9 +59,8 @@ namespace binary {
 
     void Detector::execute ()
     {
-        fillTable ();
+        fillTable();
 
-        // determine K
         std::vector<double> sumOfEntropy;
         std::vector<double> sumOfLeaves;
         std::vector<std::pair<int, double>> normLeaves;
@@ -74,10 +73,11 @@ namespace binary {
 
         int index = -1;
         if (_DETERMINE_K) {
+            // determine K
             for (int num = 2; num < _K + 1; num++) {
                 std::cout << "num=" << num << std::endl;
                 double entropy = _table[0][_N - 1][indexK(num)];
-//                std::cout << "_table[0][" << _N - 1 << "][" << num << "]=" << entropy << std::endl;
+                std::cout << "_table[0][" << _N - 1 << "][" << num << "]=" << entropy << std::endl;
                 sumOfEntropy.emplace_back(entropy);
 
                 backTrace(num);
@@ -141,6 +141,7 @@ namespace binary {
             normLeaves.emplace_back(num, leafSum / divisor);
             std::cout << "--------\n";
         }
+        index = normLeaves[0].first;
         backTrace(index, true);
 
         _nodeList = &_binaryTree->nodeList();
@@ -203,9 +204,9 @@ namespace binary {
                             }
                         }
                     }
-                    _minIndexArray[start][end][indexK (a)] = minIdx;
-                    _table[start][end][indexK (a)] = minTmp;
-                    _leftKArray[start][end][indexK (a)] = leftK;
+                    _minIndexArray[start][end][indexK(a)] = minIdx;
+                    _table[start][end][indexK(a)] = minTmp;
+                    _leftKArray[start][end][indexK(a)] = leftK;
                 }
             }
         }
@@ -214,13 +215,13 @@ namespace binary {
 
     void Detector::backTrace (int k, bool add)
     {
-        init ();
+        init();
 
-        binarySplit (0, _N - 1, k, add);
-        _boundary.emplace_back (0, 0);
-        sort (_boundary.begin (), _boundary.end (), utils::cmpBoundary);
-        for (int i = 0; i < _boundary.size (); i++) {
-            if (i == _boundary.size () - 1) {
+        binarySplit(0, _N - 1, k, add);
+        _boundary.emplace_back(0, 0);
+        sort (_boundary.begin(), _boundary.end(), utils::cmpBoundary);
+        for (int i = 0; i < _boundary.size(); i++) {
+            if (i == _boundary.size() - 1) {
                 _boundary[i].second = _N - 1;
             } else {
                 _boundary[i].second = _boundary[i + 1].first - 1;
@@ -229,35 +230,37 @@ namespace binary {
     }
 
 
-    void Detector::init ()
+    void Detector::init()
     {
-        _boundary.clear ();
+        _boundary.clear();
     }
 
 
-    void Detector::binarySplit (int start, int end, int k, bool add)
+    void Detector::binarySplit(int start, int end, int k, bool add)
     {
         //  std::cout << "----\n";
         //  std::cout << "k=" << k << std::endl;
         if (add)
-            _binaryTree->add (start, end, indexK (k));
+            _binaryTree->add(start, end, indexK(k));
 
         if (k == 1)
             return;
         else {
-            //    std::cout << "start=" << start << ", end=" << end << ", k=" << k << std::endl;
-            //    std::cout << "_minIndexArray[start][end][k]=" << _minIndexArray[start][end][k] << std::endl;
-            int midPos = _minIndexArray[start][end][indexK (k)];
+//            std::cout << "start=" << start << ", end=" << end << ", k=" << k << std::endl;
+//            printf("_minIndexArray[%d][%d][%d]=%e\n", start, end, k, _minIndexArray[start][end][k]);
+            int midPos = _minIndexArray[start][end][indexK(k)];
+//            int midPos = _minIndexArray[start][end][k];
 
-            //    std::cout << "_leftKArray[start][end][k]=" <<  _leftKArray[start][end][k] << std::endl;
-            int leftK = _leftKArray[start][end][indexK (k)];
+//            printf("_leftKArray[%d][%d][%d]=%e\n", start, end, k, _leftKArray[start][end][k]);
+            int leftK = _leftKArray[start][end][indexK(k)];
+//            int leftK = _leftKArray[start][end][k];
 
-            //    std::cout << "midPos=" << midPos << ", leftK=" << leftK << std::endl;
-            _boundary.emplace_back (midPos + 1, -1);
-            binarySplit (start, midPos, leftK, add);
+//            std::cout << "midPos=" << midPos << ", leftK=" << leftK << std::endl;
+            _boundary.emplace_back(midPos + 1, -1);
+            binarySplit(start, midPos, leftK, add);
 
-            //    std::cout << "midPos+1=" << midPos+1 << ", k-leftK=" << k-leftK << std::endl;
-            binarySplit (midPos + 1, end, k - leftK, add);
+//            std::cout << "midPos+1=" << midPos+1 << ", k-leftK=" << k-leftK << std::endl;
+            binarySplit(midPos + 1, end, k - leftK, add);
         }
     }
 

@@ -105,8 +105,8 @@ int main (int argc, char *argv[])
     }
 
     Data data(_INPUT);
-//    data.init();
-    data.init2();
+    data.init();
+//    data.init2();
 
     if (_BINARY) {
         binary::Detector db(data);

@@ -11,7 +11,8 @@ Data::Data(std::string fileName)
     _N = _reader->parse(_contactMat);
     std::cout << "#bins: " << _N << std::endl;
     if (_K < 0)
-        _K = _N / 5;
+        _K = sqrt(_N);
+//        _K = _N / 5;
     std::cout << "_K=" << _K << "\n";
 }
 

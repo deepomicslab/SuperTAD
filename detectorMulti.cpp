@@ -74,7 +74,7 @@ namespace multi {
 
     double Detector::getSE (double x, double a, double b)
     {
-        if (b != 0)
+        if (b >= _threshold)
             return x / (2. * _data->edgeSum()) * log2(a / b);
         return 0;
     }

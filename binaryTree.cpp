@@ -38,7 +38,7 @@ namespace binary {
 //    std::cout << "k=" << k << std::endl;
     TreeNode *treeNode = new TreeNode (start, end);
     if (k == 0) {
-      std::cout << "leaf node: " << start << end << std::endl;
+      std::cout << "leaf node: " << start << ", " << end << std::endl;
       TreeNode *treeExistNode = _t.top ();
       if (treeExistNode->_left == NULL) {
         treeExistNode->_left = treeNode;

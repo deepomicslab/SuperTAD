@@ -172,19 +172,20 @@ namespace binary {
                     currentVol = _data->edgeCount ().coeff (end, start);
                 for (int leaf = start; leaf < end + 1; leaf++) {
                     double leafDegree = _data->edgeCount ().coeff (leaf, leaf);
-                    if (leafDegree != 0) {
+                    if (leafDegree >= _threshold) {
                         _table[start][end][indexK (1)] += (leafDegree / (2. * _data->edgeSum ())) * log2 (currentVol / leafDegree);
                     }
                 }
             }
         }
-
+        std::cout << "Finishing filling the basic events in dp_table." << std::endl;
         for (int a = 2; a < _K + 1; a++) {
             for (int start = 0; start < _N; start++) {
                 for (int end = start; end < _N; end++) {
                     double minTmp = std::numeric_limits<double>::infinity ();
                     int minIdx = 0;
                     int leftK = 0;
+//                    printf("start=%d, end=%d, k=%d", start, end, a, "\n");
                     for (int binaryK = 1; binaryK < a; binaryK++) {
                         for (int mid = start; mid < end; mid++) {
                             double tmp = _table[start][mid][indexK (binaryK)] + _table[mid + 1][end][indexK (a - binaryK)];
@@ -193,9 +194,9 @@ namespace binary {
                             currentVol1 = _data->getVol (start, mid);
                             currentVol2 = _data->getVol (mid + 1, end);
 
-                            if (currentVol1 != 0)
+                            if (currentVol1 >= _threshold)
                                 tmp += _edgeCount->coeff (mid, start) / (2. * _data->edgeSum ()) * log2 (volParent / currentVol1);
-                            if (currentVol2 != 0)
+                            if (currentVol2 >= _threshold)
                                 tmp += _edgeCount->coeff (end, mid + 1) / (2. * _data->edgeSum ()) * log2 (volParent / currentVol2);
                             if (tmp < minTmp) {
                                 minTmp = tmp;
@@ -209,6 +210,7 @@ namespace binary {
                     _leftKArray[start][end][indexK(a)] = leftK;
                 }
             }
+        std::cout << "Finishing filling upper events where k = " << a << ", " << _table[0][_N-1][indexK(a)] << std::endl;
         }
     }
 

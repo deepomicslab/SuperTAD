@@ -16,6 +16,7 @@ extern bool _DETERMINE_K;
 extern int _N;
 extern int _H;
 
+extern float _threshold;  //avoid the precision issue
 //extern std::string _WORK_DIR;
 extern std::string _INPUT;
 extern bool _FILTERING;

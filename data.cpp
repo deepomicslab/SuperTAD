@@ -61,6 +61,8 @@ void Data::init()
         Writer::dumpMatrix(_edgeCount, _INPUT+".init.txt");
     }
 }
+
+
 void Data::init2()
 {
     std::clock_t t = std::clock();
@@ -78,7 +80,10 @@ void Data::init2()
                 intra += _edgeCount.coeff(i+1, j);
             if (j-1>0 && i+1 < _N)
                 intra -= _edgeCount.coeff(i+1, j-1);
-            _edgeCount(i, j) = intra;
+            if (abs(intra) < _THRESHOLD || intra < 0)
+                _edgeCount(i, j) = 0;
+            else
+                _edgeCount(i, j) = intra;
         }
     }
     for (int i=0; i<_N; i++) {
@@ -88,8 +93,8 @@ void Data::init2()
                 inter -= _edgeCount.coeff(0, i-1);
             if (j+1 < _N)
                 inter -= _edgeCount.coeff(j+1, _N-1);
-//            if (abs(inter) < 1e-6 || inter < 0) {
-            if (inter < 0) {
+            if (abs(inter) < _THRESHOLD || inter < 0) {
+//            if (inter < 0) {
                 _edgeCount(j, i) = 0;
                 if (_VERBOSE) {
                     printf("i=%d, j=%d", i, j);
@@ -106,7 +111,7 @@ void Data::init2()
     }
     if (_VERBOSE) {
 //    std::cout << "_edgeCount=" << _edgeCount << std::endl;
-        std::cout << "finish data initialization; running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";;
+        std::cout << "finish data initialization; running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";
         Writer::dumpMatrix(_edgeCount, _INPUT+".init.txt");
     }
 }

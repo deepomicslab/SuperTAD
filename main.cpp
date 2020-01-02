@@ -35,12 +35,12 @@ int main (int argc, char *argv[])
         std::cerr << "OPTIONS:\n";
         std::cerr << "\t-f <input path>: Input contact matrix file path\n";
 //        std::cerr << "\t-w <working directory path>: Working directory path (default current working directory)\n";
-        std::cerr << "\t-b: Binary version\n";
+        std::cerr << "\t-b: Binary version (default)\n";
         std::cerr << "\t-m: Multiple version\n";
         std::cerr << "\t-k <int>: Number of leaves in candidate coding tree (default NAN)\n";
         std::cerr << "\t-h <int>: Hierarchy number (default 2)\n";
         std::cerr << "\t--filter <true/True/TRUE/false/False/FALSE>: Filter TADs or not (default: true)\n";
-        std::cerr << "\t-v/--verbose <int>: Print verbose\n";
+        std::cerr << "\t-v/--verbose: Print verbose\n";
         return 0;
     }
 

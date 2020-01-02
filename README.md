@@ -13,25 +13,25 @@ tar -xzvf SuperTAD.tar.gz
 then
 ```
 cd ./SuperTAD
-cmake ..
+cmake .
 make
 ```
 
 ## Dependencies 
-* CMake 3.6+, g++, gcc
-* Eigen (included in source) 
+* CMake 3.5.1+, g++, gcc
+* Eigen (included in the source)
 
 ## Basic Usage  
 ```
 usage: ./superTAD -f <input hic matrix> [options]
 OPTIONS:
 	-f <input path>: Input contact matrix file path
-	-w <working directory path>: Working directory path (default current working directory)
-	-b: Binary version
+	-b: Binary version (default)
 	-m: Multiple version
 	-k <int>: Number of leaves in candidate coding tree (default NAN)
 	-h <int>: Hierarchy number (default 2)
 	--filter <true/True/TRUE/false/False/FALSE>: Filter TADs or not (default: true)
+    -v/--verbose: Print verbose\n";
 ```
 
 ## Interpret output
@@ -51,3 +51,5 @@ sample output:
 1 2 3 4 5 6 7 8 9 10
 ```
 each line represents one TAD of which boundary starts with the bin of the first index and ends with the bin of the last index in that line.
+
+You may access SuperTAD at [supertad.deepomics.org](https://supertad.deepomics.org)

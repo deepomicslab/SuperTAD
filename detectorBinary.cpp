@@ -198,14 +198,16 @@ namespace binary {
                             if (currentVol1 > 0)
                                 tmp += _edgeCount->coeff (mid, start) / (2. * _data->edgeSum ()) * log2 (volParent / currentVol1);
 //                            if (currentVol2 >= _THRESHOLD)
-                            if (currentVol2 > 0)
-                                tmp += _edgeCount->coeff (end, mid + 1) / (2. * _data->edgeSum ()) * log2 (volParent / currentVol2);
-                            if (tmp < minTmp) {
-                                minTmp = tmp;
-                                minIdx = mid;
-                                leftK = binaryK;
-                            }
+                        if (currentVol2 > 0)
+                          tmp += _edgeCount->coeff(end, mid + 1) / (2. * _data->edgeSum()) *
+                                 log2(volParent / currentVol2);
+                        if (tmp < minTmp)
+                        {
+                          minTmp = tmp;
+                          minIdx = mid;
+                          leftK = binaryK;
                         }
+                      }
                     }
                     _minIndexArray[start][end][indexK(a)] = minIdx;
                     _table[start][end][indexK(a)] = minTmp;
@@ -366,8 +368,9 @@ namespace binary {
                 }
             }
 
-            //    int countTmp = 0;
-            while (!converged) {
+            int countTmp = 0;
+            while (!converged and countTmp < totalItr) {
+                countTmp++;
                 //      std::cout << "countTmp=" << ++countTmp << std::endl;
 
                 utils::copyDoubleArray (ab1, oldAB1, 2);
@@ -398,8 +401,8 @@ namespace binary {
                 }
             }
 
-            if (!converged)
-                continue;
+//            if (!converged)
+//                continue;
 
             if (ab1[0] < ab2[0])
                 trueNodeList = nodeList1;

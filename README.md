@@ -19,7 +19,7 @@ make
 
 ## Dependencies 
 * CMake 3.5.1+, g++, gcc
-* Eigen (included in the source)
+* [Eigen3](https://eigen.tuxfamily.org/dox/) (included in the source)
 
 ## Basic Usage  
 ```
@@ -52,4 +52,4 @@ sample output:
 ```
 each line represents one TAD of which boundary starts with the bin of the first index and ends with the bin of the last index in that line.
 
-You may access SuperTAD at [supertad.deepomics.org](https://supertad.deepomics.org)
+You may find detailed introduction to SuperTAD [here](https://supertad.deepomics.org)

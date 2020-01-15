@@ -116,6 +116,7 @@ void Data::init2()
     }
 }
 
+
 double Data::getVol (int s, int e)
 {
     if (s != e)

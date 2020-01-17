@@ -85,16 +85,7 @@ namespace binary {
                 for (int leaf = 0; leaf < _boundary.size(); leaf++) {
                     int currentStart = _boundary[leaf].first;
                     int currentEnd = _boundary[leaf].second;
-                    //      std::cout << "currentStart=" << currentStart << ", currentEnd=" << currentEnd << ", ";
-
-                    double currentVol = _data->getVol(currentStart, currentEnd);
-                    //      std::cout << "currentVol=" << currentVol;
-                    //      std::cout << ", part1=" << _edgeCount->coeff(currentEnd, currentStart);
-                    //      std::cout << ", part2=" << 2. * _data->edgeSum ();
-                    //      std::cout << ", part3=" << log2(2. * _data->edgeSum () / currentVol);
-                    //      std::cout << ", add1=" << _edgeCount->coeff(currentEnd, currentStart) / (2. * _data->edgeSum ()) * log2(2. * _data->edgeSum () / currentVol) << ", add2=" <<  _table[currentStart][currentEnd][indexK(1)] << std::endl;
-                    leafSum += _edgeCount->coeff(currentEnd, currentStart) / (2. * _data->edgeSum()) *
-                               log2(2. * _data->edgeSum() / currentVol);;
+                    leafSum += _data->getSE(currentStart, currentEnd, 2. * _data->edgeSum());
                     leafSum += _table[currentStart][currentEnd][indexK(1)];
                 }
                 sumOfLeaves.emplace_back(leafSum);
@@ -122,16 +113,7 @@ namespace binary {
             for (int leaf = 0; leaf < _boundary.size(); leaf++) {
                 int currentStart = _boundary[leaf].first;
                 int currentEnd = _boundary[leaf].second;
-                //      std::cout << "currentStart=" << currentStart << ", currentEnd=" << currentEnd << ", ";
-
-                double currentVol = _data->getVol(currentStart, currentEnd);
-                //      std::cout << "currentVol=" << currentVol;
-                //      std::cout << ", part1=" << _edgeCount->coeff(currentEnd, currentStart);
-                //      std::cout << ", part2=" << 2. * _data->edgeSum ();
-                //      std::cout << ", part3=" << log2(2. * _data->edgeSum () / currentVol);
-                //      std::cout << ", add1=" << _edgeCount->coeff(currentEnd, currentStart) / (2. * _data->edgeSum ()) * log2(2. * _data->edgeSum () / currentVol) << ", add2=" <<  _table[currentStart][currentEnd][indexK(1)] << std::endl;
-                leafSum += _edgeCount->coeff(currentEnd, currentStart) / (2. * _data->edgeSum()) *
-                           log2(2. * _data->edgeSum() / currentVol);;
+                leafSum += _data->getSE(currentStart, currentEnd, 2. * _data->edgeSum());
                 leafSum += _table[currentStart][currentEnd][indexK(1)];
             }
             sumOfLeaves.emplace_back(leafSum);
@@ -165,17 +147,14 @@ namespace binary {
     {
         for (int start = 0; start < _N; start++) {
             for (int end = start; end < _N; end++) {
-                double currentVol;
-                if (start != end)
-                    currentVol = 2 * _data->edgeCount ().coeff (start, end) + _data->edgeCount ().coeff (end, start);
-                else
-                    currentVol = _data->edgeCount ().coeff (end, start);
+                double currentVol = _data->getVol(start, end);
                 for (int leaf = start; leaf < end + 1; leaf++) {
-                    double leafDegree = _data->edgeCount ().coeff (leaf, leaf);
-//                    if (leafDegree >= _THRESHOLD)
-                    if (leafDegree > 0)
-                        _table[start][end][indexK (1)] += (leafDegree / (2. * _data->edgeSum ())) * log2 (currentVol / leafDegree);
+                    _table[start][end][indexK (1)] += _data->getSE(leaf, leaf, currentVol);
+//                  if(start==131 and end==132){
+//                    printf("currentVol=%f, leaf=%d, leafDegree=%f, _table=%f \n", currentVol, leaf, leafDegree, _table[start][end][indexK (1)]);
+//                  }
                 }
+
             }
         }
         std::cout << "finishing filling the basic events in dp_table." << std::endl;
@@ -185,22 +164,15 @@ namespace binary {
                     double minTmp = std::numeric_limits<double>::infinity ();
                     int minIdx = 0;
                     int leftK = 0;
-//                    printf("start=%d, end=%d, k=%d", start, end, a, "\n");
-                    for (int binaryK = 1; binaryK < a; binaryK++) {
-                        for (int mid = start; mid < end; mid++) {
-                            double tmp = _table[start][mid][indexK (binaryK)] + _table[mid + 1][end][indexK (a - binaryK)];
-                            double volParent, currentVol1, currentVol2;
-                            volParent = _data->getVol (start, end);
-                            currentVol1 = _data->getVol (start, mid);
-                            currentVol2 = _data->getVol (mid + 1, end);
-
-//                            if (currentVol1 >= _THRESHOLD)
-                            if (currentVol1 > 0)
-                                tmp += _edgeCount->coeff (mid, start) / (2. * _data->edgeSum ()) * log2 (volParent / currentVol1);
-//                            if (currentVol2 >= _THRESHOLD)
-                        if (currentVol2 > 0)
-                          tmp += _edgeCount->coeff(end, mid + 1) / (2. * _data->edgeSum()) *
-                                 log2(volParent / currentVol2);
+                    for (int binaryK = 1; binaryK < a; binaryK++)
+                    {
+                      for (int mid = start; mid < end; mid++)
+                      {
+                        double tmp = _table[start][mid][indexK(binaryK)] + _table[mid + 1][end][indexK(a - binaryK)];
+                        double volParent;
+                        volParent = _data->getVol(start, end);
+                        tmp += _data->getSE(start, mid, volParent);
+                        tmp += _data->getSE(mid+1, end, volParent);
                         if (tmp < minTmp)
                         {
                           minTmp = tmp;

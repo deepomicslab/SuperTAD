@@ -71,22 +71,6 @@ namespace multi {
         delete _leftKArray;
     }
 
-
-    double Detector::getSE (double x, double a, double b)
-    {
-//        if (b >= _THRESHOLD)
-        if (b > 0)
-            return x / (2. * _data->edgeSum()) * log2(a / b);
-        return 0;
-    }
-
-
-    double Detector::getSE (int x, int y, double a, double b)
-    {
-        return getSE(_edgeCount->coeff(x, y), a, b);
-    }
-
-
     void Detector::execute ()
     {
         std::clock_t t = std::clock();
@@ -112,8 +96,7 @@ namespace multi {
                 for (int leaf = 0; leaf < _boundary.size(); leaf++) {
                     int currentStart = _boundary[leaf].first;
                     int currentEnd = _boundary[leaf].second;
-                    double currentVol = _data->getVol(currentStart, currentEnd);
-                    leafSum += getSE(currentEnd, currentStart, 2 * _data->edgeSum(), currentVol);
+                    leafSum += _data->getSE(currentStart, currentEnd, 2 * _data->edgeSum());
                     std::cout << "currentStart=" << currentStart << ", currentEnd=" << currentEnd << "\n";
                     leafSum += _table[currentStart][currentEnd][0][0][currentEnd];
                 }
@@ -148,8 +131,7 @@ namespace multi {
             for (int leaf = 0; leaf < _boundary.size(); leaf++) {
                 int currentStart = _boundary[leaf].first;
                 int currentEnd = _boundary[leaf].second;
-                double currentVol = _data->getVol(currentStart, currentEnd);
-                leafSum += getSE(currentEnd, currentStart, 2 * _data->edgeSum(), currentVol);
+                leafSum += _data->getSE(currentStart, currentEnd, 2 * _data->edgeSum());
                 std::cout << "currentStart=" << currentStart << ", currentEnd=" << currentEnd << "\n";
                 leafSum += _table[currentStart][currentEnd][0][0][currentEnd];
             }
@@ -178,9 +160,8 @@ namespace multi {
                 double currentVolume = _data->getVol(start, end);
 //                  printf("currentVolume=%f\n", currentVolume);
                 for (int leaf = start; leaf < end + 1; leaf++) {
-                    double leafDegree = _data->getVol(leaf, leaf);
-//                      printf("leafDegree=%f\n", leafDegree);
-                    double SE = getSE(leafDegree, currentVolume, leafDegree);
+//                      printf("leafDegree=%f\n", _data->getVol(leaf, leaf));
+                    double SE = _data->getSE(leaf, leaf, currentVolume);
 //                      printf("SE=%f\n", SE);
                     _table[start][end][0][0][end] += SE;
                 }
@@ -206,14 +187,12 @@ namespace multi {
                             double tmp;
                             if (cluster - 1 == 0) {
                                 tmp = _table[start][i][cluster - 1][0][i];
-                                double leftVolume = _data->getVol(start, i);
-                                tmp += getSE(i, start, parentVol, leftVolume);
+                                tmp += _data->getSE(start, i, parentVol);
                             } else {
                                 tmp = _table[start][i][cluster - 1][0][parentEnd];
                             }
 
-                            double currentVolume = _data->getVol(i + 1, end);
-                            tmp += getSE(end, i + 1, parentVol, currentVolume);
+                            tmp += _data->getSE(i + 1, end, parentVol);
 
                             tmp += _table[i + 1][end][0][0][end];
                             if (tmp <= minTmp) {
@@ -249,9 +228,8 @@ namespace multi {
                             int minIdx, leftK;
                             if (end - start + 1 >= cluster) {
                                 minTmp = _table[start][end][indexK(cluster)][height - 1][end];
-                                currentVol = _data->getVol(start, end);
                                 parentVol = _data->getVol(start, parentEnd);
-                                minTmp += getSE(end, start, parentVol, currentVol);
+                                minTmp += _data->getSE(start, end, parentVol);
                                 minIdx = start;
                                 leftK = 0;
                                 for (int binaryK = 1; binaryK < cluster; binaryK++) {
@@ -260,16 +238,14 @@ namespace multi {
                                         if (binaryK == 1) {
                                             tmp = _table[start][mid][indexK(binaryK)][height - 1][mid] +
                                                   _table[mid + 1][end][indexK(cluster - binaryK)][height - 1][end];
-                                            double leftVol = _data->getVol(start, mid);
-                                            tmp += getSE(mid, start, parentVol, leftVol);
+                                            tmp += _data->getSE(start, mid, parentVol);
                                         }
                                         else {
                                             tmp = _table[start][mid][indexK(binaryK)][height][parentEnd] +
                                                   _table[mid + 1][end][indexK(cluster - binaryK)][height - 1][end];
                                         }
 
-                                        currentVol = _data->getVol(mid + 1, end);
-                                        tmp += getSE(end, mid + 1, parentVol, currentVol);
+                                        tmp += _data->getSE(mid + 1, end, parentVol);
                                         if (tmp <= minTmp) {
                                             minTmp = tmp;
                                             minIdx = mid;

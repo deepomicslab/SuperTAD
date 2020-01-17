@@ -40,6 +40,8 @@ public:
   Eigen::MatrixXd &edgeCount() { return _edgeCount; }
   
   double getVol(int s, int e);
+
+  double getSE(int start, int end, double parentVol);
   
   double edgeSum() { return _edgeCount.coeff(0, _N-1); }
 };

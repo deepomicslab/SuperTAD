@@ -123,3 +123,11 @@ double Data::getVol (int s, int e)
     else
         return _edgeCount.coeff(e, s);
 }
+
+double Data::getSE(int start, int end, double parentVol)
+{
+  double currentVol = getVol(start, end);
+  if(currentVol > 0 && parentVol >= currentVol)
+    return _edgeCount(end, start) / (2. * edgeSum()) * log2( parentVol / currentVol);
+  return 0;
+}

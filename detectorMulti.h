@@ -37,10 +37,6 @@ namespace multi {
     
     int indexK(int k) { return _kToIdx.find (k)->second; }
     
-    double getSE(int x, int y, double a, double b);
-    
-    double getSE(double x, double a, double b);
-    
     void execute();
     
     void initK();

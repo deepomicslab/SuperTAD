@@ -21,29 +21,26 @@
 
 class Data {
 private:
-  Eigen::MatrixXd _contactMat;
-  
-  // upper tri is intra; lower tri is inter
-  Eigen::MatrixXd _edgeCount;
-  
-  Reader *_reader;
-  
+    Eigen::MatrixXd _contactMat;
+    bool _sym;
+
+    // upper tri is intra; lower tri is inter
+    Eigen::MatrixXd _edgeCount;
+
+    double _edgeSum;
+    double **** _asymEdgeCount;
+    Reader *_reader;
+
 public:
-  Data(std::string fileName);
-  
-  ~Data();
-  
-  void init();
-
-  void init2();
-
-  Eigen::MatrixXd &edgeCount() { return _edgeCount; }
-  
-  double getVol(int s, int e);
-
-  double getSE(int start, int end, double parentVol);
-  
-  double edgeSum() { return _edgeCount.coeff(0, _N-1); }
+    Data(std::string fileName);
+    ~Data();
+//    void init0();
+    void init();
+    Eigen::MatrixXd & edgeCount() { return _edgeCount; }
+    double getVol(int s, int e);
+    double getSE(int start, int end, double parentVol);
+    void setEdgeSum() { _edgeSum = _edgeCount.coeff(0, _N-1); }
+    double getEdgeSum() { return _edgeSum; }
 };
 
 #endif //PROGRAM_DATA_H

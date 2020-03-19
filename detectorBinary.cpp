@@ -85,7 +85,7 @@ namespace binary {
                 for (int leaf = 0; leaf < _boundary.size(); leaf++) {
                     int currentStart = _boundary[leaf].first;
                     int currentEnd = _boundary[leaf].second;
-                    leafSum += _data->getSE(currentStart, currentEnd, 2. * _data->edgeSum());
+                    leafSum += _data->getSE(currentStart, currentEnd, 2. * _data->getEdgeSum());
                     leafSum += _table[currentStart][currentEnd][indexK(1)];
                 }
                 sumOfLeaves.emplace_back(leafSum);
@@ -113,7 +113,7 @@ namespace binary {
             for (int leaf = 0; leaf < _boundary.size(); leaf++) {
                 int currentStart = _boundary[leaf].first;
                 int currentEnd = _boundary[leaf].second;
-                leafSum += _data->getSE(currentStart, currentEnd, 2. * _data->edgeSum());
+                leafSum += _data->getSE(currentStart, currentEnd, 2. * _data->getEdgeSum());
                 leafSum += _table[currentStart][currentEnd][indexK(1)];
             }
             sumOfLeaves.emplace_back(leafSum);
@@ -150,11 +150,7 @@ namespace binary {
                 double currentVol = _data->getVol(start, end);
                 for (int leaf = start; leaf < end + 1; leaf++) {
                     _table[start][end][indexK (1)] += _data->getSE(leaf, leaf, currentVol);
-//                  if(start==131 and end==132){
-//                    printf("currentVol=%f, leaf=%d, leafDegree=%f, _table=%f \n", currentVol, leaf, leafDegree, _table[start][end][indexK (1)]);
-//                  }
                 }
-
             }
         }
         std::cout << "finishing filling the basic events in dp_table." << std::endl;
@@ -197,7 +193,7 @@ namespace binary {
 
         binarySplit(0, _N - 1, k, add);
         _boundary.emplace_back(0, 0);
-        sort (_boundary.begin(), _boundary.end(), utils::cmpBoundary);
+        sort(_boundary.begin(), _boundary.end(), utils::cmpBoundary);
         for (int i = 0; i < _boundary.size(); i++) {
             if (i == _boundary.size() - 1) {
                 _boundary[i].second = _N - 1;

@@ -48,7 +48,7 @@ int main (int argc, char *argv[])
     while (i < argc) {
         if (std::string(*(argv + i)) == std::string("-f")) {
             _INPUT = std::string (*(argv + ++i));
-            std::cout << "input: " << _INPUT << std::endl;
+            std::cout << "input=" << _INPUT << std::endl;
         }
 
 //        if (std::string(*(argv + i)) == std::string("-w")) {
@@ -106,15 +106,20 @@ int main (int argc, char *argv[])
 
     Data data(_INPUT);
 //    data.init();
-    data.init2();
+    data.init();
 
     if (_BINARY) {
         binary::Detector db(data);
         db.execute();
     }
     else if (_MULTI) {
-        multi::Detector dm(data);
-        dm.execute();
+        if (_H>1) {
+            multi::Detector dm(data);
+            dm.execute();
+        } else {
+            multi::DetectorH1 dm(data);
+            dm.execute();
+        }
     }
 
     t = std::clock() - t;

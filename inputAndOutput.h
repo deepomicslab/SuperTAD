@@ -12,6 +12,7 @@
 #include <Eigen/Dense>
 #include "binaryTree.h"
 #include "multiTree.h"
+#include "utils.h"
 
 
 std::string concatePath(std::string path1, std::string path2);
@@ -44,9 +45,11 @@ public:
 
     ~Writer() {};
 
-    void writeTree(std::string filePath, std::vector<binary::TreeNode *> &nodeList);
+    void writeTree(std::string filePath, std::vector<binary::TreeNode *> & nodeList);
 
-    void writeTree(std::string filePath, std::vector<multi::TreeNode *> &nodeList);
+    void writeTree(std::string filePath, std::vector<multi::TreeNode *> & nodeList);
+
+    static void writerBoundaryList(std::string filePath, std::vector<utils::boundary> & boundaryList);
 
     static void dumpMatrix(Eigen::MatrixXd &mat, std::string outpath);
 };

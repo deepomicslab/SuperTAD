@@ -87,7 +87,7 @@ void Writer::writeTree(std::string filePath, std::vector<binary::TreeNode *> &no
     if (_VERBOSE)
         std::cout << "start dumping binary tree\n";
     if (_VERBOSE)
-        std::cout << "output path: " << filePath << "\n";
+        std::cout << "output path is" << filePath << "\n";
     _outfile.open(filePath);
     if (_outfile.is_open()) {
         for (int i = 0; i < nodeList.size(); i++) {
@@ -109,7 +109,7 @@ void Writer::writeTree(std::string filePath, std::vector<multi::TreeNode *> &nod
     if (_VERBOSE)
         std::cout << "start dumping multi-nary tree\n"; fflush(stdout);
     if (_VERBOSE)
-        std::cout << "output path: " << filePath << "\n"; fflush(stdout);
+        std::cout << "output path is " << filePath << "\n"; fflush(stdout);
     _outfile.open(filePath);
     if (_outfile.is_open()) {
         for (int i = 0; i < nodeList.size(); i++) {
@@ -126,14 +126,34 @@ void Writer::writeTree(std::string filePath, std::vector<multi::TreeNode *> &nod
 }
 
 
+void Writer::writerBoundaryList(std::string filePath, std::vector<utils::boundary> & boundaryList)
+{
+    std::ofstream file;
+    file.open(filePath);
+    if (file.is_open())
+    {
+        std::cout << "write multi-nary tree into " << filePath << '\n';
+        for (std::vector<utils::boundary>::iterator it=boundaryList.begin(); it!=boundaryList.end(); it++) {
+            for (int i=it->first; i<=it->second; i++)
+                file << i << " ";
+            file << "\n";
+        }
+        file.close();
+    } else {
+        std::cerr << "cannot write result to " << filePath << "\n";
+    }
+
+}
+
+
 void Writer::dumpMatrix(Eigen::MatrixXd &mat, std::string outpath)
 {
     std::ofstream file(outpath);
     if (file.is_open())
     {
-        std::cout << "dump matrix to:" << outpath << '\n';
+        std::cout << "dump matrix to " << outpath << '\n';
         file << mat << '\n';
     } else {
-        std::cerr << "cannot dump matrix to:" << outpath << "\n";
+        std::cerr << "cannot dump matrix to " << outpath << "\n";
     }
 }

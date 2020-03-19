@@ -17,7 +17,7 @@ namespace multi {
     int _val[2];
     double _info=0;
     std::set<TreeNode *> _children;
-    TreeNode *_parent=NULL;
+    TreeNode * _parent=NULL;
     
     TreeNode (int start, int end) {
       _val[0] = start;
@@ -33,20 +33,20 @@ namespace multi {
       return *this;
     }
   
-    bool operator==(const TreeNode &t) const {
+    bool operator==(const TreeNode & t) const {
       return _val[0] == t._val[0] && _val[1] == t._val[1];
     }
   };
   
   
-  bool operator<(const TreeNode &t1, const TreeNode &t2);
+  bool operator<(const TreeNode & t1, const TreeNode & t2);
   
-  std::ostream& operator<< (std::ostream &os, const TreeNode &node);
+  std::ostream& operator<< (std::ostream & os, const TreeNode & node);
   
   
   class Tree {
   private:
-    TreeNode *_root;
+    TreeNode * _root;
     std::vector<TreeNode *> _nodeList;
     
   public:
@@ -54,9 +54,9 @@ namespace multi {
     
     ~Tree ();
     
-    bool add (TreeNode &parentNode, TreeNode &newNode);
+    bool add (TreeNode & parentNode, TreeNode & newNode);
   
-    std::vector<TreeNode *> &nodeList () { return _nodeList; }
+    std::vector<TreeNode *> & nodeList () { return _nodeList; }
     
     void insert (int start, int end);
   };

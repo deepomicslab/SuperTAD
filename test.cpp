@@ -7,6 +7,10 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <Eigen/Dense>
+#include <ctime>
+#include "utils.h"
+
 
 int n = 10;
 int k = 3;
@@ -46,10 +50,55 @@ void modifyIntArray (int a[], int n)
 }
 
 
-int main ()
+int main()
 {
-
+    std::vector<utils::intDoublePair> t;
+    for (int i=0; i<10; i++) {
+        t.emplace_back(rand()%10, (double)rand()/RAND_MAX);
+    }
+    std::sort(t.begin(), t.end(), utils::cmpIntDoublePairBySecond);
+    for (int i=0; i<10; i++) {
+        std::cout << t[i].first << ", " << t[i].second << std::endl;
+    }
 }
+
+
+//int main ()
+//{
+//    int n = 10;
+//
+//    Eigen::MatrixXd M1(n,n);
+//    double **M2 = new double *[n];
+//    for (int i=0; i<n; i++) {
+//        M2[i] = new double [n];
+//        for (int j=0; j<n; j++) {
+//            double tmp = (double)rand() / RAND_MAX;
+//            M1(i, j) = tmp;
+//            M2[i][j] = tmp;
+//        }
+//    }
+//    std::cout << "M1:\n" << M1 << "\n";
+//    std::cout << "M2:\n";
+//    print2DDoubleArray(M2, n, n);
+//
+//    int times = 1e+5;
+//    std::clock_t t1=0;
+//    std::clock_t t2=0;
+//    std::clock_t tmpT;
+//    for (int i=0; i<times; i++) {
+//        int x = rand() % 10;
+//        int y = rand() % 10;
+//        tmpT = std::clock();
+//        M1.coeff(x, y);
+//        t1 += std::clock() - tmpT;
+//
+//        tmpT = std::clock();
+//        M2[x][y];
+//        t2 += std::clock() - tmpT;
+//    }
+//    std::cout << "M1 running time: " << (float)t1/CLOCKS_PER_SEC << "s\n";
+//    std::cout << "M2 running time: " << (float)t2/CLOCKS_PER_SEC << "s\n";
+//}
 
 
 //int main () {

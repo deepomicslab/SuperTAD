@@ -49,7 +49,7 @@ public:
 
     void writeTree(std::string filePath, std::vector<multi::TreeNode *> & nodeList);
 
-    static void writerBoundaryList(std::string filePath, std::vector<utils::boundary> & boundaryList);
+    static void writeBoundaries(std::string filePath, std::vector<utils::boundary> & boundaryList);
 
     static void dumpMatrix(Eigen::MatrixXd &mat, std::string outpath);
 };

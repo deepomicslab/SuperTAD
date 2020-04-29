@@ -11,10 +11,12 @@ namespace binary {
     {
         _data = &data;
         _edgeCount = &data.edgeCount ();
+//        if (_H==1)
+//            _baseTable = new double *[_N];
+//        else
         _table = new double **[_N];
         _minIndexArray = new int **[_N];
         _leftKArray = new int **[_N];
-//        std::cout << "_N=" << _N << ", _K=" << _K << "\n";
         for (int i = 0; i < _N; i++) {
             _table[i] = new double *[_N];
             _minIndexArray[i] = new int *[_N];
@@ -41,6 +43,14 @@ namespace binary {
     {
         delete _binaryTree;
 
+//        if (_H==1) {
+//            for (int i=0; i<_N; i++) {
+//                delete _table[i];
+//                delete _minIndexArray[i];
+//                delete _leftKArray[i];
+//            }
+//        }
+//        else {
         for (int i = 0; i < _N; i++) {
             for (int j = 0; j < _N; j++) {
                 delete _table[i][j];
@@ -51,6 +61,7 @@ namespace binary {
             delete _minIndexArray[i];
             delete _leftKArray[i];
         }
+//        }
         delete _table;
         delete _minIndexArray;
         delete _leftKArray;
@@ -63,13 +74,13 @@ namespace binary {
 
         std::vector<double> sumOfEntropy;
         std::vector<double> sumOfLeaves;
-        std::vector<std::pair<int, double>> normLeaves;
-        struct cmpNormLeaf {
-            bool operator() (const std::pair<int, double> &p1, const std::pair<int, double> &p2)
-            {
-                return p1.second < p2.second;
-            }
-        };
+        std::vector<utils::intDoublePair> normLeaves;
+//        struct cmpNormLeaf {
+//            bool operator() (const std::pair<int, double> &p1, const std::pair<int, double> &p2)
+//            {
+//                return p1.second < p2.second;
+//            }
+//        };
 
         int index = -1;
         if (_DETERMINE_K) {
@@ -85,7 +96,7 @@ namespace binary {
                 for (int leaf = 0; leaf < _boundary.size(); leaf++) {
                     int currentStart = _boundary[leaf].first;
                     int currentEnd = _boundary[leaf].second;
-                    leafSum += _data->getSE(currentStart, currentEnd, 2. * _data->getEdgeSum());
+                    leafSum += _data->getSE(currentStart, currentEnd, 2. * _data->_edgeSum);
                     leafSum += _table[currentStart][currentEnd][indexK(1)];
                 }
                 sumOfLeaves.emplace_back(leafSum);
@@ -98,7 +109,7 @@ namespace binary {
             for (int i = 0; i < normLeaves.size(); i++) {
                 std::cout << normLeaves[i].first << ", " << normLeaves[i].second << std::endl;
             }
-            sort(normLeaves.begin(), normLeaves.end(), cmpNormLeaf());
+            sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
             index = normLeaves[0].first;
             std::cout << "k chosen=" << index << std::endl;
         } else {
@@ -113,7 +124,7 @@ namespace binary {
             for (int leaf = 0; leaf < _boundary.size(); leaf++) {
                 int currentStart = _boundary[leaf].first;
                 int currentEnd = _boundary[leaf].second;
-                leafSum += _data->getSE(currentStart, currentEnd, 2. * _data->getEdgeSum());
+                leafSum += _data->getSE(currentStart, currentEnd, 2. * _data->_edgeSum);
                 leafSum += _table[currentStart][currentEnd][indexK(1)];
             }
             sumOfLeaves.emplace_back(leafSum);
@@ -143,8 +154,17 @@ namespace binary {
     }
 
 
-    void Detector::fillTable ()
+    void Detector::fillTable()
     {
+//        if (_H==1) {
+//            preSumGlog();
+//            for (int i=0; i<_N; i++) {
+//                double curVol = _edgeCount->coeff(i, 0) + _edgeCount->coeff(i, 0);
+//                double binSum = getGlog(curVol) - _gLogSum[i];
+//                _table[i][0] = _data->getSE(_edgeCount->coeff(i, 0), )
+//
+//            }
+//        } else {
         for (int start = 0; start < _N; start++) {
             for (int end = start; end < _N; end++) {
                 double currentVol = _data->getVol(start, end);
@@ -162,28 +182,29 @@ namespace binary {
                     int leftK = 0;
                     for (int binaryK = 1; binaryK < a; binaryK++)
                     {
-                      for (int mid = start; mid < end; mid++)
-                      {
-                        double tmp = _table[start][mid][indexK(binaryK)] + _table[mid + 1][end][indexK(a - binaryK)];
-                        double volParent;
-                        volParent = _data->getVol(start, end);
-                        tmp += _data->getSE(start, mid, volParent);
-                        tmp += _data->getSE(mid+1, end, volParent);
-                        if (tmp < minTmp)
+                        for (int mid = start; mid < end; mid++)
                         {
-                          minTmp = tmp;
-                          minIdx = mid;
-                          leftK = binaryK;
+                            double tmp = _table[start][mid][indexK(binaryK)] + _table[mid + 1][end][indexK(a - binaryK)];
+                            double volParent;
+                            volParent = _data->getVol(start, end);
+                            tmp += _data->getSE(start, mid, volParent);
+                            tmp += _data->getSE(mid+1, end, volParent);
+                            if (tmp < minTmp)
+                            {
+                                minTmp = tmp;
+                                minIdx = mid;
+                                leftK = binaryK;
+                            }
                         }
-                      }
                     }
                     _minIndexArray[start][end][indexK(a)] = minIdx;
                     _table[start][end][indexK(a)] = minTmp;
                     _leftKArray[start][end][indexK(a)] = leftK;
                 }
             }
-        std::cout << "Finishing filling upper events where k = " << a << ", " << _table[0][_N-1][indexK(a)] << std::endl;
+            std::cout << "Finishing filling upper events where k = " << a << ", " << _table[0][_N-1][indexK(a)] << std::endl;
         }
+//        }
     }
 
 
@@ -243,7 +264,7 @@ namespace binary {
     {
         int start = node._val[0];
         int end = node._val[1];
-        node._D = (double) _edgeCount->coeff (start, end) / ((end - start + 1) * (end - start) * .5);
+        node._D = (double) _edgeCount->coeff(start, end) / ((end - start + 1) * (end - start) * .5);
         if (node._left != NULL)
             calculateD (*node._left);
         if (node._right != NULL)
@@ -352,19 +373,19 @@ namespace binary {
                     break;
                 //      std::cout << "ab2=(" << ab2[0] << ", " << ab2[1] << ")\n";
 
-                if (utils::doubleArrayEqual (ab1, oldAB1, 2) && utils::doubleArrayEqual (ab2, oldAB2, 2))
+                if (utils::equalDoubleArrays(ab1, oldAB1, 2) && utils::equalDoubleArrays(ab2, oldAB2, 2))
                     converged = true;
                 else {
-                    nodeList1.clear ();
-                    nodeList2.clear ();
-                    for (int i = 0; i < _nodeList->size (); i++) {
+                    nodeList1.clear();
+                    nodeList2.clear();
+                    for (int i = 0; i < _nodeList->size(); i++) {
                         binary::TreeNode *nodeTmp = (*_nodeList)[i];
-                        double dist1 = pow (ab1[0] * getX (*nodeTmp) + ab1[1] - nodeTmp->_info, 2);
-                        double dist2 = pow (ab2[0] * getX (*nodeTmp) + ab2[1] - nodeTmp->_info, 2);
+                        double dist1 = pow(ab1[0] * getX (*nodeTmp) + ab1[1] - nodeTmp->_info, 2);
+                        double dist2 = pow(ab2[0] * getX (*nodeTmp) + ab2[1] - nodeTmp->_info, 2);
                         if (dist1 < dist2)
-                            nodeList1.emplace_back (i, nodeTmp);
+                            nodeList1.emplace_back(i, nodeTmp);
                         else
-                            nodeList2.emplace_back (i, nodeTmp);
+                            nodeList2.emplace_back(i, nodeTmp);
                     }
                 }
             }
@@ -442,4 +463,21 @@ namespace binary {
         return true;
     }
 
+
+//    void Detector::preSumGlog()
+//    {
+//        _gLogSum[0] = getGlog(_edgeCount->coeff(0,0))
+//        for (int i=1; i<_N; i++) {
+//            _gLogSum[i] = _gLogSum[i-1] + getGlog(_edgeCount.coeff(i, i));
+//        }
+//    }
+//
+//
+//    double Detector::getGlog(double binG)
+//    {
+//        if (binG==0)
+//            return binG;
+//        else
+//            return binG * log2(binG);
+//    }
 }

@@ -126,13 +126,13 @@ void Writer::writeTree(std::string filePath, std::vector<multi::TreeNode *> &nod
 }
 
 
-void Writer::writerBoundaryList(std::string filePath, std::vector<utils::boundary> & boundaryList)
+void Writer::writeBoundaries(std::string filePath, std::vector<utils::boundary> & boundaryList)
 {
     std::ofstream file;
     file.open(filePath);
     if (file.is_open())
     {
-        std::cout << "write multi-nary tree into " << filePath << '\n';
+        std::cout << "write boundaries into " << filePath << '\n';
         for (std::vector<utils::boundary>::iterator it=boundaryList.begin(); it!=boundaryList.end(); it++) {
             for (int i=it->first; i<=it->second; i++)
                 file << i << " ";

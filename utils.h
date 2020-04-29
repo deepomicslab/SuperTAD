@@ -13,9 +13,9 @@
 
 namespace utils {
 
-    int randInt (int low=0, int high=10);
+    int randInt(int low=0, int high=10);
 
-    double randDouble (double low=0., double high=1.);
+    double randDouble(double low=0., double high=1.);
 
     typedef std::pair<int, int> boundary;
 
@@ -23,9 +23,9 @@ namespace utils {
 
     typedef std::pair<int, double> intDoublePair;
 
-    inline bool cmpIntDoublePair(const intDoublePair &p1, const intDoublePair &p2) { return p1.second < p2.second; }
+    inline bool cmpIntDoublePairBySecond(const intDoublePair &p1, const intDoublePair &p2) { return p1.second < p2.second; }
 
-    bool doubleArrayEqual(double a1[], double a2[], int n);
+    bool equalDoubleArrays(double *a1, double *a2, int n);
 
     void copyDoubleArray(double from[], double to[], int n);
 
@@ -44,6 +44,12 @@ namespace utils {
         }
     }
 
+//    template<typename T, U>
+//    void printPairVec(std::vector<std::pair<T, U> ) {
+//        for (v=V.begin(); v!=V.end(); v++) {
+//            std::cout << "(" << v.first << ", " << v.second << ")"
+//        }
+//    }
 }
 
 #endif //PROGRAM_UTILS_H

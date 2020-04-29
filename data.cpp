@@ -66,9 +66,11 @@ Data::~Data()
 
 void Data::init()
 {
-    std::clock_t t = std::clock();
     if (_VERBOSE)
         std::cout << "start data initialization\n";
+    std::clock_t t = std::clock();
+
+    // calculate edge count(sum)
     _edgeCount.resize(_N, _N);
 //    _edgeCount.setZero();
     for (int k=1; k<_N; k++) {
@@ -110,27 +112,60 @@ void Data::init()
                 _edgeCount(j, i) = inter;
         }
     }
+    setEdgeSum();
     if (_VERBOSE) {
 //    std::cout << "_edgeCount=" << _edgeCount << std::endl;
-        std::cout << "finish data initialization; running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";
+        std::cout << "finish calculating edge count(sum); running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";
+        t = std::clock();
         Writer::dumpMatrix(_edgeCount, _INPUT+".init.txt");
     }
-    setEdgeSum();
+
+    // calculate sum of g*log(g)
+    _sumOfGtimesLogG[0] = getGtimesLogG(_edgeCount.coeff(0,0));
+    for (int i=1; i<_N; i++) {
+        _sumOfGtimesLogG[i] = _sumOfGtimesLogG[i-1] + getGtimesLogG(_edgeCount.coeff(i,i));
+    }
+    if (_VERBOSE) {
+        std::cout << "finish calculating sum of g*log(g); running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";
+    }
 }
 
 
-double Data::getVol (int s, int e)
+void Data::setEdgeSum() {
+    _edgeSum = _edgeCount.coeff(0, _N-1);
+}
+
+
+double Data::getVol(int s, int e)
 {
-    if (s != e)
+    if (s!=e)
         return 2. * _edgeCount.coeff(s, e) + _edgeCount.coeff(e, s);
     else
         return _edgeCount.coeff(e, s);
 }
 
+
 double Data::getSE(int start, int end, double parentVol)
 {
-  double currentVol = getVol(start, end);
-  if(currentVol > 0 && parentVol >= currentVol)
-    return _edgeCount(end, start) / (2. * getEdgeSum()) * log2(parentVol / currentVol);
-  return 0;
+    // g / edge_sum * log2(V_p / V)
+    double currentVol = getVol(start, end);
+    if(currentVol > 0 && parentVol >= currentVol)
+        return _edgeCount(end, start) / (2. * _edgeSum) * log2(parentVol / currentVol);
+    return 0;
+}
+
+
+double Data::getSE(int start, int end, double parentVol, double currentVol) {
+    // g / edge_sum * log2(V_p / V)
+    if(currentVol > 0 && parentVol >= currentVol)
+        return _edgeCount(end, start) / (2. * _edgeSum) * log2(parentVol / currentVol);
+    return 0;
+}
+
+
+double Data::getGtimesLogG(double binG) {
+    if (binG==0)
+        return 0;
+    else
+        return binG * log2(binG);
 }

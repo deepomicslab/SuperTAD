@@ -10,6 +10,7 @@
 #include <ctime>
 #include "detectorMulti.h"
 #include <cstdlib>
+#include "detectorH.h"
 
 
 int main (int argc, char *argv[])
@@ -105,7 +106,6 @@ int main (int argc, char *argv[])
     }
 
     Data data(_INPUT);
-//    data.init();
     data.init();
 
     if (_BINARY) {
@@ -113,11 +113,12 @@ int main (int argc, char *argv[])
         db.execute();
     }
     else if (_MULTI) {
-        if (_H>1) {
+        if (_H==1) {
+            multi::DetectorH1 dmh1(data);
+            dmh1.execute();
+        }
+        else{
             multi::Detector dm(data);
-            dm.execute();
-        } else {
-            multi::DetectorH1 dm(data);
             dm.execute();
         }
     }

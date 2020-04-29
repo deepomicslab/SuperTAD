@@ -22,16 +22,17 @@
 class Data {
 private:
     Eigen::MatrixXd _contactMat;
-    bool _sym;
+//    bool _sym;
 
     // upper tri is intra; lower tri is inter
     Eigen::MatrixXd _edgeCount;
 
-    double _edgeSum;
-    double **** _asymEdgeCount;
+//    double **** _asymEdgeCount;
     Reader *_reader;
 
 public:
+    double _edgeSum;
+    double *_sumOfGtimesLogG;
     Data(std::string fileName);
     ~Data();
 //    void init0();
@@ -39,8 +40,10 @@ public:
     Eigen::MatrixXd & edgeCount() { return _edgeCount; }
     double getVol(int s, int e);
     double getSE(int start, int end, double parentVol);
-    void setEdgeSum() { _edgeSum = _edgeCount.coeff(0, _N-1); }
-    double getEdgeSum() { return _edgeSum; }
+    double getSE(int start, int end, double parentVol, double currentVol);
+    void setEdgeSum();
+//    double getEdgeSum() { return _edgeSum; }
+    double getGtimesLogG(double binG);
 };
 
 #endif //PROGRAM_DATA_H

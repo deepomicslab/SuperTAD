@@ -21,12 +21,12 @@ namespace utils {
   }
   
   
-  double randDouble (double low, double high) {
+  double randDouble(double low, double high) {
     return (double)rand() / (double)RAND_MAX * (high - low);
   }
   
   
-  bool doubleArrayEqual (double a1[], double a2[], int n)
+  bool equalDoubleArrays(double *a1, double *a2, int n)
   {
     for (int i = 0; i < n; i++) {
       if (a1[i] != a2[i])

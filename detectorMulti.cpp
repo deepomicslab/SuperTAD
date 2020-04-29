@@ -7,141 +7,141 @@
 
 namespace multi {
 
-    DetectorBase::DetectorBase(Data & data)
-    {
-        _data = &data;
-        _edgeCount = &data.edgeCount();
-        int k = 1;
-        for (int i = 0; i < _K; i++) {
-            _kToIdx.emplace(k++, i);
-        }
-    }
-
-
-    DetectorH1::DetectorH1(Data & data) : DetectorBase(data)
-    {
-        _table = new double * [_N];
-        _minIndexArray = new int * [_N];
-        _leftKArray = new int * [_N];
-//        std::cout << "_K=" << _K << std::endl;
-        for (int i = 0; i < _N; i++) {
-            _table[i] = new double [_K]{};
-            _minIndexArray[i] = new int [_K]{};
-            _leftKArray[i] = new int [_K]{};
-        }
-    }
-
-
-    void DetectorH1::printTable()
-    {
-        printf("table:\n");
-        for (int i=0; i<_N; i++) {
-            for (int j=0; j<_K; j++) {
-                printf("%f " ,_table[i][j]);
-            }
-            printf("\n");
-        }
-    }
-
-
-    DetectorH1::~DetectorH1()
-    {
-        for (int i = 0; i < _N; i++) {
-            delete _table[i];
-            delete _minIndexArray[i];
-            delete _leftKArray[i];
-        }
-    }
-
-
-    void DetectorH1::execute()
-    {
-        printf("execute multi, h=1\n");
-        fillTable();
-        if (_DETERMINE_K) {
-            printf("determine k\n");
-            std::vector<utils::intDoublePair> tmp;
-            for (int i=0; i<_K; i++)
-                tmp.emplace_back(i, _table[_N-1][i]);
-            std::sort(tmp.begin(), tmp.end(), utils::cmpIntDoublePair);
-            _K = tmp.front().first;
-            printf("optimal k=%d\n", _K);
-        }
-        backTrace();
-        Writer::writerBoundaryList(_INPUT + ".original_boundaries.txt", _boundaryList);
-    }
-
-
-    void DetectorH1::initBoundary()
-    {
-        _boundaryList.clear();
-    }
-
-
-    void DetectorH1::fillTable()
-    {
-        printf("fill table\n");
-        _table[0][0] = _data->getSE(0, 0, 2* _data->getEdgeSum());
-        for (int i=1; i<_N; i++) {
-            double currentVol = _data->getVol(0, i);
-//            printf("currentVol=%f\n", currentVol);
-            _table[i][0] = _data->getSE(0, i, 2*_data->getEdgeSum());
-//            printf("_table[%d][0]=%f\n", i, _table[i][0]);
-            for (int leaf=0; leaf < i + 1; leaf++) {
-                _table[i][0] += _data->getSE(leaf, leaf, currentVol);
-            }
-        }
-//        printTable();
-        for (int a=1; a<_K; a++) {
-            double minTmp;
-            int minIdx;
-            for (int b=0; b<_N; b++) {
-                minTmp = std::numeric_limits<double>::infinity();
-                minIdx = 0;
-                double tmp;
-                for (int i=0; i<b; i++) {
-                    tmp = _table[i][a-1];
-                    if (i+1==b)
-                        tmp += _data->getSE(b, b, 2*_data->getEdgeSum());
-                    else {
-                        double currentVol = _data->getVol(i+1, b);
-                        tmp += _data->getSE(i+1, b, 2*_data->getEdgeSum());
-                        for (int leaf=i+1; leaf<b+1; leaf++)
-                            tmp += _data->getSE(leaf, leaf, currentVol);
-                    }
-                    if (tmp<=minTmp) {
-                        minTmp = tmp;
-                        minIdx = i;
-                    }
-                }
-                _minIndexArray[b][a] = minIdx;
-                _table[b][a] = minTmp;
-            }
-            printf("finish k=%d, structure entropy=%f\n", a, minTmp);
-        }
-//        printTable();
-    }
-
-
-    void DetectorH1::backTrace()
-    {
-        initBoundary();
-        int lastBoundary = _N;
-        int newBoundary;
-        for (int i=_K-2; i>=0; i--) {
-            newBoundary = _minIndexArray[lastBoundary-1][i+1]+1;
-            _boundaryList.emplace_back(newBoundary, lastBoundary);
-            lastBoundary = newBoundary;
-        }
-        _boundaryList.emplace_back(1, lastBoundary);
-        std::sort(_boundaryList.begin(), _boundaryList.end(), utils::cmpBoundary);
-//        printf("_boundaryList.size()=%d\n", _boundaryList.size());
-//        for (std::vector<utils::boundary>::iterator it=_boundaryList.begin(); it!=_boundaryList.end(); it++) {
-//            for (int i=it->first; i<=it->second; i++)
-//                std::cout << i << " ";
-//            std::cout << "\n";
+//    DetectorBase::DetectorBase(Data & data)
+//    {
+//        _data = &data;
+//        _edgeCount = &data.edgeCount();
+//        int k = 1;
+//        for (int i = 0; i < _K; i++) {
+//            _kToIdx.emplace(k++, i);
 //        }
-    }
+//    }
+//
+//
+//    DetectorH1::DetectorH1(Data & data) : DetectorBase(data)
+//    {
+//        _table = new double * [_N];
+//        _minIndexArray = new int * [_N];
+//        _leftKArray = new int * [_N];
+////        std::cout << "_K=" << _K << std::endl;
+//        for (int i = 0; i < _N; i++) {
+//            _table[i] = new double [_K]{};
+//            _minIndexArray[i] = new int [_K]{};
+//            _leftKArray[i] = new int [_K]{};
+//        }
+//    }
+//
+//
+//    void DetectorH1::printTable()
+//    {
+//        printf("table:\n");
+//        for (int i=0; i<_N; i++) {
+//            for (int j=0; j<_K; j++) {
+//                printf("%f " ,_table[i][j]);
+//            }
+//            printf("\n");
+//        }
+//    }
+//
+//
+//    DetectorH1::~DetectorH1()
+//    {
+//        for (int i = 0; i < _N; i++) {
+//            delete _table[i];
+//            delete _minIndexArray[i];
+//            delete _leftKArray[i];
+//        }
+//    }
+//
+//
+//    void DetectorH1::execute()
+//    {
+//        printf("execute multi, h=1\n");
+//        fillTable();
+//        if (_DETERMINE_K) {
+//            printf("determine k\n");
+//            std::vector<utils::intDoublePair> tmp;
+//            for (int i=0; i<_K; i++)
+//                tmp.emplace_back(i, _table[_N-1][i]);
+//            std::sort(tmp.begin(), tmp.end(), utils::cmpIntDoublePairBySecond);
+//            _K = tmp.front().first;
+//            printf("optimal k=%d\n", _K);
+//        }
+//        backTrace();
+//        Writer::writeBoundaries(_INPUT + ".original_boundaries.txt", _boundaryList);
+//    }
+//
+//
+//    void DetectorH1::initBoundary()
+//    {
+//        _boundaryList.clear();
+//    }
+//
+//
+//    void DetectorH1::fillTable()
+//    {
+//        printf("fill table\n");
+//        _table[0][0] = _data->getSE(0, 0, 2* _data->getEdgeSum());
+//        for (int i=1; i<_N; i++) {
+//            double currentVol = _data->getVol(0, i);
+////            printf("currentVol=%f\n", currentVol);
+//            _table[i][0] = _data->getSE(0, i, 2*_data->getEdgeSum());
+////            printf("_table[%d][0]=%f\n", i, _table[i][0]);
+//            for (int leaf=0; leaf < i + 1; leaf++) {
+//                _table[i][0] += _data->getSE(leaf, leaf, currentVol);
+//            }
+//        }
+////        printTable();
+//        for (int a=1; a<_K; a++) {
+//            double minTmp;
+//            int minIdx;
+//            for (int b=0; b<_N; b++) {
+//                minTmp = std::numeric_limits<double>::infinity();
+//                minIdx = 0;
+//                double tmp;
+//                for (int i=0; i<b; i++) {
+//                    tmp = _table[i][a-1];
+//                    if (i+1==b)
+//                        tmp += _data->getSE(b, b, 2*_data->getEdgeSum());
+//                    else {
+//                        double currentVol = _data->getVol(i+1, b);
+//                        tmp += _data->getSE(i+1, b, 2*_data->getEdgeSum());
+//                        for (int leaf=i+1; leaf<b+1; leaf++)
+//                            tmp += _data->getSE(leaf, leaf, currentVol);
+//                    }
+//                    if (tmp<=minTmp) {
+//                        minTmp = tmp;
+//                        minIdx = i;
+//                    }
+//                }
+//                _minIndexArray[b][a] = minIdx;
+//                _table[b][a] = minTmp;
+//            }
+//            printf("finish k=%d, structure entropy=%f\n", a, minTmp);
+//        }
+////        printTable();
+//    }
+//
+//
+//    void DetectorH1::backTrace()
+//    {
+//        initBoundary();
+//        int lastBoundary = _N;
+//        int newBoundary;
+//        for (int i=_K-2; i>=0; i--) {
+//            newBoundary = _minIndexArray[lastBoundary-1][i+1]+1;
+//            _boundaryList.emplace_back(newBoundary, lastBoundary);
+//            lastBoundary = newBoundary;
+//        }
+//        _boundaryList.emplace_back(1, lastBoundary);
+//        std::sort(_boundaryList.begin(), _boundaryList.end(), utils::cmpBoundary);
+////        printf("_boundaryList.size()=%d\n", _boundaryList.size());
+////        for (std::vector<utils::boundary>::iterator it=_boundaryList.begin(); it!=_boundaryList.end(); it++) {
+////            for (int i=it->first; i<=it->second; i++)
+////                std::cout << i << " ";
+////            std::cout << "\n";
+////        }
+//    }
 
 
     Detector::Detector(Data &data)
@@ -157,7 +157,6 @@ namespace multi {
         _table = new double ****[_N];
         _minIndexArray = new int ****[_N];
         _leftKArray = new int ****[_N];
-//        std::cout << "_K=" << _K << std::endl;
         for (int i = 0; i < _N; i++) {
             _table[i] = new double ***[_N];
             _minIndexArray[i] = new int ***[_N];
@@ -230,10 +229,10 @@ namespace multi {
                 backTrace(num, _H);
 
                 double leafSum = 0;
-                for (int leaf = 0; leaf < _boundary.size(); leaf++) {
-                    int currentStart = _boundary[leaf].first;
-                    int currentEnd = _boundary[leaf].second;
-                    leafSum += _data->getSE(currentStart, currentEnd, 2 * _data->getEdgeSum());
+                for (int leaf = 0; leaf < _boundaries.size(); leaf++) {
+                    int currentStart = _boundaries[leaf].first;
+                    int currentEnd = _boundaries[leaf].second;
+                    leafSum += _data->getSE(currentStart, currentEnd, 2 * _data->_edgeSum);
                     std::cout << "currentStart=" << currentStart << ", currentEnd=" << currentEnd << "\n";
                     leafSum += _table[currentStart][currentEnd][0][0][currentEnd];
                 }
@@ -251,11 +250,11 @@ namespace multi {
                 printf("(%d, %f)\n", normLeaves[i].first, normLeaves[i].second);
 
             if (_H == 1 || _H == 2) {
-                sort(sumOfEntropy.begin(), sumOfEntropy.end(), utils::cmpIntDoublePair);
+                sort(sumOfEntropy.begin(), sumOfEntropy.end(), utils::cmpIntDoublePairBySecond);
                 index = sumOfEntropy[0].first;
             }
             else {
-                sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePair);
+                sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
                 index = normLeaves[0].first;
             }
             std::cout << "k chosen=" << index << std::endl;
@@ -265,10 +264,10 @@ namespace multi {
             sumOfEntropy.emplace_back(num, _table[0][_N - 1][indexK(num)][_H - 1][_N - 1]);
             backTrace(num, _H);
             double leafSum = 0;
-            for (int leaf = 0; leaf < _boundary.size(); leaf++) {
-                int currentStart = _boundary[leaf].first;
-                int currentEnd = _boundary[leaf].second;
-                leafSum += _data->getSE(currentStart, currentEnd, 2 * _data->getEdgeSum());
+            for (int leaf = 0; leaf < _boundaries.size(); leaf++) {
+                int currentStart = _boundaries[leaf].first;
+                int currentEnd = _boundaries[leaf].second;
+                leafSum += _data->getSE(currentStart, currentEnd, 2 * _data->_edgeSum);
                 std::cout << "currentStart=" << currentStart << ", currentEnd=" << currentEnd << "\n";
                 leafSum += _table[currentStart][currentEnd][0][0][currentEnd];
             }
@@ -409,7 +408,7 @@ namespace multi {
     }
 
 
-    void Detector::initH (int h)
+    void Detector::initH(int h)
     {
         for (int i = 0; i < _N; i++) {
             for (int j = 0; j < _N; j++) {
@@ -421,32 +420,32 @@ namespace multi {
     }
 
 
-    void Detector::backTrace (int k, int h, bool add)
+    void Detector::backTrace(int k, int h, bool add)
     {
         initK();
 
         multiSplit(0, _N-1, k, h-1, _N-1, add);
-        _boundary.emplace_back(0, 0);
-        sort(_boundary.begin(), _boundary.end(), utils::cmpBoundary);
+        _boundaries.emplace_back(0, 0);
+        sort(_boundaries.begin(), _boundaries.end(), utils::cmpBoundary);
 
-        for (int i = 0; i < _boundary.size(); i++) {
-            if (i == _boundary.size() - 1) {
-                _boundary[i].second = _N - 1;
+        for (int i = 0; i < _boundaries.size(); i++) {
+            if (i == _boundaries.size() - 1) {
+                _boundaries[i].second = _N - 1;
             }
             else {
-                _boundary[i].second = _boundary[i+1].first - 1;
+                _boundaries[i].second = _boundaries[i + 1].first - 1;
             }
         }
 
-        for (int i = 0; i < _boundary.size(); i++) {
-            std::cout << "boundary[" << i << "]=(" << _boundary[i].first << ", " << _boundary[i].second << ")\n";
+        for (int i = 0; i < _boundaries.size(); i++) {
+            std::cout << "boundary[" << i << "]=(" << _boundaries[i].first << ", " << _boundaries[i].second << ")\n";
         }
     }
 
 
     void Detector::initK()
     {
-        _boundary.clear();
+        _boundaries.clear();
     }
 
 
@@ -473,7 +472,7 @@ namespace multi {
                     int midPos = _minIndexArray[start][end][indexK(k)][h][parentEnd];
 //          std::cout << "2. start=" << start << ", end=" << end << ", k=" << k << ", indexK(k)=" << indexK(k) << ", h=" << h << ", parentEnd=" << parentEnd << ", midPos=" << midPos << std::endl;
 //          std::cout << "_minIndexArray[start][end][indexK(k)][h][parentEnd]=" << _minIndexArray[start][end][indexK(k)][h][parentEnd] << "\n\n";
-                    _boundary.emplace_back(midPos+1, 0);
+                    _boundaries.emplace_back(midPos + 1, 0);
                     if (add)
                         _multiTree.insert(midPos+1, end);
                     printf("filling-------------%d %d %d %d h!=1, parentEnd: %d %f\n", start, end, k, h, parentEnd, _table[start][end][indexK(k)][h][parentEnd]);
@@ -485,7 +484,7 @@ namespace multi {
 //        std::cout << "3. start=" << start << ", end=" << end << ", k=" << k << ", indexK(k)=" << indexK(k) << ", h=" << h << ", parentEnd=" << parentEnd << std::endl;
 //        std::cout << "_minIndexArray[start][end][indexK(k)][h][parentEnd]=" << _minIndexArray[start][end][indexK(k)][h][parentEnd] << "\n\n";
                 int midPos = _minIndexArray[start][end][indexK(k)][h][parentEnd];
-                _boundary.emplace_back(midPos+1, 0);
+                _boundaries.emplace_back(midPos + 1, 0);
                 if (add)
                     _multiTree.insert(midPos+1, end);
                 printf("filling-------------%d %d %d %d h=1, parentEnd: %d %f\n", start, end, k, h, parentEnd, _table[start][end][indexK(k)][h][parentEnd]);

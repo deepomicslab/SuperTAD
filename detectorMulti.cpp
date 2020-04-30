@@ -4,145 +4,7 @@
 
 #include "detectorMulti.h"
 
-
 namespace multi {
-
-//    DetectorBase::DetectorBase(Data & data)
-//    {
-//        _data = &data;
-//        _edgeCount = &data.edgeCount();
-//        int k = 1;
-//        for (int i = 0; i < _K; i++) {
-//            _kToIdx.emplace(k++, i);
-//        }
-//    }
-//
-//
-//    DetectorH1::DetectorH1(Data & data) : DetectorBase(data)
-//    {
-//        _table = new double * [_N];
-//        _minIndexArray = new int * [_N];
-//        _leftKArray = new int * [_N];
-////        std::cout << "_K=" << _K << std::endl;
-//        for (int i = 0; i < _N; i++) {
-//            _table[i] = new double [_K]{};
-//            _minIndexArray[i] = new int [_K]{};
-//            _leftKArray[i] = new int [_K]{};
-//        }
-//    }
-//
-//
-//    void DetectorH1::printTable()
-//    {
-//        printf("table:\n");
-//        for (int i=0; i<_N; i++) {
-//            for (int j=0; j<_K; j++) {
-//                printf("%f " ,_table[i][j]);
-//            }
-//            printf("\n");
-//        }
-//    }
-//
-//
-//    DetectorH1::~DetectorH1()
-//    {
-//        for (int i = 0; i < _N; i++) {
-//            delete _table[i];
-//            delete _minIndexArray[i];
-//            delete _leftKArray[i];
-//        }
-//    }
-//
-//
-//    void DetectorH1::execute()
-//    {
-//        printf("execute multi, h=1\n");
-//        fillTable();
-//        if (_DETERMINE_K) {
-//            printf("determine k\n");
-//            std::vector<utils::intDoublePair> tmp;
-//            for (int i=0; i<_K; i++)
-//                tmp.emplace_back(i, _table[_N-1][i]);
-//            std::sort(tmp.begin(), tmp.end(), utils::cmpIntDoublePairBySecond);
-//            _K = tmp.front().first;
-//            printf("optimal k=%d\n", _K);
-//        }
-//        backTrace();
-//        Writer::writeBoundaries(_INPUT + ".original_boundaries.txt", _boundaryList);
-//    }
-//
-//
-//    void DetectorH1::initBoundary()
-//    {
-//        _boundaryList.clear();
-//    }
-//
-//
-//    void DetectorH1::fillTable()
-//    {
-//        printf("fill table\n");
-//        _table[0][0] = _data->getSE(0, 0, 2* _data->getEdgeSum());
-//        for (int i=1; i<_N; i++) {
-//            double currentVol = _data->getVol(0, i);
-////            printf("currentVol=%f\n", currentVol);
-//            _table[i][0] = _data->getSE(0, i, 2*_data->getEdgeSum());
-////            printf("_table[%d][0]=%f\n", i, _table[i][0]);
-//            for (int leaf=0; leaf < i + 1; leaf++) {
-//                _table[i][0] += _data->getSE(leaf, leaf, currentVol);
-//            }
-//        }
-////        printTable();
-//        for (int a=1; a<_K; a++) {
-//            double minTmp;
-//            int minIdx;
-//            for (int b=0; b<_N; b++) {
-//                minTmp = std::numeric_limits<double>::infinity();
-//                minIdx = 0;
-//                double tmp;
-//                for (int i=0; i<b; i++) {
-//                    tmp = _table[i][a-1];
-//                    if (i+1==b)
-//                        tmp += _data->getSE(b, b, 2*_data->getEdgeSum());
-//                    else {
-//                        double currentVol = _data->getVol(i+1, b);
-//                        tmp += _data->getSE(i+1, b, 2*_data->getEdgeSum());
-//                        for (int leaf=i+1; leaf<b+1; leaf++)
-//                            tmp += _data->getSE(leaf, leaf, currentVol);
-//                    }
-//                    if (tmp<=minTmp) {
-//                        minTmp = tmp;
-//                        minIdx = i;
-//                    }
-//                }
-//                _minIndexArray[b][a] = minIdx;
-//                _table[b][a] = minTmp;
-//            }
-//            printf("finish k=%d, structure entropy=%f\n", a, minTmp);
-//        }
-////        printTable();
-//    }
-//
-//
-//    void DetectorH1::backTrace()
-//    {
-//        initBoundary();
-//        int lastBoundary = _N;
-//        int newBoundary;
-//        for (int i=_K-2; i>=0; i--) {
-//            newBoundary = _minIndexArray[lastBoundary-1][i+1]+1;
-//            _boundaryList.emplace_back(newBoundary, lastBoundary);
-//            lastBoundary = newBoundary;
-//        }
-//        _boundaryList.emplace_back(1, lastBoundary);
-//        std::sort(_boundaryList.begin(), _boundaryList.end(), utils::cmpBoundary);
-////        printf("_boundaryList.size()=%d\n", _boundaryList.size());
-////        for (std::vector<utils::boundary>::iterator it=_boundaryList.begin(); it!=_boundaryList.end(); it++) {
-////            for (int i=it->first; i<=it->second; i++)
-////                std::cout << i << " ";
-////            std::cout << "\n";
-////        }
-//    }
-
 
     Detector::Detector(Data &data)
     {
@@ -153,7 +15,7 @@ namespace multi {
         for (int i = 0; i < _K; i++) {
             _kToIdx.emplace(k++, i);
         }
-
+        _boundaries.reserve(_K);
         _table = new double ****[_N];
         _minIndexArray = new int ****[_N];
         _leftKArray = new int ****[_N];
@@ -294,19 +156,16 @@ namespace multi {
         for (int start = 0; start < _N; start++) {
             for (int end = start; end < _N; end++) {
                 double currentVolume = _data->getVol(start, end);
-//                  printf("currentVolume=%f\n", currentVolume);
-                for (int leaf = start; leaf < end + 1; leaf++) {
-//                      printf("leafDegree=%f\n", _data->getVol(leaf, leaf));
-                    double SE = _data->getSE(leaf, leaf, currentVolume);
-//                      printf("SE=%f\n", SE);
-                    _table[start][end][0][0][end] += SE;
+                double binSum;
+                if (start == 0) {
+                    binSum = _data->getGtimesLogG(currentVolume) - _data->_sumOfGtimesLogG[end];
+                } else {
+                    binSum = _data->getGtimesLogG(currentVolume) - (_data->_sumOfGtimesLogG[end] - _data->_sumOfGtimesLogG[start-1]);
                 }
+                _table[start][end][0][0][end] = binSum / (2. * _data->_edgeSum);
             }
         }
-//    for (int i = 0; i < _N; i++) {
-//      std::cout << _table[0][i][0][0][i] << " ";
-//    }
-//    std::cout << "\n";
+
         t = std::clock() - t;
         std::cout << "part1 took: " << (float)t/CLOCKS_PER_SEC << "s\n";
 
@@ -339,10 +198,6 @@ namespace multi {
                         _minIndexArray[start][end][cluster][0][parentEnd] = minIdx;
                         _table[start][end][cluster][0][parentEnd] = minTmp;
                     }
-//          for (int tmpIdx = start; tmpIdx < parentEnd + 1; tmpIdx++) {
-//            std::cout << _table[start][tmpIdx][cluster][0][parentEnd] << " ";
-//          }
-//          std::cout << "\n";
                 }
             }
         }

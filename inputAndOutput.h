@@ -32,7 +32,7 @@ public:
 
     int parse(Eigen::MatrixXd &contactMat, std::string fileName="");
 
-    int parseTree(Eigen::MatrixXd &contactMat, std::vector<std::string> &fileNames);
+//    int parseTree(Eigen::MatrixXd &contactMat, std::vector<std::string> &fileNames);
 };
 
 

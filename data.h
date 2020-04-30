@@ -42,7 +42,6 @@ public:
     double getSE(int start, int end, double parentVol);
     double getSE(int start, int end, double parentVol, double currentVol);
     void setEdgeSum();
-//    double getEdgeSum() { return _edgeSum; }
     double getGtimesLogG(double binG);
 };
 

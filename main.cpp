@@ -36,8 +36,9 @@ int main (int argc, char *argv[])
         std::cerr << "OPTIONS:\n";
         std::cerr << "\t-f <input path>: Input contact matrix file path\n";
 //        std::cerr << "\t-w <working directory path>: Working directory path (default current working directory)\n";
-        std::cerr << "\t-b: Binary version (default)\n";
-        std::cerr << "\t-m: Multiple version\n";
+        std::cerr << "\t-b: Binary tree version\n";
+        std::cerr << "\t-m: Multiple tree version\n";
+        std::cerr << "\t-H: Multiple version (h1 fast mode)\n";
         std::cerr << "\t-k <int>: Number of leaves in candidate coding tree (default NAN)\n";
         std::cerr << "\t-h <int>: Hierarchy number (default 2)\n";
         std::cerr << "\t--filter <true/True/TRUE/false/False/FALSE>: Filter TADs or not (default: true)\n";
@@ -69,8 +70,12 @@ int main (int argc, char *argv[])
 
         if (std::string(*(argv + i)) == std::string("-m")) {
             _MULTI = true;
-            _BINARY = false;
             std::cout << "do multi\n";
+        }
+
+        if (std::string(*(argv+i)) == std::string("-H")) {
+            _multiH = true;
+            std::cout << "do new_multi\n";
         }
 
         if (std::string(*(argv + i)) == std::string("-k")) {
@@ -104,25 +109,24 @@ int main (int argc, char *argv[])
         std::cerr << "input must be provided\n";
         exit(1);
     }
-
+    printf("%d, %d, %d\n", _BINARY, _MULTI, _multiH);
     Data data(_INPUT);
     data.init();
+    printf("%d, %d, %d", _BINARY, _MULTI, _multiH);
 
     if (_BINARY) {
         binary::Detector db(data);
         db.execute();
     }
     else if (_MULTI) {
-        if (_H==1) {
-            multi::DetectorH1 dmh1(data);
-            dmh1.execute();
-        }
-        else{
-            multi::Detector dm(data);
-            dm.execute();
-        }
+        multi::Detector dm(data);
+        dm.execute();
     }
-
+    else if (_multiH) {
+        printf("aaa");
+        multi::DetectorH1 dH(data);
+        dH.execute();
+    }
     t = std::clock() - t;
     std::cout << "running time: " << (float)t/CLOCKS_PER_SEC << "s\n";
 

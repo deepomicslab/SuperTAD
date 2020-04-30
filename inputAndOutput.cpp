@@ -72,14 +72,14 @@ int Reader::parse(Eigen::MatrixXd &contactMat, std::string fileName)
 }
 
 
-int Reader::parseTree(Eigen::MatrixXd &contactMat, std::vector<std::string> &fileNames)
-{
-    for (int i=0; i<fileNames.size(); i++) {
-        _infile.open(fileNames[i]);
-
-        _infile.close();
-    }
-}
+//int Reader::parseTree(Eigen::MatrixXd &contactMat, std::vector<std::string> &fileNames)
+//{
+//    for (int i=0; i<fileNames.size(); i++) {
+//        _infile.open(fileNames[i]);
+//
+//        _infile.close();
+//    }
+//}
 
 
 void Writer::writeTree(std::string filePath, std::vector<binary::TreeNode *> &nodeList)

@@ -13,7 +13,6 @@
 #include <map>
 #include "utils.h"
 #include <ctime>
-#include "inputAndOutput.h"
 
 
 namespace multi {
@@ -33,24 +32,6 @@ namespace multi {
 //        int indexK(int k) { return _kToIdx.find(k)->second; }
 //
 //    };
-//
-//
-//    class DetectorH1 : protected DetectorBase {
-//    private:
-//        double ** _table;
-//        int ** _minIndexArray;
-//        int ** _leftKArray;
-//
-//    public:
-//        DetectorH1(Data & data);
-//        ~DetectorH1();
-//        void execute();
-//        void initBoundary();
-//        void fillTable();
-//        void backTrace();
-//        void printTable();
-//    };
-
 
     class Detector {
     private:

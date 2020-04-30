@@ -37,11 +37,11 @@ namespace multi {
 
 
     void DetectorH1::execute() {
-        _table[0][0] = _data->getSE(0, 0, _data->_edgeSum);
+        _table[0][0] = _data->getSE(0, 0, 2. *_data->_edgeSum);
         for (int i=1; i<_N; i++) {
-            double currentVol = _data->getVol(i, 0);
+            double currentVol = _data->getVol(0, i);
             double binSum = _data->getGtimesLogG(currentVol) - _data->_sumOfGtimesLogG[i];
-            _table[i][0] = _data->getSE(i, 0, _data->_edgeSum, currentVol) + binSum/_data->_edgeSum;
+            _table[i][0] = _data->getSE(0, i, 2. * _data->_edgeSum, currentVol) + binSum/(2. *_data->_edgeSum);
         }
         printf("finish k=0, SE=%f\n", _table[_N-1][0]);
         std::cout << "start to calculate upper case\n";
@@ -53,12 +53,12 @@ namespace multi {
                 for (int i=0; i<b; i++) {
                     double tmp = _table[i][a-1];
                     if (i+1==b)
-                        tmp += _data->getSE(b, b, _data->_edgeSum);
+                        tmp += _data->getSE(b, b, 2. * _data->_edgeSum);
                     else {
                         double currentVol = _data->getVol(i+1, b);
-                        tmp += _data->getSE(i+1, b, _data->_edgeSum, currentVol);
+                        tmp += _data->getSE(i+1, b, 2. * _data->_edgeSum, currentVol);
                         double binSum = _data->getGtimesLogG(currentVol) - (_data->_sumOfGtimesLogG[b] - _data->_sumOfGtimesLogG[i]);
-                        tmp += binSum / _data->_edgeSum;
+                        tmp += binSum / (2. * _data->_edgeSum);
                     }
                     if (tmp<minTmp) {
                         minTmp = tmp;
@@ -68,7 +68,7 @@ namespace multi {
                 _minIndexArray[b][a] = minIdx;
                 _table[b][a] = minTmp;
             }
-            printf("finish k=%d, structure entropy=f", a, minTmp);
+            printf("finish k=%d, structure entropy=%f", a, minTmp);
         }
         if (_DETERMINE_K) {
             std::cout << "start to determine k\n";
@@ -82,7 +82,7 @@ namespace multi {
                 }
             }
             _k = tmpIdx + 1;
-            printf("the optimal k is %f", _k);
+            printf("the optimal k is %d", _k);
         }
 
         backTrace();
@@ -97,7 +97,7 @@ namespace multi {
         return the positions in the optimal route.
      */
     void DetectorH1::backTrace() {
-        printf("#data points: %f", _N);
+        printf("#data points: %d", _N);
         int *boundaries = new int [_k];
         boundaries[_k - 1] = _N - 1;
         for (int i=_k-2; i>-1; i--) {

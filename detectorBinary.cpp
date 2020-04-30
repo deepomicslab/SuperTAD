@@ -11,9 +11,6 @@ namespace binary {
     {
         _data = &data;
         _edgeCount = &data.edgeCount ();
-//        if (_H==1)
-//            _baseTable = new double *[_N];
-//        else
         _table = new double **[_N];
         _minIndexArray = new int **[_N];
         _leftKArray = new int **[_N];
@@ -42,15 +39,6 @@ namespace binary {
     Detector::~Detector ()
     {
         delete _binaryTree;
-
-//        if (_H==1) {
-//            for (int i=0; i<_N; i++) {
-//                delete _table[i];
-//                delete _minIndexArray[i];
-//                delete _leftKArray[i];
-//            }
-//        }
-//        else {
         for (int i = 0; i < _N; i++) {
             for (int j = 0; j < _N; j++) {
                 delete _table[i][j];
@@ -75,12 +63,7 @@ namespace binary {
         std::vector<double> sumOfEntropy;
         std::vector<double> sumOfLeaves;
         std::vector<utils::intDoublePair> normLeaves;
-//        struct cmpNormLeaf {
-//            bool operator() (const std::pair<int, double> &p1, const std::pair<int, double> &p2)
-//            {
-//                return p1.second < p2.second;
-//            }
-//        };
+
 
         int index = -1;
         if (_DETERMINE_K) {
@@ -156,21 +139,17 @@ namespace binary {
 
     void Detector::fillTable()
     {
-//        if (_H==1) {
-//            preSumGlog();
-//            for (int i=0; i<_N; i++) {
-//                double curVol = _edgeCount->coeff(i, 0) + _edgeCount->coeff(i, 0);
-//                double binSum = getGlog(curVol) - _gLogSum[i];
-//                _table[i][0] = _data->getSE(_edgeCount->coeff(i, 0), )
-//
-//            }
-//        } else {
+
         for (int start = 0; start < _N; start++) {
             for (int end = start; end < _N; end++) {
                 double currentVol = _data->getVol(start, end);
-                for (int leaf = start; leaf < end + 1; leaf++) {
-                    _table[start][end][indexK (1)] += _data->getSE(leaf, leaf, currentVol);
+                double binSum;
+                if (start == 0) {
+                    binSum = _data->getGtimesLogG(currentVol) - _data->_sumOfGtimesLogG[end];
+                } else {
+                    binSum = _data->getGtimesLogG(currentVol) - (_data->_sumOfGtimesLogG[end] - _data->_sumOfGtimesLogG[start-1]);
                 }
+                _table[start][end][indexK (1)] = binSum / (2. * _data->_edgeSum);
             }
         }
         std::cout << "finishing filling the basic events in dp_table." << std::endl;
@@ -462,22 +441,4 @@ namespace binary {
 
         return true;
     }
-
-
-//    void Detector::preSumGlog()
-//    {
-//        _gLogSum[0] = getGlog(_edgeCount->coeff(0,0))
-//        for (int i=1; i<_N; i++) {
-//            _gLogSum[i] = _gLogSum[i-1] + getGlog(_edgeCount.coeff(i, i));
-//        }
-//    }
-//
-//
-//    double Detector::getGlog(double binG)
-//    {
-//        if (binG==0)
-//            return binG;
-//        else
-//            return binG * log2(binG);
-//    }
 }

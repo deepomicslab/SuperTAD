@@ -11,8 +11,7 @@ Data::Data(std::string fileName)
     _N = _reader->parse(_contactMat);
     std::cout << "#bins=" << _N << std::endl;
     if (_K < 0)
-        _K = sqrt(_N);
-//        _K = _N / 5;
+        _K = sqrt(_N) + 5;
     std::cout << "k=" << _K << "\n";
 }
 
@@ -21,48 +20,6 @@ Data::~Data()
 {
     delete _reader;
 }
-
-
-//void Data::init0()
-//{
-//    std::clock_t t = std::clock();
-//    if (_VERBOSE)
-//        std::cout << "start data initialization\n";
-//    _edgeCount.resize(_N, _N);
-//    for (int i = 0; i < _N; i++) {
-////    if (_VERBOSE)
-////      std::cout << "i=" << i << std::endl;
-//        for (int j = i; j < _N; j++) {
-//            int n = j - i + 1;
-////      if (_VERBOSE)
-////        std::cout << "i=" << i << ", j=" << j << ", n=" << n << std::endl;
-//            Eigen::MatrixXd currentMat = _contactMat.block(i, i, n, n);
-//            double countIntra = (currentMat.sum() - currentMat.diagonal().sum()) * .5;
-//
-//            double sum1 = _contactMat.block(0, i, i, j-i+1).sum();
-////      if (_VERBOSE)
-////        std::cout << "sum1=" << sum1 << std::endl;
-//
-//            double sum2;
-//            if (j + 1 < _N)
-//                sum2 = _contactMat.block(i, j+1, j-i+1, _N-1-j).sum();
-//            else
-//                sum2 = 0;
-////      if (_VERBOSE)
-////        std::cout << "sum2=" << sum2 << std::endl;
-//            double countInter = sum1 + sum2;
-//            _edgeCount(i, j) = countIntra;
-//            _edgeCount(j, i) = countInter;
-//        }
-//    }
-//    if (_VERBOSE) {
-////    std::cout << "_edgeCount=" << _edgeCount << std::endl;
-//        std::cout << "finish data initialization; running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";;
-//        Writer::dumpMatrix(_edgeCount, _INPUT+".init.txt");
-//    }
-//    setEdgeSum();
-//}
-
 
 void Data::init()
 {
@@ -97,17 +54,7 @@ void Data::init()
             if (j+1 < _N)
                 inter -= _edgeCount.coeff(j+1, _N-1);
             if (abs(inter) < _THRESHOLD || inter < 0) {
-//            if (inter < 0) {
                 _edgeCount(j, i) = 0;
-//                if (_VERBOSE) {
-//                    printf("i=%d, j=%d", i, j);
-//                    if (i-1 > 0)
-//                        printf(", _edgeCount.coeff(%d, %d)=%f", 0, i - 1, _edgeCount.coeff(0, i - 1));
-//                    if (j+1 < _N)
-//                        printf(", _edgeCount.coeff(%d, %d)=%f", j + 1, _N - 1, _edgeCount.coeff(j + 1, _N - 1));
-//                    std::cout << "\n";
-//                    fflush(stdout);
-//                }
             } else
                 _edgeCount(j, i) = inter;
         }

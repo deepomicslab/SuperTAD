@@ -32,7 +32,8 @@ private:
 
 public:
     double _edgeSum;
-    double *_sumOfGtimesLogG;
+//    double *_sumOfGtimesLogG;
+    std::vector<double> _sumOfGtimesLogG;
     Data(std::string fileName);
     ~Data();
 //    void init0();

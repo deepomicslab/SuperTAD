@@ -109,10 +109,8 @@ int main (int argc, char *argv[])
         std::cerr << "input must be provided\n";
         exit(1);
     }
-    printf("%d, %d, %d\n", _BINARY, _MULTI, _multiH);
     Data data(_INPUT);
     data.init();
-    printf("%d, %d, %d", _BINARY, _MULTI, _multiH);
 
     if (_BINARY) {
         binary::Detector db(data);
@@ -123,7 +121,6 @@ int main (int argc, char *argv[])
         dm.execute();
     }
     else if (_multiH) {
-        printf("aaa");
         multi::DetectorH1 dH(data);
         dH.execute();
     }

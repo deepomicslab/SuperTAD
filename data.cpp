@@ -68,9 +68,9 @@ void Data::init()
     }
 
     // calculate sum of g*log(g)
-    _sumOfGtimesLogG[0] = getGtimesLogG(_edgeCount.coeff(0,0));
+    _sumOfGtimesLogG.emplace_back( getGtimesLogG(_edgeCount.coeff(0,0)) );
     for (int i=1; i<_N; i++) {
-        _sumOfGtimesLogG[i] = _sumOfGtimesLogG[i-1] + getGtimesLogG(_edgeCount.coeff(i,i));
+        _sumOfGtimesLogG.emplace_back( _sumOfGtimesLogG[i-1] + getGtimesLogG(_edgeCount.coeff(i,i)));
     }
     if (_VERBOSE) {
         std::cout << "finish calculating sum of g*log(g); running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";

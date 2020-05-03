@@ -43,10 +43,11 @@ namespace multi {
             double binSum = _data->getGtimesLogG(currentVol) - _data->_sumOfGtimesLogG[i];
             _table[i][0] = _data->getSE(0, i, 2. * _data->_edgeSum, currentVol) + binSum/(2. *_data->_edgeSum);
         }
-        printf("finish k=0, SE=%f\n", _table[_N-1][0]);
+        printf("finish k=0, SE=%f \n", _table[_N-1][0]);
         std::cout << "start to calculate upper case\n";
         for (int a=1; a<_K; a++) {
-            double minTmp, minIdx;
+            double minTmp;
+            int minIdx;
             for (int b=0; b<_N; b++) {
                 minTmp= std::numeric_limits<double>::infinity();
                 minIdx = 0;
@@ -68,26 +69,26 @@ namespace multi {
                 _minIndexArray[b][a] = minIdx;
                 _table[b][a] = minTmp;
             }
-            printf("finish k=%d, structure entropy=%f", a, minTmp);
+            printf("finish k=%d, structure entropy=%f \n", a, minTmp);
         }
         if (_DETERMINE_K) {
             std::cout << "start to determine k\n";
             double *y = _table[_N-1];
             int tmpIdx = 0;
-            int tmpValue = y[0];
-            for (int i=1; i<_N; i++) {
+            double tmpValue = y[0];
+            for (int i=1; i<_K; i++) {
                 if (y[i] < tmpValue) {
                     tmpValue = y[i];
                     tmpIdx = i;
                 }
             }
             _k = tmpIdx + 1;
-            printf("the optimal k is %d", _k);
+            printf("the optimal k is %d \n", _k);
         }
 
         backTrace();
 
-        _writer.writeBoundaries(_INPUT + ".original_boundaries.txt", _boundaries);
+        _writer.writeBoundaries(_INPUT + ".h1.txt", _boundaries);
     }
 
 
@@ -97,7 +98,7 @@ namespace multi {
         return the positions in the optimal route.
      */
     void DetectorH1::backTrace() {
-        printf("#data points: %d", _N);
+        printf("#data points: %d \n", _N);
         int *boundaries = new int [_k];
         boundaries[_k - 1] = _N - 1;
         for (int i=_k-2; i>-1; i--) {
@@ -107,9 +108,9 @@ namespace multi {
 
         for (int i=0; i<_k; i++) {
             if (i==0)
-                _boundaries.emplace_back(0, boundaries[i]);
+                _boundaries.emplace_back(1, boundaries[i]+1);
             else
-                _boundaries.emplace_back(boundaries[i - 1] + 1, boundaries[i]);
+                _boundaries.emplace_back(boundaries[i - 1] + 2, boundaries[i]+1);
         }
         for (int i = 0; i < _boundaries.size(); i++) {
             std::cout << "boundary[" << i << "]=(" << _boundaries[i].first << ", " << _boundaries[i].second << ")\n";

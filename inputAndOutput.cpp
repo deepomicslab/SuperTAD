@@ -151,8 +151,8 @@ void Writer::dumpMatrix(Eigen::MatrixXd &mat, std::string outpath)
     std::ofstream file(outpath);
     if (file.is_open())
     {
-        std::cout << "dump matrix to " << outpath << '\n';
         file << mat << '\n';
+        std::cout << "dump matrix to " << outpath << '\n';
     } else {
         std::cerr << "cannot dump matrix to " << outpath << "\n";
     }

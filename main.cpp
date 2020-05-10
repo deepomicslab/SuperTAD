@@ -74,7 +74,7 @@ int main (int argc, char *argv[])
         }
 
         if (std::string(*(argv+i)) == std::string("-H")) {
-            _multiH = true;
+            _MULTI_H = true;
             std::cout << "do new_multi\n";
         }
 
@@ -120,7 +120,7 @@ int main (int argc, char *argv[])
         multi::Detector dm(data);
         dm.execute();
     }
-    else if (_multiH) {
+    else if (_MULTI_H) {
         multi::DetectorH1 dH(data);
         dH.execute();
     }

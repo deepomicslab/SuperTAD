@@ -7,7 +7,7 @@
 
 bool _BINARY = false;
 bool _MULTI = false;
-bool _multiH = false;
+bool _MULTI_H = false;
 
 int _K = -999;
 bool _DETERMINE_K = true;

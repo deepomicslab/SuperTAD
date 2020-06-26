@@ -180,10 +180,11 @@ void Writer::dumpCoordinates(i2dMap &map, std::string outPath, std::ofstream *f)
 }
 
 
-void Writer::dumpListOfCoordinates(str_2_i2dMap &map, std::string outPath)
+void Writer::writeListOfCoordinates(str_2_i2dMap &map, std::string outPath)
 {
     std::ofstream file(outPath);
     if (file.is_open()) {
+        std::cout << "dump list of coordinates to " << outPath << "\n";
         file << "{";
         for (auto it=map.begin(); it!=map.end(); it++) {
             file << it->first << ":{";
@@ -198,6 +199,31 @@ void Writer::dumpListOfCoordinates(str_2_i2dMap &map, std::string outPath)
             file << "\n";
         }
         file << "}\n";
+        file.close();
+    } else {
+        std::cerr << "cannot dump list of coordinates to " << outPath << "\n";
+    }
+}
+
+
+void Writer::dumpListOfCoordinates(str_2_i2dMap &map, std::string outPath)
+{
+    std::ofstream file(outPath);
+    if (file.is_open()) {
+        std::cout << "dump list of coordinates to " << outPath << "\n";
+        file << "{";
+        for (auto it=map.begin(); it!=map.end(); it++) {
+            file << "\"" << it->first << "\"" << ": {";
+            for (auto it2=it->second.begin(); it2!=it->second.end(); it2++) {
+                file << it2->first << ":" << it2->second;
+                if (it2->first!=it->second.rbegin()->first)
+                    file << ",";
+            }
+            file << "}";
+            if (it->first!=map.rbegin()->first)
+                file << ",";
+        }
+        file << "}";
         file.close();
     } else {
         std::cerr << "cannot dump list of coordinates to " << outPath << "\n";

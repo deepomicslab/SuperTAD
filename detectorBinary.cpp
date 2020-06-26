@@ -176,7 +176,7 @@ namespace binary {
                                 minIdx = mid;
                                 leftK = binaryK;
                             }
-                            map2.emplace(mid, minTmp);
+                            map2.emplace(mid, tmp);
                         }
                         map.emplace(key, map2);
                     }
@@ -187,7 +187,8 @@ namespace binary {
             }
             std::cout << "Finishing filling upper events where k = " << k << ", " << _table[0][_N - 1][indexK(k)] << std::endl;
         }
-        Writer::dumpListOfCoordinates(map, _TMP_PATH_);
+        if (_TMP_PATH_!="")
+            Writer::dumpListOfCoordinates(map, _TMP_PATH_);
     }
 
 

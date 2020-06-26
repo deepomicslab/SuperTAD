@@ -24,4 +24,6 @@ extern bool _FILTERING;
 
 extern bool _VERBOSE;
 
+extern std::string _TMP_PATH_;
+
 #endif //PROGRAM_PARAMS_H

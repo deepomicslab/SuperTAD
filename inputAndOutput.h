@@ -13,6 +13,7 @@
 #include "binaryTree.h"
 #include "multiTree.h"
 #include "utils.h"
+#include <map>
 
 
 std::string concatePath(std::string path1, std::string path2);
@@ -51,7 +52,11 @@ public:
 
     static void writeBoundaries(std::string filePath, std::vector<utils::boundary> & boundaryList);
 
-    static void dumpMatrix(Eigen::MatrixXd &mat, std::string outpath);
+    static void dumpMatrix(Eigen::MatrixXd &mat, std::string outPath);
+
+    static void dumpCoordinates(i2dMap &map, std::string outPath, std::ofstream *f=NULL);
+
+    static void dumpListOfCoordinates(str_2_i2dMap &map, std::string outPath);
 };
 
 #endif //PROGRAM_INPUTANDOUTPUT_H

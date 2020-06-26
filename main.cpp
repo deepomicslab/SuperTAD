@@ -102,6 +102,12 @@ int main (int argc, char *argv[])
             }
         }
 
+        if (std::string(*(argv + i)) == std::string("--tmp_path")) {
+            std::string tmp = std::string (*(argv + ++i));
+            std::cout << "tmp_path=" << tmp << "\n";
+            _TMP_PATH_ = tmp;
+        }
+
         i++;
     }
 

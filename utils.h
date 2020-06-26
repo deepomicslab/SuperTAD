@@ -9,7 +9,12 @@
 #include <utility>
 #include <stdlib.h>
 #include <iostream>
+#include <map>
+#include <sstream>
 
+
+typedef std::map<int, double> i2dMap;
+typedef std::map<std::string, std::map<int, double>> str_2_i2dMap;
 
 namespace utils {
 

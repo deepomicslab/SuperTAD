@@ -146,14 +146,60 @@ void Writer::writeBoundaries(std::string filePath, std::vector<utils::boundary> 
 }
 
 
-void Writer::dumpMatrix(Eigen::MatrixXd &mat, std::string outpath)
+void Writer::dumpMatrix(Eigen::MatrixXd &mat, std::string outPath)
 {
-    std::ofstream file(outpath);
-    if (file.is_open())
-    {
+    std::ofstream file(outPath);
+    if (file.is_open()) {
         file << mat << '\n';
-        std::cout << "dump matrix to " << outpath << '\n';
+        std::cout << "dump matrix to " << outPath << '\n';
+        file.close();
     } else {
-        std::cerr << "cannot dump matrix to " << outpath << "\n";
+        std::cerr << "cannot dump matrix to " << outPath << "\n";
+    }
+}
+
+
+void Writer::dumpCoordinates(i2dMap &map, std::string outPath, std::ofstream *f)
+{
+    bool append = false;
+    if (f) {
+        append = true;
+    } else {
+        std::ofstream file(outPath);
+        f = &file;
+    }
+    if (f->is_open()) {
+        for (auto it=map.begin(); it!=map.end(); it++) {
+            *f << it->first << "\t" << it->second << "\n";
+        }
+        if (!append)
+            f->close();
+    } else {
+        std::cerr << "cannot dump coordinates to " << outPath << "\n";
+    }
+}
+
+
+void Writer::dumpListOfCoordinates(str_2_i2dMap &map, std::string outPath)
+{
+    std::ofstream file(outPath);
+    if (file.is_open()) {
+        file << "{";
+        for (auto it=map.begin(); it!=map.end(); it++) {
+            file << it->first << ":{";
+            for (auto it2=it->second.begin(); it2!=it->second.end(); it2++) {
+                file << it2->first << ":" << it2->second;
+                if (it2->first!=it->second.rbegin()->first)
+                    file << ",";
+            }
+            file << "}";
+            if (it->first!=map.rbegin()->first)
+                file << ",";
+            file << "\n";
+        }
+        file << "}\n";
+        file.close();
+    } else {
+        std::cerr << "cannot dump list of coordinates to " << outPath << "\n";
     }
 }

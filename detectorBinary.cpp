@@ -139,7 +139,7 @@ namespace binary {
 
     void Detector::fillTable()
     {
-
+        str_2_i2dMap map;
         for (int start = 0; start < _N; start++) {
             for (int end = start; end < _N; end++) {
                 double currentVol = _data->getVol(start, end);
@@ -153,17 +153,19 @@ namespace binary {
             }
         }
         std::cout << "finishing filling the basic events in dp_table." << std::endl;
-        for (int a = 2; a < _K + 1; a++) {
+        for (int k = 2; k < _K + 1; k++) {
             for (int start = 0; start < _N; start++) {
                 for (int end = start; end < _N; end++) {
                     double minTmp = std::numeric_limits<double>::infinity ();
                     int minIdx = 0;
                     int leftK = 0;
-                    for (int binaryK = 1; binaryK < a; binaryK++)
+                    for (int binaryK = 1; binaryK < k; binaryK++)
                     {
+                        std::string key = std::to_string(start) + "_" + std::to_string(end) + "_" + std::to_string(k) + "_" + std::to_string(binaryK);
+                        i2dMap map2;
                         for (int mid = start; mid < end; mid++)
                         {
-                            double tmp = _table[start][mid][indexK(binaryK)] + _table[mid + 1][end][indexK(a - binaryK)];
+                            double tmp = _table[start][mid][indexK(binaryK)] + _table[mid + 1][end][indexK(k - binaryK)];
                             double volParent;
                             volParent = _data->getVol(start, end);
                             tmp += _data->getSE(start, mid, volParent);
@@ -174,16 +176,18 @@ namespace binary {
                                 minIdx = mid;
                                 leftK = binaryK;
                             }
+                            map2.emplace(mid, minTmp);
                         }
+                        map.emplace(key, map2);
                     }
-                    _minIndexArray[start][end][indexK(a)] = minIdx;
-                    _table[start][end][indexK(a)] = minTmp;
-                    _leftKArray[start][end][indexK(a)] = leftK;
+                    _minIndexArray[start][end][indexK(k)] = minIdx;
+                    _table[start][end][indexK(k)] = minTmp;
+                    _leftKArray[start][end][indexK(k)] = leftK;
                 }
             }
-            std::cout << "Finishing filling upper events where k = " << a << ", " << _table[0][_N-1][indexK(a)] << std::endl;
+            std::cout << "Finishing filling upper events where k = " << k << ", " << _table[0][_N - 1][indexK(k)] << std::endl;
         }
-//        }
+        Writer::dumpListOfCoordinates(map, _TMP_PATH_);
     }
 
 

@@ -183,7 +183,8 @@ namespace multi {
                             if (cluster - 1 == 0) {
                                 tmp = _table[start][i][cluster - 1][0][i];
                                 tmp += _data->getSE(start, i, parentVol);
-                            } else {
+                            }
+                            else {
                                 tmp = _table[start][i][cluster - 1][0][parentEnd];
                             }
 
@@ -206,7 +207,7 @@ namespace multi {
         }
         std::cout << "\n";
         t = std::clock() - t;
-        std::cout << "part2 took: " << (float)t/CLOCKS_PER_SEC << "s\n";
+        std::cout << "part2 spent: " << (float)t/CLOCKS_PER_SEC << "s\n";
 
         t = std::clock();
         for (int height = 1; height < _H; height++) {

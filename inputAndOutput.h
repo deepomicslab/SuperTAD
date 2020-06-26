@@ -56,6 +56,8 @@ public:
 
     static void dumpCoordinates(i2dMap &map, std::string outPath, std::ofstream *f=NULL);
 
+    static void writeListOfCoordinates(str_2_i2dMap &map, std::string outPath);
+
     static void dumpListOfCoordinates(str_2_i2dMap &map, std::string outPath);
 };
 

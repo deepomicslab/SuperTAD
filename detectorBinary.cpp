@@ -139,7 +139,7 @@ namespace binary {
 
     void Detector::fillTable()
     {
-        str_2_i2dMap map;
+//        str_2_i2dMap map;
         for (int start = 0; start < _N; start++) {
             for (int end = start; end < _N; end++) {
                 double currentVol = _data->getVol(start, end);
@@ -162,7 +162,7 @@ namespace binary {
                     for (int binaryK = 1; binaryK < k; binaryK++)
                     {
                         std::string key = std::to_string(start) + "_" + std::to_string(end) + "_" + std::to_string(k) + "_" + std::to_string(binaryK);
-                        i2dMap map2;
+//                        i2dMap map2;
                         for (int mid = start; mid < end; mid++)
                         {
                             double tmp = _table[start][mid][indexK(binaryK)] + _table[mid + 1][end][indexK(k - binaryK)];
@@ -176,9 +176,9 @@ namespace binary {
                                 minIdx = mid;
                                 leftK = binaryK;
                             }
-                            map2.emplace(mid, tmp);
+//                            map2.emplace(mid, tmp);
                         }
-                        map.emplace(key, map2);
+//                        map.emplace(key, map2);
                     }
                     _minIndexArray[start][end][indexK(k)] = minIdx;
                     _table[start][end][indexK(k)] = minTmp;
@@ -187,8 +187,11 @@ namespace binary {
             }
             std::cout << "Finishing filling upper events where k = " << k << ", " << _table[0][_N - 1][indexK(k)] << std::endl;
         }
-        if (_TMP_PATH_!="")
-            Writer::dumpListOfCoordinates(map, _TMP_PATH_);
+//        if (_TMP_PATH_!="") {
+////            Writer::dumpListOfCoordinates(map, _TMP_PATH_+".1");
+////            Writer::writeListOfCoordinates(map, _TMP_PATH_+".2");
+//            Writer::writeListOfCoordinates(map, _TMP_PATH_);
+//        }
     }
 
 

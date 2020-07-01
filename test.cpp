@@ -12,55 +12,139 @@
 #include "utils.h"
 
 
-int n = 10;
-int k = 3;
+int *_n = new int(0);
 
-void print2DIntArray (int **array, int m, int n) {
-  for (int i = 0; i < m; i++) {
-    for (int j = 0; j < n; j++) {
-      std::cout << array[i][j] << " ";
-    }
-    std::cout << "\n";
-  }
+int indexK1(int k) {
+    return k-1;
 }
 
-void print2DDoubleArray (double **array, int m, int n) {
-  for (int i = 0; i < m; i++) {
-    for (int j = 0; j < n; j++) {
-      std::cout << array[i][j] << " ";
-    }
-    std::cout << "\n";
-  }
+void indexK2(int k) {
+    *_n = k-1;
 }
 
-
-bool intArrayEqual (int a1[], int a2[], int n)
+float testIndex1(int n)
 {
-  for (int i = 0; i < n; i++) {
-    if (a1[i] != a2[i])
-      return false;
-  }
-  return true;
+    std::clock_t t = std::clock();
+    for (int i = 0; i < n; i++) {
+        indexK1(i);
+    }
+    t = std::clock() - t;
+    return (float)t/CLOCKS_PER_SEC;
 }
 
-
-void modifyIntArray (int a[], int n)
+float testIndex2(int n)
 {
-  a[0] = -999;
+    std::clock_t t = std::clock();
+    for (int i = 0; i < n; i++) {
+        indexK2(i);
+    }
+    return (float) (std::clock() - t)/CLOCKS_PER_SEC;
+}
+
+float testIndex3(int n)
+{
+    std::clock_t t = std::clock();
+    for (int i = 0; i < n; i++) {
+        i-1;
+    }
+    return (float) (std::clock() - t)/CLOCKS_PER_SEC;
+}
+
+void testIndex()
+{
+    int n = 1e+9;
+    float t1, t2, t3;
+    for (int i=0; i<5; i++) {
+        t1 = testIndex1(n);
+        t2 = testIndex2(n);
+        t3 = testIndex3(n);
+        printf("t1=%f, t2=%f, t3=%f\n", t1, t2, t3);
+        std::fflush(stdout);
+    }
+    //    std::clock_t t1 = 0;
+//    std::clock_t t2 = 0;
+//    std::clock_t t3 = 0;
+//    std::clock_t tmp;
+//    for (int k=0; k<10; k++) {
+//        t1 = 0;
+//        t2 = 0;
+//        t3 = 0;
+//        for (int i = 0; i < 1e+7; i++) {
+//            tmp = std::clock();
+//            indexK1(i);
+//            t1 += std::clock() - tmp;
+//
+//            tmp = std::clock();
+//            indexK2(i);
+//            t2 += std::clock() - tmp;
+//
+//            tmp = std::clock();
+//            i - 1;
+//            t3 += std::clock() - tmp;
+//        }
+//        printf("t1=%f, t2=%f, t3=%f\n", (float) t1 / CLOCKS_PER_SEC, (float) t2 / CLOCKS_PER_SEC,
+//               (float) t3 / CLOCKS_PER_SEC);
+//        std::fflush(stdout);
+//    }
 }
 
 
 int main()
 {
-    std::vector<utils::intDoublePair> t;
-    for (int i=0; i<10; i++) {
-        t.emplace_back(rand()%10, (double)rand()/RAND_MAX);
-    }
-    std::sort(t.begin(), t.end(), utils::cmpIntDoublePairBySecond);
-    for (int i=0; i<10; i++) {
-        std::cout << t[i].first << ", " << t[i].second << std::endl;
-    }
+    testIndex();
 }
+
+
+
+
+
+//int n = 10;
+//int k = 3;
+//
+//void print2DIntArray (int **array, int m, int n) {
+//  for (int i = 0; i < m; i++) {
+//    for (int j = 0; j < n; j++) {
+//      std::cout << array[i][j] << " ";
+//    }
+//    std::cout << "\n";
+//  }
+//}
+//
+//void print2DDoubleArray (double **array, int m, int n) {
+//  for (int i = 0; i < m; i++) {
+//    for (int j = 0; j < n; j++) {
+//      std::cout << array[i][j] << " ";
+//    }
+//    std::cout << "\n";
+//  }
+//}
+//
+//
+//bool intArrayEqual (int a1[], int a2[], int n)
+//{
+//  for (int i = 0; i < n; i++) {
+//    if (a1[i] != a2[i])
+//      return false;
+//  }
+//  return true;
+//}
+//
+//
+//void modifyIntArray (int a[], int n)
+//{
+//  a[0] = -999;
+//}
+//int main()
+//{
+//    std::vector<utils::intDoublePair> t;
+//    for (int i=0; i<10; i++) {
+//        t.emplace_back(rand()%10, (double)rand()/RAND_MAX);
+//    }
+//    std::sort(t.begin(), t.end(), utils::cmpIntDoublePairBySecond);
+//    for (int i=0; i<10; i++) {
+//        std::cout << t[i].first << ", " << t[i].second << std::endl;
+//    }
+//}
 
 
 //int main ()

@@ -25,7 +25,7 @@ namespace binary {
   }
 
 
-  Tree::~Tree ()
+  Tree::~Tree()
   {
     for (int i = 0; i < _nodeList.size (); i++) {
       delete _nodeList[i];
@@ -33,11 +33,10 @@ namespace binary {
   }
 
 
-  void Tree::add (int start, int end, int k)
+  void Tree::add(int &start, int &end, int &k)
   {
-//    std::cout << "k=" << k << std::endl;
-    TreeNode *treeNode = new TreeNode (start, end);
-    if (k == 0) {
+    TreeNode *treeNode = new TreeNode(start, end);
+    if (k == 0) { // if change to k==1???
       std::cout << "leaf node: " << start << ", " << end << std::endl;
       TreeNode *treeExistNode = _t.top ();
       if (treeExistNode->_left == NULL) {
@@ -71,6 +70,6 @@ namespace binary {
       }
     }
     if (treeNode != _root)
-      _nodeList.emplace_back (treeNode);
+      _nodeList.emplace_back(treeNode);
   }
 }

@@ -14,45 +14,52 @@ namespace binary {
         _table = new double **[_N];
         _minIndexArray = new int **[_N];
         _leftKArray = new int **[_N];
-        for (int i = 0; i < _N; i++) {
-            _table[i] = new double *[_N];
-            _minIndexArray[i] = new int *[_N];
-            _leftKArray[i] = new int *[_N];
-            for (int j = 0; j < _N; j++) {
-                _table[i][j] = new double[_K]{};
-                _minIndexArray[i][j] = new int[_K]{};
-                _leftKArray[i][j] = new int[_K]{};
+        for (int s=0; s<_N; s++) {
+            _table[s] = new double *[_N];
+            _minIndexArray[s] = new int *[_N];
+            _leftKArray[s] = new int *[_N];
+            int k;
+            for (int e=s; e<_N; e++) {
+                k = (e-s+1 < _K ? e-s+1 : _K);
+                _table[s][e] = new double[k]{};
+                _minIndexArray[s][e] = new int[k]{};
+                _leftKArray[s][e] = new int[k]{};
             }
         }
         _boundary.reserve(_K);
         _binaryTree = new binary::Tree();
 
-        int k = 1;
-        for (int i = 0; i < _K; i++) {
-            _kToIdx.emplace (k, i);
-            k++;
-        }
+//        int k = 1;
+//        for (int i = 0; i < _K; i++)
+//            _kToIdx.emplace (k++, i);
 //        std::cout << "_kToIndex.size=" << _kToIdx.size () << "\n";
+
+        _numBins = new int(0);
+        _kTmpIdx = new int(0);
+        _kMinusTmpIdx = new int(0);
     }
 
 
     Detector::~Detector ()
     {
         delete _binaryTree;
-        for (int i = 0; i < _N; i++) {
-            for (int j = 0; j < _N; j++) {
-                delete _table[i][j];
-                delete _minIndexArray[i][j];
-                delete _leftKArray[i][j];
+        for (int s = 0; s < _N; s++) {
+            for (int e = s; e < _N; e++) {
+                delete _table[s][e];
+                delete _minIndexArray[s][e];
+                delete _leftKArray[s][e];
             }
-            delete _table[i];
-            delete _minIndexArray[i];
-            delete _leftKArray[i];
+            delete _table[s];
+            delete _minIndexArray[s];
+            delete _leftKArray[s];
         }
-//        }
         delete _table;
         delete _minIndexArray;
         delete _leftKArray;
+
+        delete _numBins;
+        delete _kTmpIdx;
+        delete _kMinusTmpIdx;
     }
 
 
@@ -64,30 +71,34 @@ namespace binary {
         std::vector<double> sumOfLeaves;
         std::vector<utils::intDoublePair> normLeaves;
 
-
         int index = -1;
         if (_DETERMINE_K) {
+            double entropy;
+
             // determine K
-            for (int num = 2; num < _K + 1; num++) {
-                std::cout << "num=" << num << std::endl;
-                double entropy = _table[0][_N - 1][indexK(num)];
-                std::cout << "_table[0][" << _N - 1 << "][" << num << "]=" << entropy << std::endl;
+            for (int kTmp = 2; kTmp <= _K; kTmp++) {
+                std::cout << "kTmp=" << kTmp << std::endl;
+                indexKtmp(kTmp);
+
+                entropy = _table[0][_N - 1][*_kTmpIdx];
+                printf("_table[0][_N-1][%d]=%f\n", *_kTmpIdx, entropy);
                 sumOfEntropy.emplace_back(entropy);
 
-                backTrace(num);
+                backTrace(kTmp);
                 double leafSum = 0;
+//                int currentS, currentE;
                 for (int leaf = 0; leaf < _boundary.size(); leaf++) {
-                    int currentStart = _boundary[leaf].first;
-                    int currentEnd = _boundary[leaf].second;
-                    leafSum += _data->getSE(currentStart, currentEnd, 2. * _data->_edgeSum);
-                    leafSum += _table[currentStart][currentEnd][indexK(1)];
+//                    currentS = _boundary[leaf].first;
+//                    currentE = _boundary[leaf].second;
+                    leafSum += _data->getSE(_boundary[leaf].first, _boundary[leaf].second, 2.*_data->_edgeSum);
+                    leafSum += _table[_boundary[leaf].first][_boundary[leaf].second][0];
                 }
                 sumOfLeaves.emplace_back(leafSum);
                 //    std::cout << "log2((double)_N / (double)num)=" << log2((double)_N / (double)num) << std::endl;
-                double divisor = log2(_N / (double) num) + (_N * (num - 1) / (double) (num * (_N - 1))) * log2(num);
+                double divisor = log2(_N / (double) kTmp) + (_N * (kTmp - 1) / (double) (kTmp * (_N - 1))) * log2(kTmp);
                 std::cout << "leafSum=" << leafSum << ", divisor=" << divisor << std::endl;
-                normLeaves.emplace_back(num, leafSum / divisor);
-                std::cout << "--------\n";
+                normLeaves.emplace_back(kTmp, leafSum / divisor);
+                std::cout << "========\n\n";
             }
             for (int i = 0; i < normLeaves.size(); i++) {
                 std::cout << normLeaves[i].first << ", " << normLeaves[i].second << std::endl;
@@ -95,28 +106,34 @@ namespace binary {
             sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
             index = normLeaves[0].first;
             std::cout << "k chosen=" << index << std::endl;
+
         } else {
-            int num = _K;
-            std::cout << "num=" << num << std::endl;
-            double entropy = _table[0][_N - 1][indexK(num)];
+
+            int kTmp = _K;
+            std::cout << "kTmp=" << kTmp << std::endl;
+            indexKtmp(kTmp);
+
+            double entropy = _table[0][_N - 1][*_kTmpIdx];
 //            std::cout << "_table[0][" << _N - 1 << "][" << num << "]=" << entropy << std::endl;
             sumOfEntropy.emplace_back(entropy);
 
-            backTrace(num);
+            backTrace(kTmp);
             double leafSum = 0;
+            int currentStart, currentEnd;
             for (int leaf = 0; leaf < _boundary.size(); leaf++) {
-                int currentStart = _boundary[leaf].first;
-                int currentEnd = _boundary[leaf].second;
+                currentStart = _boundary[leaf].first;
+                currentEnd = _boundary[leaf].second;
                 leafSum += _data->getSE(currentStart, currentEnd, 2. * _data->_edgeSum);
-                leafSum += _table[currentStart][currentEnd][indexK(1)];
+                leafSum += _table[currentStart][currentEnd][0];
             }
             sumOfLeaves.emplace_back(leafSum);
             //    std::cout << "log2((double)_N / (double)num)=" << log2((double)_N / (double)num) << std::endl;
-            double divisor = log2(_N / (double) num) + (_N * (num - 1) / (double) (num * (_N - 1))) * log2(num);
+            double divisor = log2(_N / (double) kTmp) + (_N * (kTmp - 1) / (double) (kTmp * (_N - 1))) * log2(kTmp);
             std::cout << "leafSum=" << leafSum << ", divisor=" << divisor << std::endl;
-            normLeaves.emplace_back(num, leafSum / divisor);
-            std::cout << "--------\n";
+            normLeaves.emplace_back(kTmp, leafSum/divisor);
+            std::cout << "========\n\n";
         }
+
         index = normLeaves[0].first;
         backTrace(index, true);
 
@@ -124,6 +141,7 @@ namespace binary {
         _writer.writeTree(_INPUT+".original_boundaries.txt", *_nodeList);
 
         // filtering
+        std::clock_t t = std::clock();
         if (_FILTERING) {
             calculateD (_binaryTree->root());
             calculateDensity(_binaryTree->root());
@@ -134,62 +152,118 @@ namespace binary {
             }
             _writer.writeTree(_INPUT+".filter_boundaries.txt", trueNodes);
         }
+        float time = (float)(std::clock() - t) / CLOCKS_PER_SEC;
+        printf("filtering consumes %fs\n", time);
     }
 
 
     void Detector::fillTable()
     {
 //        str_2_i2dMap map;
-        for (int start = 0; start < _N; start++) {
-            for (int end = start; end < _N; end++) {
-                double currentVol = _data->getVol(start, end);
+        if (_VERBOSE)
+            printf("filling dp table\n");
+
+        // process k=1
+        if (_VERBOSE)
+            printf("filling base cases\n");
+        for (int s = 0; s < _N; s++) {
+            for (int e = s; e < _N; e++) {
+                double currentVol = _data->getVol(s, e);
                 double binSum;
-                if (start == 0) {
-                    binSum = _data->getGtimesLogG(currentVol) - _data->_sumOfGtimesLogG[end];
+                if (s == 0) {
+                    binSum = _data->getGtimesLogG(currentVol) - _data->_sumOfGtimesLogG[e];
                 } else {
-                    binSum = _data->getGtimesLogG(currentVol) - (_data->_sumOfGtimesLogG[end] - _data->_sumOfGtimesLogG[start-1]);
+                    binSum = _data->getGtimesLogG(currentVol) - (_data->_sumOfGtimesLogG[e] - _data->_sumOfGtimesLogG[s - 1]);
                 }
-                _table[start][end][indexK (1)] = binSum / (2. * _data->_edgeSum);
+//                indexK(1);
+//                printf("s=%d, e=%d\t", s, e);
+//                printf("_table[%d][%d][0]=%f\n", s, e, _table[s][e][0]);
+                _table[s][e][0] = binSum / (2. * _data->_edgeSum);
             }
         }
-        std::cout << "finishing filling the basic events in dp_table." << std::endl;
-        for (int k = 2; k < _K + 1; k++) {
-            for (int start = 0; start < _N; start++) {
-                for (int end = start; end < _N; end++) {
-                    double minTmp = std::numeric_limits<double>::infinity ();
-                    int minIdx = 0;
-                    int leftK = 0;
-                    for (int binaryK = 1; binaryK < k; binaryK++)
+        if (_VERBOSE)
+            printf("finish filling base case where k=1, _table[0][%d][0]=%f\n", _N-1, _table[0][_N-1][0]);
+
+        // process k>=2
+        double minSe, seTmp, parentVol;
+        int minIdx, leftK, kIdx;
+        bool breakFlag = false;
+        for (int k = 2; k <= _K; k++) {
+            if (breakFlag)
+                break;
+            indexK(k, kIdx);
+
+            for (int s = 0; s < _N; s++) {
+                if (breakFlag)
+                    break;
+
+                for (int e = s; e < _N; e++) {
+                    if (breakFlag)
+                        break;
+
+                    minSe = std::numeric_limits<double>::infinity();
+                    minIdx = 0;
+                    leftK = 0;
+
+                    // skip cases when #numBins<#numLeves
+                    numBins(s, e);
+                    if (*_numBins < k) {
+//                        if (_VERBOSE)
+//                            printf("s=%d, e=%d, k=%d, #numBins(%d)<#numLeaves(%d); meaningless; skip\n", s, e, k, *_numBins, k);
+                        continue;
+                    }
+
+                    // find min{S(s,i,k_t)+H_l(s,e,i)+S(i+1,e,k-k_t)+H_r(s,e,i)}
+                    for (int kTmp=1; kTmp<k; kTmp++)
                     {
-                        std::string key = std::to_string(start) + "_" + std::to_string(end) + "_" + std::to_string(k) + "_" + std::to_string(binaryK);
+                        indexKtmp(kTmp);
+                        indexK(k-kTmp, *_kMinusTmpIdx);
+
+//                        std::string key = std::to_string(s) + "_" + std::to_string(e) + "_" + std::to_string(k) + "_" + std::to_string(kTmp);
 //                        i2dMap map2;
-                        for (int mid = start; mid < end; mid++)
+                        for (int i=s; i<e; i++)
                         {
-                            double tmp = _table[start][mid][indexK(binaryK)] + _table[mid + 1][end][indexK(k - binaryK)];
-                            double volParent;
-                            volParent = _data->getVol(start, end);
-                            tmp += _data->getSE(start, mid, volParent);
-                            tmp += _data->getSE(mid+1, end, volParent);
-                            if (tmp < minTmp)
+                            if (i-s+1 < kTmp || e-(i+1)+1 < k-kTmp) {
+//                                if (_VERBOSE) {
+//                                    numBins(s, i);
+//                                    printf("s=%d, i=%d, #numBins=%d, kTmp=%d;%s\n",
+//                                        s, i, *_numBins, kTmp, (*_numBins<kTmp?"#numBins<#numLeaves; skip":""));
+//                                    numBins(i+1, e);
+//                                    printf("i+1=%d, e=%d, #numBins=%d, k-kTmp=%d;%s\n",
+//                                        i+1, e, *_numBins, k-kTmp, (*_numBins<k-kTmp?"#numBins<#numLeaves; skip":""));
+//                                }
+                                continue;
+                            }
+
+                            seTmp = _table[s][i][*_kTmpIdx];
+                            seTmp += _table[i+1][e][*_kMinusTmpIdx];
+                            parentVol = _data->getVol(s, e);
+                            seTmp += _data->getSE(s, i, parentVol);
+                            seTmp += _data->getSE(i + 1, e, parentVol);
+                            if (seTmp < minSe)
                             {
-                                minTmp = tmp;
-                                minIdx = mid;
-                                leftK = binaryK;
+                                minSe = seTmp;
+                                minIdx = i;
+                                leftK = kTmp;
                             }
 //                            map2.emplace(mid, tmp);
                         }
 //                        map.emplace(key, map2);
                     }
-                    _minIndexArray[start][end][indexK(k)] = minIdx;
-                    _table[start][end][indexK(k)] = minTmp;
-                    _leftKArray[start][end][indexK(k)] = leftK;
+                    _minIndexArray[s][e][kIdx] = minIdx;
+                    _table[s][e][kIdx] = minSe;
+                    _leftKArray[s][e][kIdx] = leftK;
+
+                    if (k==_K && s==0 && e==_N-1) {
+                        if (_VERBOSE)
+                            printf("already obtain optimal solution for minS(1, %d, %d); stop here\n", _N, _K);
+                        breakFlag=true;
+                    }
                 }
             }
-            std::cout << "Finishing filling upper events where k = " << k << ", " << _table[0][_N - 1][indexK(k)] << std::endl;
+            printf("finishing filling upper events where k=%d, _table[0][%d][%d]=%f\n", k, _N-1, kIdx, _table[0][_N-1][kIdx]);
         }
 //        if (_TMP_PATH_!="") {
-////            Writer::dumpListOfCoordinates(map, _TMP_PATH_+".1");
-////            Writer::writeListOfCoordinates(map, _TMP_PATH_+".2");
 //            Writer::writeListOfCoordinates(map, _TMP_PATH_);
 //        }
     }
@@ -197,10 +271,13 @@ namespace binary {
 
     void Detector::backTrace (int k, bool add)
     {
+        printf("start backtrace\n");
         init();
 
-        binarySplit(0, _N - 1, k, add);
+        binarySplit(0, _N-1, k, add);
+
         _boundary.emplace_back(0, 0);
+
         sort(_boundary.begin(), _boundary.end(), utils::cmpBoundary);
         for (int i = 0; i < _boundary.size(); i++) {
             if (i == _boundary.size() - 1) {
@@ -209,6 +286,7 @@ namespace binary {
                 _boundary[i].second = _boundary[i + 1].first - 1;
             }
         }
+        printf("finish backtrace\n");
     }
 
 
@@ -218,31 +296,39 @@ namespace binary {
     }
 
 
-    void Detector::binarySplit(int start, int end, int k, bool add)
+    void Detector::binarySplit(int s, int e, int k, bool add, int lv)
     {
-        //  std::cout << "----\n";
-        //  std::cout << "k=" << k << std::endl;
-        if (add)
-            _binaryTree->add(start, end, indexK(k));
+        std::string gap = "";
+        for (int i=0; i<lv; i++)
+            gap += " ";
 
-        if (k == 1)
+        printf("%s----binarySplit k=%d----\n", gap.c_str(), k);
+
+        indexKtmp(k);
+
+        if (add) {
+            _binaryTree->add(s, e, *_kTmpIdx);
+        }
+
+        if (k == 1) {
+            printf("%sk==1, return\n\n", gap.c_str());
             return;
+        }
         else {
-//            std::cout << "start=" << start << ", end=" << end << ", k=" << k << std::endl;
-//            printf("_minIndexArray[%d][%d][%d]=%e\n", start, end, k, _minIndexArray[start][end][k]);
-            int midPos = _minIndexArray[start][end][indexK(k)];
-//            int midPos = _minIndexArray[start][end][k];
+            printf("%s_minIndexArray[%d][%d][%d]=%f\n", gap.c_str(), s, e, *_kTmpIdx, _minIndexArray[s][e][*_kTmpIdx]);
+            printf("%s_leftKArray[%d][%d][%d]=%f\n", gap.c_str(), s, e, *_kTmpIdx, _leftKArray[s][e][*_kTmpIdx]);
 
-//            printf("_leftKArray[%d][%d][%d]=%e\n", start, end, k, _leftKArray[start][end][k]);
-            int leftK = _leftKArray[start][end][indexK(k)];
-//            int leftK = _leftKArray[start][end][k];
+            int i = _minIndexArray[s][e][*_kTmpIdx];
 
-//            std::cout << "midPos=" << midPos << ", leftK=" << leftK << std::endl;
-            _boundary.emplace_back(midPos + 1, -1);
-            binarySplit(start, midPos, leftK, add);
+            int kTmp = _leftKArray[s][e][*_kTmpIdx];
 
-//            std::cout << "midPos+1=" << midPos+1 << ", k-leftK=" << k-leftK << std::endl;
-            binarySplit(midPos + 1, end, k - leftK, add);
+            printf("%si=%d, kTmp=%d\n", gap.c_str(), i, kTmp);
+
+            _boundary.emplace_back(i+1, -1);
+
+            binarySplit(s, i, kTmp, add, lv+1);
+
+            binarySplit(i+1, e, k-kTmp, add, lv+1);
         }
     }
 
@@ -448,5 +534,11 @@ namespace binary {
             return false;
 
         return true;
+    }
+
+
+    bool Detector::meaningfulComb(int s, int e, int k)
+    {
+        return e-s+1 >= k;
     }
 }

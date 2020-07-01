@@ -64,7 +64,7 @@ namespace binary {
     
     ~Tree ();
     
-    void add (int start, int end, int k);
+    void add (int &start, int &end, int &k);
     
     std::vector<TreeNode *> &nodeList () { return _nodeList; }
     

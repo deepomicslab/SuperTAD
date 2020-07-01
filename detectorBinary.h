@@ -31,7 +31,10 @@ namespace binary {
         int ***_leftKArray;
         std::vector<std::pair<int, int>> _boundary;
         std::set<binary::TreeNode *> _trueNodeList;
-        std::map<int, int> _kToIdx;
+//        std::map<int, int> _kToIdx;
+        int *_numBins;
+        int *_kTmpIdx;
+        int *_kMinusTmpIdx;
 
     public:
         Detector(Data &data);
@@ -44,11 +47,17 @@ namespace binary {
 
         void fillTable();
 
-        int indexK(int k) { return _kToIdx.find (k)->second; };
+//        int indexK(int k) { return _kToIdx.find(k)->second; };
+        void indexKtmp(int k) { *_kTmpIdx = k - 1; }
+        void indexK(int k, int &kIdx) { kIdx = k - 1; }
+//        int indexK(int k) { return k-1; }
+
+        void numBins(int s, int e) { *_numBins = e - s + 1; }
+//        int numBins(int &s, int &e) { return e-s+1; }
 
         void backTrace(int k, bool add = false);
 
-        void binarySplit(int start, int end, int k, bool add = false);
+        void binarySplit(int s, int e, int k, bool add=false, int lv=0);
 
         void calculateD(binary::TreeNode &node);
 
@@ -67,6 +76,8 @@ namespace binary {
 //        void preSumGlog();
 //
 //        double getGlog(double binG);
+
+        bool meaningfulComb(int s, int e, int k);
     };
 }
 

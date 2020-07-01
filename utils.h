@@ -35,12 +35,12 @@ namespace utils {
     void copyDoubleArray(double from[], double to[], int n);
 
     template<typename T>
-    void print3DArray (T ***array, int n, int m, int w)
+    void print3DArray(T ***array, int n, int m, int w)
     {
         for (int i = 0; i < n; i++) {
-            printf("i=%d\n", i);
-            for (int j = 0; j < m; j++) {
-                for (int k=0; k < w; k++) {
+            printf("----i=%d----\n", i);
+            for (int j=0; j<m; j++) {
+                for (int k=0; k<w; k++) {
                     std::cout << array[i][j][k] << " ";
                 }
                 std::cout << "\n";
@@ -55,6 +55,9 @@ namespace utils {
 //            std::cout << "(" << v.first << ", " << v.second << ")"
 //        }
 //    }
+
+    template<typename T>
+    static void print2Dtable(T **table);
 }
 
 #endif //PROGRAM_UTILS_H

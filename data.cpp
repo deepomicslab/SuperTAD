@@ -63,11 +63,11 @@ void Data::init()
     if (_VERBOSE) {
 //    std::cout << "_edgeCount=" << _edgeCount << std::endl;
         std::cout << "finish calculating edge count(sum); running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";
-        t = std::clock();
-        Writer::dumpMatrix(_edgeCount, _INPUT+".init.txt");
+//        Writer::dumpMatrix(_edgeCount, _INPUT+".init.txt");
     }
 
     // calculate sum of g*log(g)
+    t = std::clock();
     _sumOfGtimesLogG.emplace_back( getGtimesLogG(_edgeCount.coeff(0,0)) );
     for (int i=1; i<_N; i++) {
         _sumOfGtimesLogG.emplace_back( _sumOfGtimesLogG[i-1] + getGtimesLogG(_edgeCount.coeff(i,i)));

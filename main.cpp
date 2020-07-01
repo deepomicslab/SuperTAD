@@ -60,6 +60,7 @@ int main (int argc, char *argv[])
 
         if (std::string(*(argv + i)) == std::string("-v") || std::string(*(argv + i)) == std::string("--verbose")) {
             _VERBOSE = true;
+            setbuf(stdout, NULL);
             std::cout << "print verbose\n";
         }
 

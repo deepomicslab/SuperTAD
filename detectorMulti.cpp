@@ -12,29 +12,29 @@ namespace multi {
         _edgeCount = &data.edgeCount();
 
         int k = 1;
-        for (int i = 0; i < _K; i++) {
+        for (int i = 0; i < _K_; i++) {
             _kToIdx.emplace(k++, i);
         }
-        _boundaries.reserve(_K);
-        _table = new double ****[_N];
-        _minIndexArray = new int ****[_N];
-        _leftKArray = new int ****[_N];
-        for (int i = 0; i < _N; i++) {
-            _table[i] = new double ***[_N];
-            _minIndexArray[i] = new int ***[_N];
-            _leftKArray[i] = new int ***[_N];
-            for (int j = 0; j < _N; j++) {
-                _table[i][j] = new double **[_K];
-                _minIndexArray[i][j] = new int **[_K];
-                _leftKArray[i][j] = new int **[_K];
-                for (int k = 0; k < _K; k++) {
-                    _table[i][j][k] = new double *[_H];
-                    _minIndexArray[i][j][k] = new int *[_H];
-                    _leftKArray[i][j][k] = new int *[_H];
-                    for (int h = 0; h < _H; h++) {
-                        _table[i][j][k][h] = new double[_N]{};
-                        _minIndexArray[i][j][k][h] = new int[_N]{};
-                        _leftKArray[i][j][k][h] = new int[_N]{};
+        _boundaries.reserve(_K_);
+        _table = new double ****[_N_];
+        _minIndexArray = new int ****[_N_];
+        _leftKArray = new int ****[_N_];
+        for (int i = 0; i < _N_; i++) {
+            _table[i] = new double ***[_N_];
+            _minIndexArray[i] = new int ***[_N_];
+            _leftKArray[i] = new int ***[_N_];
+            for (int j = 0; j < _N_; j++) {
+                _table[i][j] = new double **[_K_];
+                _minIndexArray[i][j] = new int **[_K_];
+                _leftKArray[i][j] = new int **[_K_];
+                for (int k = 0; k < _K_; k++) {
+                    _table[i][j][k] = new double *[_H_];
+                    _minIndexArray[i][j][k] = new int *[_H_];
+                    _leftKArray[i][j][k] = new int *[_H_];
+                    for (int h = 0; h < _H_; h++) {
+                        _table[i][j][k][h] = new double[_N_]{};
+                        _minIndexArray[i][j][k][h] = new int[_N_]{};
+                        _leftKArray[i][j][k][h] = new int[_N_]{};
                     }
                 }
             }
@@ -44,10 +44,10 @@ namespace multi {
 
     Detector::~Detector ()
     {
-        for (int i = 0; i < _N; i++) {
-            for (int j = 0; j < _N; j++) {
-                for (int k = 0; k < _K; k++) {
-                    for (int h = 0; h < _H; h++) {
+        for (int i = 0; i < _N_; i++) {
+            for (int j = 0; j < _N_; j++) {
+                for (int k = 0; k < _K_; k++) {
+                    for (int h = 0; h < _H_; h++) {
                         delete _table[i][j][k][h];
                         delete _minIndexArray[i][j][k][h];
                         delete _leftKArray[i][j][k][h];
@@ -82,13 +82,13 @@ namespace multi {
 
 //        std::cout << "_K=" << _K << std::endl;
         int index = -1;
-        if (_DETERMINE_K) {
+        if (_DETERMINE_K_) {
             // determine K
-            for (int num = 2; num < _K + 1; num++) {
+            for (int num = 2; num < _K_ + 1; num++) {
                 printf("--------\nk=%d\n", num);
-                sumOfEntropy.emplace_back(num, _table[0][_N - 1][indexK(num)][_H - 1][_N - 1]);
+                sumOfEntropy.emplace_back(num, _table[0][_N_ - 1][indexK(num)][_H_ - 1][_N_ - 1]);
 
-                backTrace(num, _H);
+                backTrace(num, _H_);
 
                 double leafSum = 0;
                 for (int leaf = 0; leaf < _boundaries.size(); leaf++) {
@@ -100,7 +100,7 @@ namespace multi {
                 }
                 sumOfLeaves.emplace_back(leafSum);
                 double divisor =
-                    log2(_N / (double) num) + (_N * (num - 1) / (double) (num * (_N - 1))) * log2((double) num);
+                    log2(_N_ / (double) num) + (_N_ * (num - 1) / (double) (num * (_N_ - 1))) * log2((double) num);
                 normLeaves.emplace_back(num, leafSum / divisor);
             }
             printf("sumOfEntropy:\n");
@@ -111,7 +111,7 @@ namespace multi {
             for (int i=0; i<normLeaves.size(); i++)
                 printf("(%d, %f)\n", normLeaves[i].first, normLeaves[i].second);
 
-            if (_H == 1 || _H == 2) {
+            if (_H_ == 1 || _H_ == 2) {
                 sort(sumOfEntropy.begin(), sumOfEntropy.end(), utils::cmpIntDoublePairBySecond);
                 index = sumOfEntropy[0].first;
             }
@@ -121,10 +121,10 @@ namespace multi {
             }
             std::cout << "k chosen=" << index << std::endl;
         } else {
-            int num = _K;
+            int num = _K_;
             printf("--------\nk=%d\n", num);
-            sumOfEntropy.emplace_back(num, _table[0][_N - 1][indexK(num)][_H - 1][_N - 1]);
-            backTrace(num, _H);
+            sumOfEntropy.emplace_back(num, _table[0][_N_ - 1][indexK(num)][_H_ - 1][_N_ - 1]);
+            backTrace(num, _H_);
             double leafSum = 0;
             for (int leaf = 0; leaf < _boundaries.size(); leaf++) {
                 int currentStart = _boundaries[leaf].first;
@@ -135,26 +135,26 @@ namespace multi {
             }
             sumOfLeaves.emplace_back(leafSum);
             double divisor =
-                log2(_N / (double) num) + (_N * (num - 1) / (double) (num * (_N - 1))) * log2((double) num);
+                log2(_N_ / (double) num) + (_N_ * (num - 1) / (double) (num * (_N_ - 1))) * log2((double) num);
             normLeaves.emplace_back(num, leafSum / divisor);
-            index = _K;
+            index = _K_;
         }
 
-        backTrace(index, _H, true);
+        backTrace(index, _H_, true);
 
         _nodeList = &_multiTree.nodeList();
         for (int i = 0; i < _nodeList->size(); i++) {
             std::cout << (*_nodeList)[i]->_val[0] << ", " <<  (*_nodeList)[i]->_val[1] << std::endl;
         }
-        _writer.writeTree(_INPUT+".original_boundaries.txt", *_nodeList);
+        _writer.writeTree(_INPUT_ + ".original_boundaries.txt", *_nodeList);
     }
 
 
     void Detector::fillTable ()
     {
         std::clock_t t = std::clock();
-        for (int start = 0; start < _N; start++) {
-            for (int end = start; end < _N; end++) {
+        for (int start = 0; start < _N_; start++) {
+            for (int end = start; end < _N_; end++) {
                 double currentVolume = _data->getVol(start, end);
                 double binSum;
                 if (start == 0) {
@@ -171,9 +171,9 @@ namespace multi {
 
         t = std::clock();
 //        std::cout << "_K=" << _K << std::endl;
-        for (int cluster = 1; cluster < _K; cluster++) {
-            for (int start = 0; start < _N; start++) {
-                for (int parentEnd = start; parentEnd < _N; parentEnd++) {
+        for (int cluster = 1; cluster < _K_; cluster++) {
+            for (int start = 0; start < _N_; start++) {
+                for (int parentEnd = start; parentEnd < _N_; parentEnd++) {
                     for (int end = start; end < parentEnd + 1; end++) {
                         double parentVol = _data->getVol(start, parentEnd);
                         double minTmp = std::numeric_limits<double>::infinity();
@@ -202,19 +202,19 @@ namespace multi {
                 }
             }
         }
-        for (int cluster = 0; cluster < _K; cluster++) {
-            std::cout << _table[0][_N-1][cluster][0][_N-1] << " ";
+        for (int cluster = 0; cluster < _K_; cluster++) {
+            std::cout << _table[0][_N_ - 1][cluster][0][_N_ - 1] << " ";
         }
         std::cout << "\n";
         t = std::clock() - t;
         std::cout << "part2 spent: " << (float)t/CLOCKS_PER_SEC << "s\n";
 
         t = std::clock();
-        for (int height = 1; height < _H; height++) {
+        for (int height = 1; height < _H_; height++) {
             initH(height);
-            for (int cluster = 2; cluster < _K + 1; cluster++) {
-                for (int start = 0; start < _N; start++) {
-                    for (int parentEnd = start; parentEnd < _N; parentEnd++) {
+            for (int cluster = 2; cluster < _K_ + 1; cluster++) {
+                for (int start = 0; start < _N_; start++) {
+                    for (int parentEnd = start; parentEnd < _N_; parentEnd++) {
                         for (int end = start; end < parentEnd + 1; end++) {
                             double minTmp, currentVol, parentVol;
                             int minIdx, leftK;
@@ -266,9 +266,9 @@ namespace multi {
 
     void Detector::initH(int h)
     {
-        for (int i = 0; i < _N; i++) {
-            for (int j = 0; j < _N; j++) {
-                for (int k = 0; k < _N; k++) {
+        for (int i = 0; i < _N_; i++) {
+            for (int j = 0; j < _N_; j++) {
+                for (int k = 0; k < _N_; k++) {
                     _table[i][j][0][h][k] = std::numeric_limits<double>::infinity();
                 }
             }
@@ -280,13 +280,13 @@ namespace multi {
     {
         initK();
 
-        multiSplit(0, _N-1, k, h-1, _N-1, add);
+        multiSplit(0, _N_ - 1, k, h - 1, _N_ - 1, add);
         _boundaries.emplace_back(0, 0);
         sort(_boundaries.begin(), _boundaries.end(), utils::cmpBoundary);
 
         for (int i = 0; i < _boundaries.size(); i++) {
             if (i == _boundaries.size() - 1) {
-                _boundaries[i].second = _N - 1;
+                _boundaries[i].second = _N_ - 1;
             }
             else {
                 _boundaries[i].second = _boundaries[i + 1].first - 1;

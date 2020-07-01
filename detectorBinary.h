@@ -78,6 +78,10 @@ namespace binary {
 //        double getGlog(double binG);
 
         bool meaningfulComb(int s, int e, int k);
+
+        int iForLastK(int s, int e, int k, int kTmp);
+
+        int indexEnd(int s, int e) { return e-s; }
     };
 }
 

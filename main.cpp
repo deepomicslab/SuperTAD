@@ -34,7 +34,7 @@ int main (int argc, char *argv[])
             <<"****************************************************************************************\n";
         std::cerr << "USAGE: " << argv[0] << " [-option value]\n";
         std::cerr << "OPTIONS:\n";
-        std::cerr << "\t-f <input path>: Input contact matrix file path\n";
+//        std::cerr << "\t-f <input path>: Input contact matrix file path\n";
 //        std::cerr << "\t-w <working directory path>: Working directory path (default current working directory)\n";
         std::cerr << "\t-b: Binary tree version\n";
         std::cerr << "\t-m: Multiple tree version\n";
@@ -46,12 +46,15 @@ int main (int argc, char *argv[])
         return 0;
     }
 
-    int i = 0;
+    _INPUT_ = std::string(*(argv+1));
+    printf("input file path: %s\n", _INPUT_.c_str());
+
+    int i = 2;
     while (i < argc) {
-        if (std::string(*(argv + i)) == std::string("-f")) {
-            _INPUT = std::string (*(argv + ++i));
-            std::cout << "input=" << _INPUT << std::endl;
-        }
+//        if (std::string(*(argv + i)) == std::string("-f")) {
+//            _INPUT_ = std::string (*(argv + ++i));
+//            std::cout << "input=" << _INPUT_ << std::endl;
+//        }
 
 //        if (std::string(*(argv + i)) == std::string("-w")) {
 //            _WORK_DIR = std::string (*(argv + ++i));
@@ -59,75 +62,83 @@ int main (int argc, char *argv[])
 //        }
 
         if (std::string(*(argv + i)) == std::string("-v") || std::string(*(argv + i)) == std::string("--verbose")) {
-            _VERBOSE = true;
+            _VERBOSE_ = true;
             setbuf(stdout, NULL);
             std::cout << "print verbose\n";
         }
 
         if (std::string(*(argv + i)) == std::string("-b")) {
-            _BINARY = true;
+            _BINARY_ = true;
             std::cout << "do binary\n";
         }
 
         if (std::string(*(argv + i)) == std::string("-m")) {
-            _MULTI = true;
+            _MULTI_ = true;
             std::cout << "do multi\n";
         }
 
         if (std::string(*(argv+i)) == std::string("-H")) {
-            _MULTI_H = true;
+            _MULTI_H_ = true;
             std::cout << "do new_multi\n";
         }
 
         if (std::string(*(argv + i)) == std::string("-k")) {
-            _K = atoi(*(argv + ++i));
-            _DETERMINE_K = false;
-            std::cout << "k=" << _K << "\n";
+            _K_ = atoi(*(argv + ++i));
+            _DETERMINE_K_ = false;
+            std::cout << "K=" << _K_ << "\n";
         }
 
         if (std::string(*(argv + i)) == std::string("-h")) {
             int h = atoi(*(argv + ++i));
-            std::cout << "h=" << h << "\n";
-            _H = h;
+            std::cout << "H=" << h << "\n";
+            _H_ = h;
         }
 
         if (std::string(*(argv + i)) == std::string("--filter")) {
             std::string tmp = std::string (*(argv + ++i));
             if (tmp == "true" or  tmp == "True" or tmp == "TRUE") {
-                _FILTERING = true;
-                std::cout << "do filtering\n";
+                _FILTERING_ = true;
+                std::cout << "enable filtering\n";
             }
             else {
-                _FILTERING = false;
-                std::cout << "no filtering\n";
+                _FILTERING_ = false;
+                std::cout << "disable filtering\n";
             }
         }
 
-        if (std::string(*(argv + i)) == std::string("--tmp_path")) {
+        if (std::string(*(argv + i)) == std::string("--tmp-path")) {
             std::string tmp = std::string (*(argv + ++i));
             std::cout << "tmp_path=" << tmp << "\n";
             _TMP_PATH_ = tmp;
         }
 
+        if (std::string(*(argv+i))==std::string("--no-bold")) {
+            _BOLD_ = false;
+            printf("disable bold mode may cause extra execution time\n");
+        }
+
         i++;
     }
 
-    if (_INPUT == "") {
+    if (_DEBUG_)
+        _VERBOSE_ = true;
+
+    if (_INPUT_ == "") {
         std::cerr << "input must be provided\n";
         exit(1);
     }
-    Data data(_INPUT);
+    Data data(_INPUT_);
     data.init();
 
-    if (_BINARY) {
+    if (_BINARY_) {
         binary::Detector db(data);
         db.execute();
     }
-    else if (_MULTI) {
+    else if (_MULTI_) {
         multi::Detector dm(data);
         dm.execute();
     }
-    else if (_MULTI_H) {
+    else if (_MULTI_H_) {
         multi::DetectorH1 dH(data);
         dH.execute();
     }

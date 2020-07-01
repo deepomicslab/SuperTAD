@@ -5,20 +5,24 @@
 #include "params.h"
 
 
-bool _BINARY = false;
-bool _MULTI = false;
-bool _MULTI_H = false;
+bool _BINARY_ = false;
+bool _MULTI_ = false;
+bool _MULTI_H_ = false;
 
-int _K = -999;
-bool _DETERMINE_K = true;
-int _N = -999;
-int _H = 2;
+int _K_ = -999;
+bool _DETERMINE_K_ = true;
+int _N_ = -999;
+int _H_ = 2;
 
-float _THRESHOLD = 1e-6;
+float _THRESHOLD_ = 1e-6;
 //std::string _WORK_DIR = "./";
-std::string _INPUT;
-bool _FILTERING = true;
+std::string _INPUT_;
+bool _FILTERING_ = true;
 
-bool _VERBOSE = false;
+bool _VERBOSE_ = false;
 
 std::string _TMP_PATH_;
+
+bool _BOLD_ = true;
+
+bool _DEBUG_ = false;

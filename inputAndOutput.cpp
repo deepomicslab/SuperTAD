@@ -28,7 +28,7 @@ Reader::Reader(std::string fileName)
 
 int Reader::parse(Eigen::MatrixXd &contactMat, std::string fileName)
 {
-    if (_VERBOSE)
+    if (_VERBOSE_)
         std::cout << "start parsing input\n";
     std::string line;
     double c;
@@ -37,38 +37,45 @@ int Reader::parse(Eigen::MatrixXd &contactMat, std::string fileName)
         fileName = _fileName;
 
     if (!isPathExist (fileName)) {
-        std::cerr << fileName << "not exist\n";
+        printf("input file doesn't exists\n");
         exit (1);
     }
 
-    _infile.open(fileName);
-
-    bool init = false;
-    int count = 0;
-    int pos1 = 0;
-    while (getline (_infile, line)) {
-        std::istringstream iss (line);
-        if (!init) {
-            std::string lineBack = line;
-            std::istringstream issBack (lineBack);
-            while (issBack >> c) {
-                count++;
+    _infile.exceptions ( std::ifstream::badbit );
+    try {
+        _infile.open(fileName);
+        bool init = false;
+        int count = 0;
+        int pos1 = 0;
+        while (getline(_infile, line)) {
+            std::istringstream iss(line);
+            if (!init) {
+                std::string lineBack = line;
+                std::istringstream issBack(lineBack);
+                while (issBack >> c) {
+                    count++;
+                }
+                contactMat.resize(count, count);
+                init = true;
             }
-            contactMat.resize (count, count);
-            init = true;
+            int pos2 = 0;
+            while (iss >> c) {
+                contactMat(pos1, pos2) = c;
+                pos2++;
+            }
+            pos1++;
         }
-        int pos2 = 0;
-        while (iss >> c) {
-            contactMat(pos1, pos2) = c;
-            pos2++;
-        }
-        pos1++;
-    }
-    _infile.close ();
-    if (_VERBOSE)
-        std::cout << "finish parsing input\n";
+        _infile.close();
 
-    return count;
+        if (_VERBOSE_)
+            std::cout << "finish parsing input\n";
+
+        return count;
+
+    } catch (const std::ifstream::failure& e) {
+        printf("exception reading file\n");
+        exit(1);
+    }
 }
 
 
@@ -84,9 +91,9 @@ int Reader::parse(Eigen::MatrixXd &contactMat, std::string fileName)
 
 void Writer::writeTree(std::string filePath, std::vector<binary::TreeNode *> &nodeList)
 {
-    if (_VERBOSE)
+    if (_VERBOSE_)
         std::cout << "start dumping binary tree\n";
-    if (_VERBOSE)
+    if (_VERBOSE_)
         std::cout << "output path is" << filePath << "\n";
     _outfile.open(filePath);
     if (_outfile.is_open()) {
@@ -96,7 +103,7 @@ void Writer::writeTree(std::string filePath, std::vector<binary::TreeNode *> &no
             _outfile << "\n";
         }
         _outfile.close();
-        if (_VERBOSE)
+        if (_VERBOSE_)
             std::cout << "finish dumping binary tree\n";
     } else {
         std::cerr << "cannot open file " << filePath << "\n";
@@ -106,9 +113,9 @@ void Writer::writeTree(std::string filePath, std::vector<binary::TreeNode *> &no
 
 void Writer::writeTree(std::string filePath, std::vector<multi::TreeNode *> &nodeList)
 {
-    if (_VERBOSE)
+    if (_VERBOSE_)
         std::cout << "start dumping multi-nary tree\n"; fflush(stdout);
-    if (_VERBOSE)
+    if (_VERBOSE_)
         std::cout << "output path is " << filePath << "\n"; fflush(stdout);
     _outfile.open(filePath);
     if (_outfile.is_open()) {
@@ -118,7 +125,7 @@ void Writer::writeTree(std::string filePath, std::vector<multi::TreeNode *> &nod
             _outfile << "\n";
         }
         _outfile.close();
-        if (_VERBOSE)
+        if (_VERBOSE_)
             std::cout << "finish dumping multi-nary tree\n"; fflush(stdout);
     } else {
         std::cerr << "cannot open file " << filePath << "\n";

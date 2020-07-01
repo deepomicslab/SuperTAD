@@ -24,7 +24,7 @@ namespace multi {
   
   Tree::Tree ()
   {
-    _root = new TreeNode (0, _N);
+    _root = new TreeNode (0, _N_);
 //    _nodeList.emplace_back (_root);
   }
   

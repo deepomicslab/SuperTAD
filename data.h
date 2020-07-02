@@ -17,6 +17,7 @@
 #include <ctime>
 #include "params.h"
 #include "inputAndOutput.h"
+#include "utils.h"
 
 
 class Data {

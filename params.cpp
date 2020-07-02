@@ -25,4 +25,4 @@ std::string _TMP_PATH_;
 
 bool _BOLD_ = true;
 
-bool _DEBUG_ = false;
+bool _DEBUG_ = true;

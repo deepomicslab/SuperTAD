@@ -14,19 +14,22 @@ namespace binary {
         _table = new double **[_N_];
         _minIndexArray = new int **[_N_];
         _leftKArray = new int **[_N_];
+        _minIndexArrayTrickOld = new int **[_N_];
+        _minIndexArrayTrickNew = new int **[_N_];
         for (int s=0; s < _N_; s++) {
-            _table[s] = new double *[_N_-s];
-            _minIndexArray[s] = new int *[_N_-s];
-            _leftKArray[s] = new int *[_N_-s];
-            int kMax;
+            _table[s] = new double *[_N_];
+            _minIndexArray[s] = new int *[_N_];
+            _leftKArray[s] = new int *[_N_];
+            _minIndexArrayTrickOld[s] = new int *[_N_];
+            _minIndexArrayTrickNew[s] = new int *[_N_];
+            int k;
             for (int e=s; e < _N_; e++) {
-                kMax = (e - s + 1 < _K_ ? e - s + 1 : _K_);
-//                _table[s][e] = new double[k]{};
-//                _minIndexArray[s][e] = new int[k]{};
-//                _leftKArray[s][e] = new int[k]{};
-                _table[s][indexEnd(s,e)] = new double[kMax]{};
-                _minIndexArray[s][indexEnd(s,e)] = new int[kMax]{};
-                _leftKArray[s][indexEnd(s,e)] = new int[kMax]{};
+                k = (e-s+1 < _K_ ? e-s+1 : _K_);
+                _table[s][e] = new double[k]{};
+                _minIndexArray[s][e] = new int[k]{};
+                _leftKArray[s][e] = new int[k]{};
+                _minIndexArrayTrickOld[s][e] = new int[k]{};
+                _minIndexArrayTrickNew[s][e] = new int[k]{};
             }
         }
         _boundary.reserve(_K_);
@@ -39,7 +42,7 @@ namespace binary {
 
         _numBins = new int(0);
         _kTmpIdx = new int(0);
-        _kMinusTmpIdx = new int(0);
+        _kMinusKtmpIdx = new int(0);
     }
 
 
@@ -51,6 +54,8 @@ namespace binary {
                 delete _table[s][e];
                 delete _minIndexArray[s][e];
                 delete _leftKArray[s][e];
+                delete _minIndexArrayTrickOld[s][e];
+                delete _minIndexArrayTrickNew[s][e];
             }
             delete _table[s];
             delete _minIndexArray[s];
@@ -62,7 +67,7 @@ namespace binary {
 
         delete _numBins;
         delete _kTmpIdx;
-        delete _kMinusTmpIdx;
+        delete _kMinusKtmpIdx;
     }
 
 
@@ -162,7 +167,10 @@ namespace binary {
 
     void Detector::fillTable()
     {
+//        // test ***********
 //        str_2_i2dMap map;
+//        // ****************
+
         if (_VERBOSE_)
             printf("filling dp table\n");
 
@@ -178,19 +186,26 @@ namespace binary {
                 } else {
                     binSum = _data->getGtimesLogG(currentVol) - (_data->_sumOfGtimesLogG[e] - _data->_sumOfGtimesLogG[s - 1]);
                 }
-//                _table[s][e][0] = binSum / (2. * _data->_edgeSum);
-                _table[s][indexEnd(s,e)][0] = binSum / (2. * _data->_edgeSum);
+//                indexK(1);
+//                printf("s=%d, e=%d\t", s, e);
+//                printf("_table[%d][%d][0]=%f\n", s, e, _table[s][e][0]);
+                _table[s][e][0] = binSum / (2. * _data->_edgeSum);
             }
         }
         if (_VERBOSE_)
             printf("finish filling base case where k=1, _table[0][%d][0]=%f\n", _N_ - 1, _table[0][_N_ - 1][0]);
 
         // process k>=2
-        double minSe, seTmp, parentVol;
-        int minIdx, leftK, kIdx;
+        int kIdx;
         bool breakFlag = false;
-        int minI[_N_][_N_][_K_];
+
+        int minIforLastK[_N_][_N_][_K_], minI[_N_][_N_][_K_];
+        memset(minIforLastK, -1, _N_*_N_*_K_*sizeof(int));
+
         for (int k = 2; k <= _K_; k++) {
+
+            memset(minI, -1, _N_*_N_*_K_*sizeof(int));
+
             if (breakFlag)
                 break;
             indexK(k, kIdx);
@@ -205,65 +220,109 @@ namespace binary {
 
                     // skip cases when #numBins<#numLeves
                     numBins(s, e);
-
-                    minSe = std::numeric_limits<double>::infinity();
-                    minIdx = 0;
-                    leftK = 0;
-
                     if (*_numBins < k) {
 //                        if (_DEBUG_)
 //                            printf("s=%d, e=%d, k=%d, #numBins(%d)<#numLeaves(%d); meaningless; skip\n", s, e, k, *_numBins, k);
                         continue;
                     }
 
+                    double minSE, se, parentVol, minSEtest, seTest;
+                    int leftI, leftK, leftItest, leftKtest;
+
+                    minSE = std::numeric_limits<double>::infinity();
+                    leftI = 0;
+                    leftK = 0;
+
+                    // debug ******************
+                    minSEtest = std::numeric_limits<double>::infinity();
+                    leftItest = 0;
+                    leftKtest = 0;
+                    // ************************
+
                     /* find min{S(s,i,kTmp)+H_l(s,e,i)+S(i+1,e,k-kTmp)+H_r(s,e,i)}
                      * loop all meaningful comb of i, kTmp
                      */
-                    for (int kTmp=1; kTmp<k; kTmp++)
-                    {
+                    for (int kTmp=1; kTmp<k; kTmp++) {
                         indexKtmp(kTmp);
-                        indexK(k-kTmp, *_kMinusTmpIdx);
+                        indexK(k-kTmp, *_kMinusKtmpIdx);
 
+                        double minSE2 = std::numeric_limits<double>::infinity();
+                        int leftI2 = 0;
+
+//                        // test *******************
 //                        std::string key = std::to_string(s) + "_" + std::to_string(e) + "_" + std::to_string(k) + "_" + std::to_string(kTmp);
 //                        i2dMap map2;
-                        for (int i=s; i<e; i++)
-                        {
-                            if (i-s+1 < kTmp || e-(i+1)+1 < k-kTmp) {
-                                if (_DEBUG_) {
-                                    numBins(s, i);
-                                    printf("s=%d, i=%d, #numBins=%d, kTmp=%d;%s\n",
-                                        s, i, *_numBins, kTmp, (*_numBins<kTmp?"#numBins<#numLeaves; skip":""));
-                                    numBins(i+1, e);
-                                    printf("i+1=%d, e=%d, #numBins=%d, k-kTmp=%d;%s\n",
-                                        i+1, e, *_numBins, k-kTmp, (*_numBins<k-kTmp?"#numBins<#numLeaves; skip":""));
-                                }
+//                        // ************************
+
+                        int endTmp = (minIforLastK[s][e][*_kTmpIdx] == -1 ? e : minIforLastK[s][e][*_kTmpIdx] + 2);
+
+                        for (int i=s; i<endTmp; i++) {
+                            numBins(s, i);
+                            if (*_numBins < kTmp) {
+//                                if (_DEBUG_)
+//                                    printf("s=%d, i=%d, e=%d, #numBins=%d, k=%d, kTmp=%d; skip\n",
+//                                    s, i, e, *_numBins, k, kTmp);
+                                continue;
+                            }
+                            numBins(i+1, e);
+                            if (*_numBins < k-kTmp) {
+//                                if (_DEBUG_) {
+//                                    printf("s=%d, i+1=%d, e=%d, #numBins=%d, k=%d, kTmp=%d, k-kTmp=%d; skip\n",
+//                                           s, i + 1, e, *_numBins, k, kTmp, k - kTmp);
+//                                }
                                 continue;
                             }
 
-//                            seTmp = _table[s][i][*_kTmpIdx];
-//                            seTmp += _table[i+1][e][*_kMinusTmpIdx];
-                            seTmp = _table[s][indexEnd(s,i)][*_kTmpIdx];
-                            seTmp += _table[i+1][indexEnd(i+1,e)][*_kMinusTmpIdx];
-
+                            se = _table[s][i][*_kTmpIdx];
+                            se += _table[i+1][e][*_kMinusKtmpIdx];
                             parentVol = _data->getVol(s, e);
-                            seTmp += _data->getSE(s, i, parentVol);
-                            seTmp += _data->getSE(i + 1, e, parentVol);
-                            if (seTmp < minSe)
-                            {
-                                minSe = seTmp;
-                                minIdx = i;
+                            se += _data->getSE(s, i, parentVol);
+                            se += _data->getSE(i+1, e, parentVol);
+                            if (se < minSE) {
+                                minSE = se;
+                                leftI = i;
                                 leftK = kTmp;
                             }
-//                            map2.emplace(mid, tmp);
+                            if (se < minSE2) {
+                                minSE2 = se;
+                                leftI2 = i;
+                            }
                         }
+
+                        minI[s][e][*_kTmpIdx] = leftI2;
+
+                        // debug *************************
+                        for (int i=s; i<e; i++) {
+                            if (i-s+1 < kTmp || e-(i+1)+1 < k-kTmp)
+                                continue;
+                            seTest = _table[s][i][*_kTmpIdx];
+                            seTest += _table[i + 1][e][*_kMinusKtmpIdx];
+                            parentVol = _data->getVol(s, e);
+                            seTest += _data->getSE(s, i, parentVol);
+                            seTest += _data->getSE(i + 1, e, parentVol);
+                            if (seTest < minSEtest) {
+                                minSEtest = seTest;
+                                leftItest = i;
+                                leftKtest = kTmp;
+                            }
+//                            // test ****************
+//                            map2.emplace(i, se);
+//                            // *********************
+                        }
+//                        // test ****************
 //                        map.emplace(key, map2);
+//                        // *********************
+
+                        if (leftI != leftItest) {
+                            fprintf(stderr,
+                                    "s=%d, e=%d, k=%d, kTmp=%d, endTmp=%d, leftI=%d, leftK=%d, leftItest=%d, leftKtest=%d\n",
+                                    s, e, k, kTmp, endTmp, leftI, leftK, leftItest, leftKtest);
+                        }
+                        // *******************************
                     }
-//                    _minIndexArray[s][e][kIdx] = minIdx;
-//                    _table[s][e][kIdx] = minSe;
-//                    _leftKArray[s][e][kIdx] = leftK;
-                    _minIndexArray[s][indexEnd(s,e)][kIdx] = minIdx;
-                    _table[s][indexEnd(s,e)][kIdx] = minSe;
-                    _leftKArray[s][indexEnd(s,e)][kIdx] = leftK;
+                    _minIndexArray[s][e][kIdx] = leftI;
+                    _table[s][e][kIdx] = minSE;
+                    _leftKArray[s][e][kIdx] = leftK;
 
                     if (k == _K_ && s == 0 && e == _N_ - 1) {
                         if (_VERBOSE_)
@@ -272,12 +331,21 @@ namespace binary {
                     }
                 }
             }
-            printf("finishing filling upper events where k=%d, _table[0][%d][%d]=%f\n", k, _N_ - 1, kIdx, _table[0][_N_ - 1][kIdx]);
+
+            memset(minIforLastK, -1,  _N_*_N_*_K_*sizeof(int));
+            memcpy(minIforLastK, minI, _N_*_N_*_K_*sizeof(int));
+
+            printf("finishing filling upper events where k=%d, _table[0][%d][%d]=%f\n",
+                k, _N_ - 1, kIdx, _table[0][_N_ - 1][kIdx]);
         }
 
+//        // test ************************
 //        if (_TMP_PATH_!="") {
 //            Writer::writeListOfCoordinates(map, _TMP_PATH_);
 //        }
+//        // *****************************
+
+        return;
     }
 
 
@@ -310,11 +378,11 @@ namespace binary {
 
     void Detector::binarySplit(int s, int e, int k, bool add, int lv)
     {
-        std::string gap = "";
-        for (int i=0; i<lv; i++)
-            gap += " ";
+//        std::string gap = "";
+//        for (int i=0; i<lv; i++)
+//            gap += " ";
 
-        printf("%s----binarySplit k=%d----\n", gap.c_str(), k);
+//        printf("%s----binarySplit k=%d----\n", gap.c_str(), k);
 
         indexKtmp(k);
 
@@ -323,18 +391,18 @@ namespace binary {
         }
 
         if (k == 1) {
-            printf("%sk==1, return\n\n", gap.c_str());
+//            printf("%sk==1, return\n\n", gap.c_str());
             return;
         }
         else {
-            printf("%s_minIndexArray[%d][%d][%d]=%f\n", gap.c_str(), s, e, *_kTmpIdx, _minIndexArray[s][e][*_kTmpIdx]);
-            printf("%s_leftKArray[%d][%d][%d]=%f\n", gap.c_str(), s, e, *_kTmpIdx, _leftKArray[s][e][*_kTmpIdx]);
+//            printf("%s_minIndexArray[%d][%d][%d]=%f\n", gap.c_str(), s, e, *_kTmpIdx, _minIndexArray[s][e][*_kTmpIdx]);
+//            printf("%s_leftKArray[%d][%d][%d]=%f\n", gap.c_str(), s, e, *_kTmpIdx, _leftKArray[s][e][*_kTmpIdx]);
 
             int i = _minIndexArray[s][e][*_kTmpIdx];
 
             int kTmp = _leftKArray[s][e][*_kTmpIdx];
 
-            printf("%si=%d, kTmp=%d\n", gap.c_str(), i, kTmp);
+//            printf("%si=%d, kTmp=%d\n", gap.c_str(), i, kTmp);
 
             _boundary.emplace_back(i+1, -1);
 

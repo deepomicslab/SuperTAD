@@ -25,6 +25,8 @@ namespace binary {
         binary::Tree *_binaryTree;
         std::vector<binary::TreeNode *> *_nodeList;
         double ***_table;
+        int ***_minIndexArrayTrickOld;
+        int ***_minIndexArrayTrickNew;
 //        double **_baseTable;
 //        double _gLogSum{};
         int ***_minIndexArray;
@@ -34,7 +36,7 @@ namespace binary {
 //        std::map<int, int> _kToIdx;
         int *_numBins;
         int *_kTmpIdx;
-        int *_kMinusTmpIdx;
+        int *_kMinusKtmpIdx;
 
     public:
         Detector(Data &data);
@@ -49,6 +51,9 @@ namespace binary {
 
 //        int indexK(int k) { return _kToIdx.find(k)->second; };
         void indexKtmp(int k) { *_kTmpIdx = k - 1; }
+
+        void indexKminusKtmp(int k) { *_kMinusKtmpIdx = k - 1; }
+
         void indexK(int k, int &kIdx) { kIdx = k - 1; }
 //        int indexK(int k) { return k-1; }
 

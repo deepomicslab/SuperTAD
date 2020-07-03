@@ -10,26 +10,28 @@ namespace binary {
     Detector::Detector (Data &data)
     {
         _data = &data;
-        _edgeCount = &data.edgeCount ();
+        _edgeCount = &data.edgeCount();
+        _tableSize = 0;
         _table = new double **[_N_];
         _minIndexArray = new int **[_N_];
         _leftKArray = new int **[_N_];
-        _minIndexArrayTrickOld = new int **[_N_];
-        _minIndexArrayTrickNew = new int **[_N_];
+        _minIndexArrayBold = new int **[_N_];
+        _tableSize = 0;
         for (int s=0; s < _N_; s++) {
             _table[s] = new double *[_N_];
             _minIndexArray[s] = new int *[_N_];
             _leftKArray[s] = new int *[_N_];
-            _minIndexArrayTrickOld[s] = new int *[_N_];
-            _minIndexArrayTrickNew[s] = new int *[_N_];
+            _minIndexArrayBold[s] = new int *[_N_];
             int k;
             for (int e=s; e < _N_; e++) {
                 k = (e-s+1 < _K_ ? e-s+1 : _K_);
                 _table[s][e] = new double[k]{};
                 _minIndexArray[s][e] = new int[k]{};
                 _leftKArray[s][e] = new int[k]{};
-                _minIndexArrayTrickOld[s][e] = new int[k]{};
-                _minIndexArrayTrickNew[s][e] = new int[k]{};
+                if (_BOLD_) {
+                    _minIndexArrayBold[s][e] = new int[k]{};
+                    memset(_minIndexArrayBold[s][e], -1, k*sizeof(int));
+                }
             }
         }
         _boundary.reserve(_K_);
@@ -54,8 +56,10 @@ namespace binary {
                 delete _table[s][e];
                 delete _minIndexArray[s][e];
                 delete _leftKArray[s][e];
-                delete _minIndexArrayTrickOld[s][e];
-                delete _minIndexArrayTrickNew[s][e];
+
+                if (_BOLD_) {
+                    delete _minIndexArrayBold[s][e];
+                }
             }
             delete _table[s];
             delete _minIndexArray[s];
@@ -84,28 +88,29 @@ namespace binary {
             double entropy;
 
             // determine K
-            for (int kTmp = 2; kTmp <= _K_; kTmp++) {
-                std::cout << "kTmp=" << kTmp << std::endl;
-                indexKtmp(kTmp);
+            for (int k = 2; k <= _K_; k++) {
+                if (_VERBOSE_)
+                    std::cout << "k=" << k << std::endl;
+                indexKtmp(k);
 
                 entropy = _table[0][_N_ - 1][*_kTmpIdx];
-                printf("_table[0][_N-1][%d]=%f\n", *_kTmpIdx, entropy);
+                if (_VERBOSE_)
+                    printf("min structure entropy=%f\n", entropy);
+//                if (_DEBUG_)
+//                    printf("_table[0][_N-1][%d]=%f\n", *_kTmpIdx, entropy);
                 sumOfEntropy.emplace_back(entropy);
 
-                backTrace(kTmp);
+                backTrace(k);
                 double leafSum = 0;
-//                int currentS, currentE;
                 for (int leaf = 0; leaf < _boundary.size(); leaf++) {
-//                    currentS = _boundary[leaf].first;
-//                    currentE = _boundary[leaf].second;
                     leafSum += _data->getSE(_boundary[leaf].first, _boundary[leaf].second, 2.*_data->_edgeSum);
                     leafSum += _table[_boundary[leaf].first][_boundary[leaf].second][0];
                 }
                 sumOfLeaves.emplace_back(leafSum);
-                //    std::cout << "log2((double)_N / (double)num)=" << log2((double)_N / (double)num) << std::endl;
-                double divisor = log2(_N_ / (double) kTmp) + (_N_ * (kTmp - 1) / (double) (kTmp * (_N_ - 1))) * log2(kTmp);
-                std::cout << "leafSum=" << leafSum << ", divisor=" << divisor << std::endl;
-                normLeaves.emplace_back(kTmp, leafSum / divisor);
+                double divisor = log2(_N_ / (double) k) + (_N_ * (k - 1) / (double) (k * (_N_ - 1))) * log2(k);
+//                if (_DEBUG_)
+//                    std::cout << "leafSum=" << leafSum << ", divisor=" << divisor << std::endl;
+                normLeaves.emplace_back(k, leafSum / divisor);
                 std::cout << "========\n\n";
             }
             for (int i = 0; i < normLeaves.size(); i++) {
@@ -113,16 +118,16 @@ namespace binary {
             }
             sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
             index = normLeaves[0].first;
-            std::cout << "k chosen=" << index << std::endl;
+            std::cout << "chose k=" << index << std::endl;
 
         } else {
 
             int kTmp = _K_;
-            std::cout << "kTmp=" << kTmp << std::endl;
+//            if (_DEBUG_)
+//                std::cout << "kTmp=" << kTmp << std::endl;
             indexKtmp(kTmp);
 
             double entropy = _table[0][_N_ - 1][*_kTmpIdx];
-//            std::cout << "_table[0][" << _N - 1 << "][" << num << "]=" << entropy << std::endl;
             sumOfEntropy.emplace_back(entropy);
 
             backTrace(kTmp);
@@ -135,11 +140,10 @@ namespace binary {
                 leafSum += _table[currentStart][currentEnd][0];
             }
             sumOfLeaves.emplace_back(leafSum);
-            //    std::cout << "log2((double)_N / (double)num)=" << log2((double)_N / (double)num) << std::endl;
             double divisor = log2(_N_ / (double) kTmp) + (_N_ * (kTmp - 1) / (double) (kTmp * (_N_ - 1))) * log2(kTmp);
-            std::cout << "leafSum=" << leafSum << ", divisor=" << divisor << std::endl;
+//            if (_DEBUG_)
+//                std::cout << "leafSum=" << leafSum << ", divisor=" << divisor << std::endl;
             normLeaves.emplace_back(kTmp, leafSum/divisor);
-            std::cout << "========\n\n";
         }
 
         index = normLeaves[0].first;
@@ -186,9 +190,6 @@ namespace binary {
                 } else {
                     binSum = _data->getGtimesLogG(currentVol) - (_data->_sumOfGtimesLogG[e] - _data->_sumOfGtimesLogG[s - 1]);
                 }
-//                indexK(1);
-//                printf("s=%d, e=%d\t", s, e);
-//                printf("_table[%d][%d][0]=%f\n", s, e, _table[s][e][0]);
                 _table[s][e][0] = binSum / (2. * _data->_edgeSum);
             }
         }
@@ -203,8 +204,6 @@ namespace binary {
         memset(minIforLastK, -1, _N_*_N_*_K_*sizeof(int));
 
         for (int k = 2; k <= _K_; k++) {
-
-            memset(minI, -1, _N_*_N_*_K_*sizeof(int));
 
             if (breakFlag)
                 break;
@@ -239,7 +238,8 @@ namespace binary {
                     leftKtest = 0;
                     // ************************
 
-                    /* find min{S(s,i,kTmp)+H_l(s,e,i)+S(i+1,e,k-kTmp)+H_r(s,e,i)}
+                    /*
+                     * find min{S(s,i,kTmp)+H_l(s,e,i)+S(i+1,e,k-kTmp)+H_r(s,e,i)}
                      * loop all meaningful comb of i, kTmp
                      */
                     for (int kTmp=1; kTmp<k; kTmp++) {
@@ -255,21 +255,19 @@ namespace binary {
 //                        // ************************
 
                         int endTmp = (minIforLastK[s][e][*_kTmpIdx] == -1 ? e : minIforLastK[s][e][*_kTmpIdx] + 2);
+//                        int endTmp = (_minIndexArrayBold[s][e][*_kTmpIdx] == -1 ? e : _minIndexArrayBold[s][e][*_kTmpIdx] + 2);
 
                         for (int i=s; i<endTmp; i++) {
                             numBins(s, i);
                             if (*_numBins < kTmp) {
-//                                if (_DEBUG_)
-//                                    printf("s=%d, i=%d, e=%d, #numBins=%d, k=%d, kTmp=%d; skip\n",
+//                                printf("s=%d, i=%d, e=%d, #numBins=%d, k=%d, kTmp=%d; skip\n",
 //                                    s, i, e, *_numBins, k, kTmp);
                                 continue;
                             }
                             numBins(i+1, e);
                             if (*_numBins < k-kTmp) {
-//                                if (_DEBUG_) {
-//                                    printf("s=%d, i+1=%d, e=%d, #numBins=%d, k=%d, kTmp=%d, k-kTmp=%d; skip\n",
-//                                           s, i + 1, e, *_numBins, k, kTmp, k - kTmp);
-//                                }
+//                                printf("s=%d, i+1=%d, e=%d, #numBins=%d, k=%d, kTmp=%d, k-kTmp=%d; skip\n",
+//                                       s, i + 1, e, *_numBins, k, kTmp, k - kTmp);
                                 continue;
                             }
 
@@ -289,7 +287,8 @@ namespace binary {
                             }
                         }
 
-                        minI[s][e][*_kTmpIdx] = leftI2;
+                        minIforLastK[s][e][*_kTmpIdx] = leftI2;
+//                        _minIndexArrayBold[s][e][*_kTmpIdx] = leftI2;
 
                         // debug *************************
                         for (int i=s; i<e; i++) {
@@ -332,11 +331,13 @@ namespace binary {
                 }
             }
 
-            memset(minIforLastK, -1,  _N_*_N_*_K_*sizeof(int));
-            memcpy(minIforLastK, minI, _N_*_N_*_K_*sizeof(int));
+//            memset(minIforLastK, -1,  _N_*_N_*_K_*sizeof(int));
+//            memcpy(minIforLastK, minI, _N_*_N_*_K_*sizeof(int));
 
-            printf("finishing filling upper events where k=%d, _table[0][%d][%d]=%f\n",
-                k, _N_ - 1, kIdx, _table[0][_N_ - 1][kIdx]);
+            if (_VERBOSE_) {
+                printf("finishing filling upper events where k=%d, _table[0][%d][%d]=%f\n",
+                       k, _N_ - 1, kIdx, _table[0][_N_ - 1][kIdx]);
+            }
         }
 
 //        // test ************************
@@ -434,11 +435,8 @@ namespace binary {
             node._info = minusParent (node._D, node);
         }
         else {
-//      std::cout << "node=" << node << std::endl;
-//      std::cout << "node._left=" << *node._left << std::endl;
             int leftStart = node._left->_val[0];
             int leftEnd = node._left->_val[1];
-//      std::cout << "node._right=" << *node._right << std::endl;
             int rightStart = node._right->_val[0];
             int rightEnd = node._right->_val[1];
             int delta = (end - start + 1) * (end - start) * .5;
@@ -450,16 +448,16 @@ namespace binary {
         }
 
         if (node._left != NULL)
-            calculateDensity (*node._left);
+            calculateDensity(*node._left);
         if (node._right != NULL)
-            calculateDensity (*node._right);
+            calculateDensity(*node._right);
     }
 
 
-    double Detector::minusParent (double d, binary::TreeNode &node)
+    double Detector::minusParent(double d, binary::TreeNode &node)
     {
         binary::TreeNode *currentNode = &node;
-        while (!(*currentNode == _binaryTree->root ())) {
+        while (!(*currentNode == _binaryTree->root())) {
             currentNode = currentNode->_parent;
             d -= currentNode->_info;
         }
@@ -467,15 +465,15 @@ namespace binary {
     }
 
 
-    void Detector::filterNodes ()
+    void Detector::filterNodes()
     {
-        Eigen::MatrixXi scoreMat (_nodeList->size (), _nodeList->size ());
-        scoreMat.setZero ();
+        Eigen::MatrixXi scoreMat(_nodeList->size(), _nodeList->size());
+        scoreMat.setZero();
 
         std::vector<std::pair<int, binary::TreeNode *>> nodeList1, nodeList2, trueNodeList;
-        nodeList1.reserve (_nodeList->size () / 2);
-        nodeList2.reserve (_nodeList->size () / 2);
-        trueNodeList.reserve (_nodeList->size () / 2);
+        nodeList1.reserve(_nodeList->size() / 2);
+        nodeList2.reserve(_nodeList->size() / 2);
+        trueNodeList.reserve(_nodeList->size() / 2);
 
         double ab1[2]{};
         double ab2[2]{};
@@ -483,29 +481,24 @@ namespace binary {
         int totalItr = 1000;
         int threshold = 900;
         int time = 0;
-        //  int count = 0;
-        //  int countElse = 0;
         while (time < totalItr) {
-            //    std::cout << "--------\ncount=" << ++count << std::endl;
-            //    std::cout << "--------\ntime=" << time << std::endl;
-            //    std::cout << "--------\ncountElse=" << countElse << std::endl;
-            _trueNodeList.clear ();
+            _trueNodeList.clear();
             double oldAB1[2]{};
             double oldAB2[2]{};
             bool converged = false;
 
             // init filter
             while (true) {
-                nodeList1.clear ();
-                nodeList2.clear ();
-                for (int i = 0; i < _nodeList->size (); i++) {
-                    if (utils::randInt (0, 2) == 0)
-                        nodeList1.emplace_back (i, (*_nodeList)[i]);
+                nodeList1.clear();
+                nodeList2.clear();
+                for (int i = 0; i < _nodeList->size(); i++) {
+                    if (utils::randInt(0, 2) == 0)
+                        nodeList1.emplace_back(i, (*_nodeList)[i]);
                     else
-                        nodeList2.emplace_back (i, (*_nodeList)[i]);
+                        nodeList2.emplace_back(i, (*_nodeList)[i]);
                 }
 
-                if (nodeList1.size () > 1 && nodeList2.size () > 1) {
+                if (nodeList1.size() > 1 && nodeList2.size() > 1) {
                     break;
                 }
             }
@@ -513,18 +506,15 @@ namespace binary {
             int countTmp = 0;
             while (!converged and countTmp < totalItr) {
                 countTmp++;
-                //      std::cout << "countTmp=" << ++countTmp << std::endl;
 
-                utils::copyDoubleArray (ab1, oldAB1, 2);
-                utils::copyDoubleArray (ab2, oldAB2, 2);
+                utils::copyDoubleArray(ab1, oldAB1, 2);
+                utils::copyDoubleArray(ab2, oldAB2, 2);
 
-                if (!simpleLinearRegression (nodeList1, ab1))
+                if (!simpleLinearRegression(nodeList1, ab1))
                     break;
-                //      std::cout << "ab1=(" << ab1[0] << ", " << ab1[1] << ")\n";
 
-                if (!simpleLinearRegression (nodeList2, ab2))
+                if (!simpleLinearRegression(nodeList2, ab2))
                     break;
-                //      std::cout << "ab2=(" << ab2[0] << ", " << ab2[1] << ")\n";
 
                 if (utils::equalDoubleArrays(ab1, oldAB1, 2) && utils::equalDoubleArrays(ab2, oldAB2, 2))
                     converged = true;
@@ -533,8 +523,8 @@ namespace binary {
                     nodeList2.clear();
                     for (int i = 0; i < _nodeList->size(); i++) {
                         binary::TreeNode *nodeTmp = (*_nodeList)[i];
-                        double dist1 = pow(ab1[0] * getX (*nodeTmp) + ab1[1] - nodeTmp->_info, 2);
-                        double dist2 = pow(ab2[0] * getX (*nodeTmp) + ab2[1] - nodeTmp->_info, 2);
+                        double dist1 = pow(ab1[0] * getX(*nodeTmp) + ab1[1] - nodeTmp->_info, 2);
+                        double dist2 = pow(ab2[0] * getX(*nodeTmp) + ab2[1] - nodeTmp->_info, 2);
                         if (dist1 < dist2)
                             nodeList1.emplace_back(i, nodeTmp);
                         else
@@ -553,21 +543,19 @@ namespace binary {
 
             if (abs (ab1[0] - ab2[0]) > .5) {
                 time++;
-                for (int m = 0; m < trueNodeList.size () - 1; m++) {
-                    for (int n = m + 1; n < trueNodeList.size (); n++) {
-                        scoreMat (trueNodeList[m].first, trueNodeList[n].first)++;
+                for (int m = 0; m < trueNodeList.size() - 1; m++) {
+                    for (int n = m + 1; n < trueNodeList.size(); n++) {
+                        scoreMat(trueNodeList[m].first, trueNodeList[n].first)++;
                     }
                 }
             }
-            //    else
-            //      countElse++;
         }
 
-        for (int i = 0; i < _nodeList->size (); i++) {
-            for (int j = i + 1; j < _nodeList->size (); j++) {
-                if (scoreMat.coeff (i, j) > threshold) {
-                    _trueNodeList.emplace ((*_nodeList)[i]);
-                    _trueNodeList.emplace ((*_nodeList)[j]);
+        for (int i = 0; i < _nodeList->size(); i++) {
+            for (int j = i + 1; j < _nodeList->size(); j++) {
+                if (scoreMat.coeff(i, j) > threshold) {
+                    _trueNodeList.emplace((*_nodeList)[i]);
+                    _trueNodeList.emplace((*_nodeList)[j]);
                 }
             }
         }
@@ -575,57 +563,41 @@ namespace binary {
     }
 
 
-    double Detector::getX (binary::TreeNode &node)
+    double Detector::getX(binary::TreeNode &node)
     {
         double size = node._val[1] - node._val[0] + 1;
         return 1. / 3. * (size + 1);
     }
 
 
-    double Detector::getY (binary::TreeNode &node)
+    double Detector::getY(binary::TreeNode &node)
     {
         return node._info;
     }
 
 
-    bool Detector::simpleLinearRegression (std::vector<std::pair<int, binary::TreeNode *>> &nodeList, double ab[])
+    bool Detector::simpleLinearRegression(std::vector<std::pair<int, binary::TreeNode *>> &nodeList, double ab[])
     {
         double sumX = 0;
         double sumY = 0;
-        for (int i = 0; i < nodeList.size (); i++) {
-            //    std::cout << "x=" << getX (*nodeList[i].second);
-            sumX += getX (*nodeList[i].second);
-            //    std::cout << "_D=" << nodeList[i].second->_D << ", y=" << getY (*nodeList[i].second) << std::endl;
-            sumY += getY (*nodeList[i].second);
+        for (int i = 0; i < nodeList.size(); i++) {
+            sumX += getX(*nodeList[i].second);
+            sumY += getY(*nodeList[i].second);
         }
-        double meanX = sumX / nodeList.size ();
-        double meanY = sumY / nodeList.size ();
+        double meanX = sumX / nodeList.size();
+        double meanY = sumY / nodeList.size();
         double covXY = 0;
         double varX = 0;
-        //  std::cout << "meanX=" << meanX << ", meanY=" << meanY << std::endl;
-        for (int i = 0; i < nodeList.size (); i++) {
-            covXY += (getX (*nodeList[i].second) - meanX) * (getY (*nodeList[i].second) - meanY);
-            varX += pow (getX (*nodeList[i].second) - meanX, 2);
+        for (int i = 0; i < nodeList.size(); i++) {
+            covXY += (getX(*nodeList[i].second) - meanX) * (getY(*nodeList[i].second) - meanY);
+            varX += pow (getX(*nodeList[i].second) - meanX, 2);
         }
-        //  std::cout << "covXY=" << covXY << ", varX=" << varX << ", meanY=" << meanY << ", meanX=" << meanX << std::endl;
         ab[0] = covXY / varX;
         ab[1] = meanY - ab[0] * meanX;
         if (std::isnan (ab[0]) || std::isnan (ab[1]))
             return false;
 
         return true;
-    }
-
-
-    bool Detector::meaningfulComb(int s, int e, int k)
-    {
-        return e-s+1 >= k;
-    }
-
-
-    int Detector::iForLastK(int s, int e, int k, int kTmp)
-    {
-//        return _minIndexArray[s][e][];
     }
 
 }

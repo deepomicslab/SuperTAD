@@ -24,9 +24,10 @@ namespace binary {
         Writer _writer;
         binary::Tree *_binaryTree;
         std::vector<binary::TreeNode *> *_nodeList;
+        int _tableSize;
         double ***_table;
-        int ***_minIndexArrayTrickOld;
-        int ***_minIndexArrayTrickNew;
+        int **_sizeTable;
+        int ***_minIndexArrayBold;
 //        double **_baseTable;
 //        double _gLogSum{};
         int ***_minIndexArray;
@@ -77,14 +78,6 @@ namespace binary {
         double getY(binary::TreeNode &node);
 
         bool simpleLinearRegression(std::vector<std::pair<int, binary::TreeNode *>> &nodeList, double ab[]);
-
-//        void preSumGlog();
-//
-//        double getGlog(double binG);
-
-        bool meaningfulComb(int s, int e, int k);
-
-        int iForLastK(int s, int e, int k, int kTmp);
 
         int indexEnd(int s, int e) { return e-s; }
     };

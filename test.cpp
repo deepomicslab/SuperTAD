@@ -12,90 +12,123 @@
 #include "utils.h"
 
 
-int *_n = new int(0);
-
-int indexK1(int k) {
-    return k-1;
-}
-
-void indexK2(int k) {
-    *_n = k-1;
-}
-
-float testIndex1(int n)
-{
-    std::clock_t t = std::clock();
-    for (int i = 0; i < n; i++) {
-        indexK1(i);
-    }
-    t = std::clock() - t;
-    return (float)t/CLOCKS_PER_SEC;
-}
-
-float testIndex2(int n)
-{
-    std::clock_t t = std::clock();
-    for (int i = 0; i < n; i++) {
-        indexK2(i);
-    }
-    return (float) (std::clock() - t)/CLOCKS_PER_SEC;
-}
-
-float testIndex3(int n)
-{
-    std::clock_t t = std::clock();
-    for (int i = 0; i < n; i++) {
-        i-1;
-    }
-    return (float) (std::clock() - t)/CLOCKS_PER_SEC;
-}
-
-void testIndex()
-{
-    int n = 1e+9;
-    float t1, t2, t3;
-    for (int i=0; i<5; i++) {
-        t1 = testIndex1(n);
-        t2 = testIndex2(n);
-        t3 = testIndex3(n);
-        printf("t1=%f, t2=%f, t3=%f\n", t1, t2, t3);
-        std::fflush(stdout);
-    }
-    //    std::clock_t t1 = 0;
-//    std::clock_t t2 = 0;
-//    std::clock_t t3 = 0;
-//    std::clock_t tmp;
-//    for (int k=0; k<10; k++) {
-//        t1 = 0;
-//        t2 = 0;
-//        t3 = 0;
-//        for (int i = 0; i < 1e+7; i++) {
-//            tmp = std::clock();
-//            indexK1(i);
-//            t1 += std::clock() - tmp;
-//
-//            tmp = std::clock();
-//            indexK2(i);
-//            t2 += std::clock() - tmp;
-//
-//            tmp = std::clock();
-//            i - 1;
-//            t3 += std::clock() - tmp;
+int main() {
+    srand(time(0));
+    int n = 10;
+    int count = 0;
+    int r;
+//    double ***array = new double **[n];
+//    for (int i=0; i<n; i++) {
+//        r = rand() % 10 + 1;
+//        array[i] = new double *[r];
+//        for (int j=0; j<r; j++) {
+//            r = (int)rand()%10+1;
+//            array[i][j] = new double [r];
+//            count += r;
 //        }
-//        printf("t1=%f, t2=%f, t3=%f\n", (float) t1 / CLOCKS_PER_SEC, (float) t2 / CLOCKS_PER_SEC,
-//               (float) t3 / CLOCKS_PER_SEC);
+//    }
+//    double **array = new double *[n];
+    int sizes[n];
+    for (int i=0; i<n; i++) {
+        r = rand() % 10 + 1;
+        printf("r=%d\n", r);
+//        array[i] = new double [r]{};
+        sizes[i] = r;
+        count += r;
+    }
+    fflush(stdout);
+    double **array = (double**) malloc(count*sizeof(double));
+    memset(array, -1, sizeof(array));
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<sizes[i]; j++) {
+            printf("%f ", array[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+
+//int *_n = new int(0);
+//
+//int indexK1(int k) {
+//    return k-1;
+//}
+//
+//void indexK2(int k) {
+//    *_n = k-1;
+//}
+//
+//float testIndex1(int n)
+//{
+//    std::clock_t t = std::clock();
+//    for (int i = 0; i < n; i++) {
+//        indexK1(i);
+//    }
+//    t = std::clock() - t;
+//    return (float)t/CLOCKS_PER_SEC;
+//}
+//
+//float testIndex2(int n)
+//{
+//    std::clock_t t = std::clock();
+//    for (int i = 0; i < n; i++) {
+//        indexK2(i);
+//    }
+//    return (float) (std::clock() - t)/CLOCKS_PER_SEC;
+//}
+//
+//float testIndex3(int n)
+//{
+//    std::clock_t t = std::clock();
+//    for (int i = 0; i < n; i++) {
+//        i-1;
+//    }
+//    return (float) (std::clock() - t)/CLOCKS_PER_SEC;
+//}
+//
+//void testIndex()
+//{
+//    int n = 1e+9;
+//    float t1, t2, t3;
+//    for (int i=0; i<5; i++) {
+//        t1 = testIndex1(n);
+//        t2 = testIndex2(n);
+//        t3 = testIndex3(n);
+//        printf("t1=%f, t2=%f, t3=%f\n", t1, t2, t3);
 //        std::fflush(stdout);
 //    }
-}
-
-
-int main()
-{
-    testIndex();
-}
-
-
-
+//    //    std::clock_t t1 = 0;
+////    std::clock_t t2 = 0;
+////    std::clock_t t3 = 0;
+////    std::clock_t tmp;
+////    for (int k=0; k<10; k++) {
+////        t1 = 0;
+////        t2 = 0;
+////        t3 = 0;
+////        for (int i = 0; i < 1e+7; i++) {
+////            tmp = std::clock();
+////            indexK1(i);
+////            t1 += std::clock() - tmp;
+////
+////            tmp = std::clock();
+////            indexK2(i);
+////            t2 += std::clock() - tmp;
+////
+////            tmp = std::clock();
+////            i - 1;
+////            t3 += std::clock() - tmp;
+////        }
+////        printf("t1=%f, t2=%f, t3=%f\n", (float) t1 / CLOCKS_PER_SEC, (float) t2 / CLOCKS_PER_SEC,
+////               (float) t3 / CLOCKS_PER_SEC);
+////        std::fflush(stdout);
+////    }
+//}
+//
+//
+//int main()
+//{
+//    testIndex();
+//}
 
 
 //int n = 10;

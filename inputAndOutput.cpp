@@ -185,7 +185,7 @@ void Writer::writeTreeAsBinList(std::string filePath, std::vector<T *> &nodeList
 
 
 template<class T>
-void Writer::writeTreeAsBedpe(std::string filePath, std::vector<T *> &nodeList, Data *data)
+void Writer::writeTreeAsBedpe(std::string filePath, std::vector<T *> &nodeList)
 {
     FILE *outFile = NULL;
     outFile = std::fopen(filePath.c_str(), "w");

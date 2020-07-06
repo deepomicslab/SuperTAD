@@ -62,7 +62,7 @@ public:
     static void writeTreeAsBinList(std::string filePath, std::vector<T *> &nodeList);
 
     template<class T>
-    static void writeTreeAsBedpe(std::string filePath, std::vector<T *> &nodeList, Data *data=NULL);
+    static void writeTreeAsBedpe(std::string filePath, std::vector<T *> &nodeList);
 
     static void writeBoundaries(std::string filePath, std::vector<utils::boundary> &boundaryList);
 

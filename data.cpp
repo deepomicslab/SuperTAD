@@ -8,8 +8,8 @@
 Data::Data(std::string fileName)
 {
 //    _reader = new Reader(fileName);
-    _reader = new Reader();
-    _N_ = _reader->parseMatrix(_contactMat, _INPUT_);
+//    _N_ = _reader->parseMatrix(_contactMat, _INPUT_);
+    _N_ = Reader::parseMatrix(_contactMat, _INPUT_);
     if (_BOLD_)
         _PENALTY_ = _N_/10;
     std::cout << "#bins=" << _N_ << std::endl;
@@ -22,7 +22,7 @@ Data::Data(std::string fileName)
 
 Data::~Data()
 {
-    delete _reader;
+//    delete _reader;
 }
 
 

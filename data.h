@@ -35,7 +35,7 @@ private:
 
 //    double **** _asymEdgeCount;
 
-    Reader *_reader;
+//    Reader *_reader;
 
 public:
     double _edgeSum;

@@ -28,7 +28,7 @@ extern bool _VERBOSE_;
 extern std::string _TMP_PATH_;
 
 extern bool _BOLD_;
-extern bool _PENALTY_;
+extern int _PENALTY_;
 
 extern bool _DEBUG_;
 

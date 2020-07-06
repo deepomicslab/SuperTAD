@@ -25,13 +25,8 @@ bool _VERBOSE_ = false;
 std::string _TMP_PATH_;
 
 bool _BOLD_ = true;
+int _PENALTY_ = 1;
 
-<<<<<<< Updated upstream
-bool _DEBUG_ = false;
-=======
-<<<<<<< Updated upstream
-bool _DEBUG_ = true;
-=======
 bool _DEBUG_ = false;
 
 // for matrix input
@@ -42,6 +37,3 @@ int64_t _CHROM2_START_ = 1;
 int _RESOLUTION_ = 1;
 
 bool _BEDPE_ = false;
-
->>>>>>> Stashed changes
->>>>>>> Stashed changes

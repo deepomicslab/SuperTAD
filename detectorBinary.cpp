@@ -85,6 +85,9 @@ namespace binary {
 
         int index = -1;
         if (_DETERMINE_K_) {
+            printf("start determine k\n");
+            if (_VERBOSE_)
+                printf("========\n");
             double entropy;
 
             // determine K
@@ -96,8 +99,7 @@ namespace binary {
                 entropy = _table[0][_N_ - 1][*_kTmpIdx];
                 if (_VERBOSE_)
                     printf("min structure entropy=%f\n", entropy);
-//                if (_DEBUG_)
-//                    printf("_table[0][_N-1][%d]=%f\n", *_kTmpIdx, entropy);
+//                printf("_table[0][_N-1][%d]=%f\n", *_kTmpIdx, entropy);
                 sumOfEntropy.emplace_back(entropy);
 
                 backTrace(k);
@@ -108,23 +110,23 @@ namespace binary {
                 }
                 sumOfLeaves.emplace_back(leafSum);
                 double divisor = log2(_N_ / (double) k) + (_N_ * (k - 1) / (double) (k * (_N_ - 1))) * log2(k);
-//                if (_DEBUG_)
-//                    std::cout << "leafSum=" << leafSum << ", divisor=" << divisor << std::endl;
+//                std::cout << "leafSum=" << leafSum << ", divisor=" << divisor << std::endl;
                 normLeaves.emplace_back(k, leafSum / divisor);
-                std::cout << "========\n\n";
+                if (_VERBOSE_)
+                    std::cout << "========\n";
             }
             for (int i = 0; i < normLeaves.size(); i++) {
                 std::cout << normLeaves[i].first << ", " << normLeaves[i].second << std::endl;
             }
             sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
             index = normLeaves[0].first;
-            std::cout << "chose k=" << index << std::endl;
+            printf("chose k=%d\n", index);
+            printf("finish determine k\n");
 
         } else {
 
             int kTmp = _K_;
-//            if (_DEBUG_)
-//                std::cout << "kTmp=" << kTmp << std::endl;
+//            std::cout << "kTmp=" << kTmp << std::endl;
             indexKtmp(kTmp);
 
             double entropy = _table[0][_N_ - 1][*_kTmpIdx];
@@ -141,20 +143,21 @@ namespace binary {
             }
             sumOfLeaves.emplace_back(leafSum);
             double divisor = log2(_N_ / (double) kTmp) + (_N_ * (kTmp - 1) / (double) (kTmp * (_N_ - 1))) * log2(kTmp);
-//            if (_DEBUG_)
-//                std::cout << "leafSum=" << leafSum << ", divisor=" << divisor << std::endl;
+//            std::cout << "leafSum=" << leafSum << ", divisor=" << divisor << std::endl;
             normLeaves.emplace_back(kTmp, leafSum/divisor);
         }
 
         index = normLeaves[0].first;
+        printf("obtain optimal structure\n");
         backTrace(index, true);
 
         _nodeList = &_binaryTree->nodeList();
         _writer.writeTree(_INPUT_ + ".original_boundaries.txt", *_nodeList);
 
         // filtering
-        std::clock_t t = std::clock();
         if (_FILTERING_) {
+            printf("start filtering\n");
+            std::clock_t t = std::clock();
             calculateD (_binaryTree->root());
             calculateDensity(_binaryTree->root());
             filterNodes();
@@ -163,9 +166,10 @@ namespace binary {
                 trueNodes.emplace_back((*it));
             }
             _writer.writeTree(_INPUT_ + ".filter_boundaries.txt", trueNodes);
+            float time = (float)(std::clock() - t) / CLOCKS_PER_SEC;
+            printf("filtering consumes %fs\n", time);
         }
-        float time = (float)(std::clock() - t) / CLOCKS_PER_SEC;
-        printf("filtering consumes %fs\n", time);
+
     }
 
 
@@ -200,8 +204,8 @@ namespace binary {
         int kIdx;
         bool breakFlag = false;
 
-        int minIforLastK[_N_][_N_][_K_], minI[_N_][_N_][_K_];
-        memset(minIforLastK, -1, _N_*_N_*_K_*sizeof(int));
+//        int minIforLastK[_N_][_N_][_K_], minI[_N_][_N_][_K_];
+//        memset(minIforLastK, -1, _N_*_N_*_K_*sizeof(int));
 
         for (int k = 2; k <= _K_; k++) {
 
@@ -220,7 +224,6 @@ namespace binary {
                     // skip cases when #numBins<#numLeves
                     numBins(s, e);
                     if (*_numBins < k) {
-//                        if (_DEBUG_)
 //                            printf("s=%d, e=%d, k=%d, #numBins(%d)<#numLeaves(%d); meaningless; skip\n", s, e, k, *_numBins, k);
                         continue;
                     }
@@ -254,8 +257,8 @@ namespace binary {
 //                        i2dMap map2;
 //                        // ************************
 
-                        int endTmp = (minIforLastK[s][e][*_kTmpIdx] == -1 ? e : minIforLastK[s][e][*_kTmpIdx] + 2);
-//                        int endTmp = (_minIndexArrayBold[s][e][*_kTmpIdx] == -1 ? e : _minIndexArrayBold[s][e][*_kTmpIdx] + 2);
+//                        int endTmp = (minIforLastK[s][e][*_kTmpIdx] == -1 ? e : minIforLastK[s][e][*_kTmpIdx] + 2);
+                        int endTmp = (_minIndexArrayBold[s][e][*_kTmpIdx] == -1 ? e : _minIndexArrayBold[s][e][*_kTmpIdx] + 2);
 
                         for (int i=s; i<endTmp; i++) {
                             numBins(s, i);
@@ -287,8 +290,8 @@ namespace binary {
                             }
                         }
 
-                        minIforLastK[s][e][*_kTmpIdx] = leftI2;
-//                        _minIndexArrayBold[s][e][*_kTmpIdx] = leftI2;
+//                        minIforLastK[s][e][*_kTmpIdx] = leftI2;
+                        _minIndexArrayBold[s][e][*_kTmpIdx] = leftI2;
 
                         // debug *************************
                         for (int i=s; i<e; i++) {

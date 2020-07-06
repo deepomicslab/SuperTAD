@@ -58,6 +58,9 @@ namespace utils {
 
     template<typename T>
     static void print2Dtable(T **table);
+
+    std::string license() { return "SuperTAD v1.0"; }
+
 }
 
 #endif //PROGRAM_UTILS_H

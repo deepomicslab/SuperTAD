@@ -7,12 +7,15 @@
 
 Data::Data(std::string fileName)
 {
-    _reader = new Reader(fileName);
-    _N_ = _reader->parse(_contactMat);
+//    _reader = new Reader(fileName);
+    _reader = new Reader();
+    _N_ = _reader->parseMatrix(_contactMat, _INPUT_);
+    if (_BOLD_)
+        _PENALTY_ = _N_/10;
     std::cout << "#bins=" << _N_ << std::endl;
     if (_K_ < 0) {
         _K_ = sqrt(_N_) + 5;
-        std::cout << "k=" << _K_ << "\n";
+        std::cout << "set K=" << _K_ << "\n";
     }
 }
 
@@ -21,6 +24,7 @@ Data::~Data()
 {
     delete _reader;
 }
+
 
 void Data::init()
 {
@@ -63,23 +67,25 @@ void Data::init()
     }
     setEdgeSum();
 
-    if (_DEBUG_) {
-//    std::cout << "_edgeCount=" << _edgeCount << std::endl;
-        std::cout << "finish calculating edge count(sum); running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";
-//        Writer::dumpMatrix(_edgeCount, _INPUT+".init.txt");
-    }
+//    if (_DEBUG_) {
+//        std::cout << "_edgeCount=" << _edgeCount << std::endl;
+//        std::cout << "finish calculating edge count(sum); running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";
+////        Writer::dumpMatrix(_edgeCount, _INPUT+".init.txt");
+//    }
 
     // calculate sum of g*log(g)
     t = std::clock();
-    _sumOfGtimesLogG.emplace_back( getGtimesLogG(_edgeCount.coeff(0,0)) );
+    _sumOfGtimesLogG.emplace_back(getGtimesLogG(_edgeCount.coeff(0,0)) );
     for (int i=1; i < _N_; i++) {
-        _sumOfGtimesLogG.emplace_back( _sumOfGtimesLogG[i-1] + getGtimesLogG(_edgeCount.coeff(i,i)));
+        _sumOfGtimesLogG.emplace_back(_sumOfGtimesLogG[i-1] + getGtimesLogG(_edgeCount.coeff(i,i)));
     }
-    if (_DEBUG_)
-        std::cout << "finish calculating sum of g*log(g); running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";
+//    if (_DEBUG_)
+//        std::cout << "finish calculating sum of g*log(g); running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";
 
     if (_VERBOSE_)
         printf("finish initialization\n");
+    else
+        printf("initialize\n");
 }
 
 

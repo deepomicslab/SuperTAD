@@ -13,39 +13,47 @@
 
 
 int main() {
-    srand(time(0));
-    int n = 10;
-    int count = 0;
-    int r;
-//    double ***array = new double **[n];
+    std::string str = "data/sub_chr6_200_KR100kb_matrix.txt.filter_boundaries.txt";
+    int pos = str.rfind("/");
+    std::cout << "substr: " << str.substr(0, pos) << std::endl;
+    std::cout << "substr: " << str.substr(pos+1) << std::endl;
+}
+
+
+//int main() {
+//    srand(time(0));
+//    int n = 10;
+//    int count = 0;
+//    int r;
+////    double ***array = new double **[n];
+////    for (int i=0; i<n; i++) {
+////        r = rand() % 10 + 1;
+////        array[i] = new double *[r];
+////        for (int j=0; j<r; j++) {
+////            r = (int)rand()%10+1;
+////            array[i][j] = new double [r];
+////            count += r;
+////        }
+////    }
+////    double **array = new double *[n];
+//    int sizes[n];
 //    for (int i=0; i<n; i++) {
 //        r = rand() % 10 + 1;
-//        array[i] = new double *[r];
-//        for (int j=0; j<r; j++) {
-//            r = (int)rand()%10+1;
-//            array[i][j] = new double [r];
-//            count += r;
-//        }
+//        printf("r=%d\n", r);
+////        array[i] = new double [r]{};
+//        sizes[i] = r;
+//        count += r;
 //    }
-//    double **array = new double *[n];
-    int sizes[n];
-    for (int i=0; i<n; i++) {
-        r = rand() % 10 + 1;
-        printf("r=%d\n", r);
-//        array[i] = new double [r]{};
-        sizes[i] = r;
-        count += r;
-    }
-    fflush(stdout);
-    double **array = (double**) malloc(count*sizeof(double));
-    memset(array, -1, sizeof(array));
-    for (int i=0; i<n; i++) {
-        for (int j=0; j<sizes[i]; j++) {
-            printf("%f ", array[i][j]);
-        }
-        printf("\n");
-    }
-}
+//    fflush(stdout);
+//    double **array = (double**) malloc(count*sizeof(double));
+//    memset(array, -1, sizeof(array));
+//    for (int i=0; i<n; i++) {
+//        for (int j=0; j<sizes[i]; j++) {
+//            printf("%f ", array[i][j]);
+//        }
+//        printf("\n");
+//    }
+//}
 
 
 //int *_n = new int(0);

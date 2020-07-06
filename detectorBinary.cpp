@@ -123,7 +123,8 @@ namespace binary {
             printf("chose k=%d\n", index);
             printf("finish determine k\n");
 
-        } else {
+        }
+        else {
 
             int kTmp = _K_;
 //            std::cout << "kTmp=" << kTmp << std::endl;
@@ -152,12 +153,21 @@ namespace binary {
         backTrace(index, true);
 
         _nodeList = &_binaryTree->nodeList();
-        _writer.writeTree(_INPUT_ + ".original_boundaries.txt", *_nodeList);
+        _writer.writeTree(_OUTPUT_ + ".original_boundaries", *_nodeList);
 
         // filtering
         if (_FILTERING_) {
+<<<<<<< Updated upstream
             printf("start filtering\n");
             std::clock_t t = std::clock();
+=======
+<<<<<<< Updated upstream
+=======
+            printf("start filtering\n");
+            std::clock_t t = std::clock();
+
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
             calculateD (_binaryTree->root());
             calculateDensity(_binaryTree->root());
             filterNodes();
@@ -165,9 +175,18 @@ namespace binary {
             for (auto it = _trueNodeList.begin(); it != _trueNodeList.end(); it++) {
                 trueNodes.emplace_back((*it));
             }
+<<<<<<< Updated upstream
             _writer.writeTree(_INPUT_ + ".filter_boundaries.txt", trueNodes);
+<<<<<<< Updated upstream
             float time = (float)(std::clock() - t) / CLOCKS_PER_SEC;
             printf("filtering consumes %fs\n", time);
+=======
+=======
+            _writer.writeTree(_OUTPUT_ + ".filter_boundaries", trueNodes);
+            if (_VERBOSE_)
+                printf("filtering consumes %fs\n", (float)(std::clock() - t) / CLOCKS_PER_SEC);
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
         }
 
     }
@@ -207,6 +226,7 @@ namespace binary {
 //        int minIforLastK[_N_][_N_][_K_], minI[_N_][_N_][_K_];
 //        memset(minIforLastK, -1, _N_*_N_*_K_*sizeof(int));
 
+        int maxPenalty = 0;
         for (int k = 2; k <= _K_; k++) {
 
             if (breakFlag)
@@ -224,7 +244,16 @@ namespace binary {
                     // skip cases when #numBins<#numLeves
                     numBins(s, e);
                     if (*_numBins < k) {
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+//                        if (_DEBUG_)
+>>>>>>> Stashed changes
 //                            printf("s=%d, e=%d, k=%d, #numBins(%d)<#numLeaves(%d); meaningless; skip\n", s, e, k, *_numBins, k);
+=======
+                        if (_DEBUG_)
+                            printf("s=%d, e=%d, k=%d, #numBins(%d)<#numLeaves(%d); meaningless; skip\n", s, e, k, *_numBins, k);
+>>>>>>> Stashed changes
                         continue;
                     }
 
@@ -306,6 +335,7 @@ namespace binary {
                                 minSEtest = seTest;
                                 leftItest = i;
                                 leftKtest = kTmp;
+                                maxPenalty = leftItest - leftI > maxPenalty ? leftItest - leftI : maxPenalty;
                             }
 //                            // test ****************
 //                            map2.emplace(i, se);
@@ -342,6 +372,8 @@ namespace binary {
                        k, _N_ - 1, kIdx, _table[0][_N_ - 1][kIdx]);
             }
         }
+
+        fprintf(stderr, "maxPenalty=%d\n", maxPenalty);
 
 //        // test ************************
 //        if (_TMP_PATH_!="") {

@@ -88,7 +88,7 @@ namespace multi {
 
         backTrace();
 
-        _writer.writeBoundaries(_INPUT_ + ".h1.txt", _boundaries);
+        _writer.writeBoundaries(_OUTPUT_ + ".h1.txt", _boundaries);
     }
 
 

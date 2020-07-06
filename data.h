@@ -22,6 +22,11 @@
 
 class Data {
 private:
+    std::string _chrom1;
+    std::string _chrom2;
+    std::map<int, std::pair<int64_t, int64_t>> _chrom1Idx2Interval;
+    std::map<int, std::pair<int64_t, int64_t>> _chrom2Idx2Interval;
+
     Eigen::MatrixXd _contactMat;
 //    bool _sym;
 
@@ -29,21 +34,34 @@ private:
     Eigen::MatrixXd _edgeCount;
 
 //    double **** _asymEdgeCount;
+
     Reader *_reader;
 
 public:
     double _edgeSum;
+
 //    double *_sumOfGtimesLogG;
+
     std::vector<double> _sumOfGtimesLogG;
+
     Data(std::string fileName);
+
     ~Data();
+
 //    void init0();
+
     void init();
+
     Eigen::MatrixXd & edgeCount() { return _edgeCount; }
+
     double getVol(int s, int e);
+
     double getSE(int start, int end, double parentVol);
+
     double getSE(int start, int end, double parentVol, double currentVol);
+
     void setEdgeSum();
+
     double getGtimesLogG(double binG);
 };
 

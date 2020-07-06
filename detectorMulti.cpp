@@ -146,7 +146,7 @@ namespace multi {
         for (int i = 0; i < _nodeList->size(); i++) {
             std::cout << (*_nodeList)[i]->_val[0] << ", " <<  (*_nodeList)[i]->_val[1] << std::endl;
         }
-        _writer.writeTree(_INPUT_ + ".original_boundaries.txt", *_nodeList);
+        _writer.writeTree(_OUTPUT_ + ".original_boundaries", *_nodeList);
     }
 
 

@@ -13,53 +13,70 @@
 #include "detectorH.h"
 
 
-int main (int argc, char *argv[])
+int printUsage(char *argv[], int err)
 {
-    std::clock_t t = std::clock ();
 
+    std::string info;
+    info =  "****************************************************************************************\n";
+    info += "* SuperTAD: [Super]-fast [T]opological [A]ssociating [D]omain package for Hi-C dataset *\n";
+    info += "* version: 1.1                                                                         *\n";
+    info += "* Bug report to mbwang2016@gmail.com                                                   *\n";
+    info += "*                                                                                      *\n";
+    info += "* THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS            *\n";
+    info += "* OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,          *\n";
+    info += "* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE          *\n";
+    info += "* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER               *\n";
+    info += "* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING              *\n";
+    info += "* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER                  *\n";
+    info += "* DEALINGS IN THE SOFTWARE.                                                            *\n";
+    info += "****************************************************************************************\n";
+    info += "USAGE: " + std::string(argv[0]) + " <input-path> [-option value]\n";
+    info += "OPTIONS:\n";
+    info += "\t-w <string>: working directory; If not given, use current input directory)\n";
+    info += "\t-b: binary tree version\n";
+    info += "\t-m: multiple tree version\n";
+    info += "\t-H: multiple version (h1 fast mode)\n";
+    info += "\t-k <int>: number of leaves in candidate coding tree (default NAN)\n";
+    info += "\t-h <int>: hierarchy number (default 2)\n";
+    info += "\t--no-filter: do not filter TADs\n";
+    info += "\t--no-bold: disable bold mode\n";
+    info += "\t--bedpe: write output in BEDPE format\n";
+    info += "\t--chrom1 <string>: chrom1 label\n";
+    info += "\t--chrom2 <string>: chrom2 label (if only chrom1 is given, assume chrom1 and 2 are identical)\n";
+    info += "\t--chrom1-start <int>: start pos on chrom1\n";
+    info += "\t--chrom2-start <int>: start pos on chrom2\n";
+    info += "\t-r/--resolution <int>: resolution\n";
+    info += "\t-v/--verbose: print verbose\n";
+
+    if (err)
+        fprintf(stderr, info.c_str());
+    else
+        fprintf(stdout, info.c_str());
+
+    return 0;
+}
+
+
+int parseArg(int argc, char *argv[])
+{
     if (argc < 2) {
-        std::cerr
-            << "***************************************************************************************\n"
-            <<"* SuperTAD: [Super]-fast [T]opological [A]ssociating [D]omain package for Hi-C dataset *\n"
-            <<"* version: 0.1                                                                         *\n"
-            <<"* Bug report to mbwang2016@gmail.com                                                   *\n"
-            <<"*                                                                                      *\n"
-            <<"* THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS              *\n"
-            <<"* OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,          *\n"
-            <<"* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE          *\n"
-            <<"* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER               *\n"
-            <<"* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING              *\n"
-            <<"* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER                  *\n"
-            <<"* DEALINGS IN THE SOFTWARE.                                                            *\n"
-            <<"****************************************************************************************\n";
-        std::cerr << "USAGE: " << argv[0] << " [-option value]\n";
-        std::cerr << "OPTIONS:\n";
-//        std::cerr << "\t-f <input path>: Input contact matrix file path\n";
-//        std::cerr << "\t-w <working directory path>: Working directory path (default current working directory)\n";
-        std::cerr << "\t-b: Binary tree version\n";
-        std::cerr << "\t-m: Multiple tree version\n";
-        std::cerr << "\t-H: Multiple version (h1 fast mode)\n";
-        std::cerr << "\t-k <int>: Number of leaves in candidate coding tree (default NAN)\n";
-        std::cerr << "\t-h <int>: Hierarchy number (default 2)\n";
-        std::cerr << "\t--filter <true/True/TRUE/false/False/FALSE>: Filter TADs or not (default: true)\n";
-        std::cerr << "\t-v/--verbose: Print verbose\n";
-        return 0;
+        printUsage(argv, 1);
+        return 1;
     }
 
     _INPUT_ = std::string(*(argv+1));
-    printf("input file path: %s\n", _INPUT_.c_str());
+    printf("input path: %s\n", _INPUT_.c_str());
 
     int i = 2;
     while (i < argc) {
-//        if (std::string(*(argv + i)) == std::string("-f")) {
-//            _INPUT_ = std::string (*(argv + ++i));
-//            std::cout << "input=" << _INPUT_ << std::endl;
-//        }
+        if (std::string(*(argv + i)) == std::string("--help")) {
+            printUsage(argv, 0);
+        }
 
-//        if (std::string(*(argv + i)) == std::string("-w")) {
-//            _WORK_DIR = std::string (*(argv + ++i));
-//            std::cout << "work dir:" << _WORK_DIR << std::endl;
-//        }
+        if (std::string(*(argv + i)) == std::string("-w")) {
+            _WORK_DIR_ = std::string (*(argv + ++i));
+            std::cout << "working dir: " << _WORK_DIR_ << std::endl;
+        }
 
         if (std::string(*(argv + i)) == std::string("-v") || std::string(*(argv + i)) == std::string("--verbose")) {
             _VERBOSE_ = true;
@@ -89,44 +106,77 @@ int main (int argc, char *argv[])
         }
 
         if (std::string(*(argv + i)) == std::string("-h")) {
-            int h = atoi(*(argv + ++i));
-            std::cout << "H=" << h << "\n";
-            _H_ = h;
+            _H_ = atoi(*(argv + ++i));
+            std::cout << "H=" << _H_ << "\n";
         }
 
-        if (std::string(*(argv + i)) == std::string("--filter")) {
-            std::string tmp = std::string (*(argv + ++i));
-            if (tmp == "true" or  tmp == "True" or tmp == "TRUE") {
-                _FILTERING_ = true;
-                std::cout << "enable filtering\n";
-            }
-            else {
-                _FILTERING_ = false;
-                std::cout << "disable filtering\n";
-            }
+        if (std::string(*(argv + i)) == std::string("--no-filter")) {
+            _FILTERING_ = false;
+            std::cout << "disable filtering\n";
         }
 
         if (std::string(*(argv + i)) == std::string("--tmp-path")) {
-            std::string tmp = std::string (*(argv + ++i));
+            std::string tmp = std::string(*(argv + ++i));
             std::cout << "tmp_path=" << tmp << "\n";
             _TMP_PATH_ = tmp;
         }
 
         if (std::string(*(argv+i))==std::string("--no-bold")) {
             _BOLD_ = false;
-            printf("disable bold mode may cause extra execution time\n");
+            printf("bold mode is disabled, it may cause extra execution time\n");
+        }
+
+        if (std::string(*(argv+i))==std::string("--bedpe")) {
+            _BEDPE_ = true;
+            printf("output will be written in BEDPE format\n");
+        }
+
+        if (std::string(*(argv + i)) == std::string("--chrom1")) {
+            _CHROM1_ = std::string(*(argv + ++i));
+            _CHROM2_ = _CHROM1_;
+            printf("chrom1 lable is given as: %s", _CHROM1_.c_str());
+        }
+
+        if (std::string(*(argv + i)) == std::string("--chrom2")) {
+            _CHROM2_ = std::string(*(argv + ++i));
+            printf("chrom1 lable is given as: %s", _CHROM1_.c_str());
+        }
+
+        if (std::string(*(argv + i)) == std::string("--chrom1-start")) {
+            _CHROM1_START_ = atoi(*(argv + ++i));
+            printf("starting pos on chrom1: %d", _CHROM1_START_);
+        }
+
+        if (std::string(*(argv + i)) == std::string("--chrom2-start")) {
+            _CHROM2_START_ = atoi(*(argv + ++i));
+            printf("starting pos on chrom2: %d", _CHROM2_START_);
         }
 
         i++;
     }
 
+    if (_WORK_DIR_ == "")
+        _OUTPUT_ = _INPUT_;
+    else {
+        int pos = _INPUT_.rfind("/");
+        _WORK_DIR_ = _INPUT_.substr(0, pos);
+        _OUTPUT_ = _WORK_DIR_ + "/" + _INPUT_.substr(pos + 1);
+    }
+
+    return 0;
+}
+
+
+int main (int argc, char *argv[])
+{
+    std::clock_t t = std::clock();
+
+    if (parseArg(argc, argv))
+        exit(1);
+
     if (_DEBUG_)
         _VERBOSE_ = true;
 
-    if (_INPUT_ == "") {
-        std::cerr << "input must be provided\n";
-        exit(1);
-    }
     Data data(_INPUT_);
     data.init();
 
@@ -142,8 +192,11 @@ int main (int argc, char *argv[])
         multi::DetectorH1 dH(data);
         dH.execute();
     }
+
     t = std::clock() - t;
-    std::cout << "running time: " << (float)t/CLOCKS_PER_SEC << "s\n";
+
+    if (_VERBOSE_)
+        std::cout << "running time: " << (float)t/CLOCKS_PER_SEC << "s\n";
 
     return 0;
 }

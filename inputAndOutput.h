@@ -94,10 +94,10 @@ public:
             fprintf(outFile, "#%s\n", utils::version().c_str());
             int chr1Start, chr1End, chr2Start, chr2End;
             for (int i = 0; i < nodeList.size(); i++) {
-                chr1Start = _CHROM1_START_ + (nodeList[i]->_val[0]-1) * _RESOLUTION_;
-                chr1End =   _CHROM1_START_ + (nodeList[i]->_val[1]-1) * _RESOLUTION_;
-                chr2Start = _CHROM2_START_ + (nodeList[i]->_val[0]-1) * _RESOLUTION_;
-                chr2End =   _CHROM2_START_ + (nodeList[i]->_val[1]-1) * _RESOLUTION_;
+                chr1Start = _CHROM1_START_ + (nodeList[i]->_val[0]) * _RESOLUTION_;
+                chr1End =   _CHROM1_START_ + (nodeList[i]->_val[1]) * _RESOLUTION_;
+                chr2Start = _CHROM2_START_ + (nodeList[i]->_val[0]) * _RESOLUTION_;
+                chr2End =   _CHROM2_START_ + (nodeList[i]->_val[1]) * _RESOLUTION_;
                 fprintf(outFile, "%s\t%d\t%d\t%s\t%d\t%d\tnode%d\n",
                         _CHROM1_.c_str(), chr1Start, chr1End, _CHROM2_.c_str(), chr2Start, chr2End, i+1);
             }

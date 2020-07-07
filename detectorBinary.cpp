@@ -11,17 +11,15 @@ namespace binary {
     {
         _data = &data;
         _edgeCount = &data.edgeCount();
-        _tableSize = 0;
         _table = new double **[_N_];
         _minIndexArray = new int **[_N_];
         _leftKArray = new int **[_N_];
-        _minIndexArrayBold = new int **[_N_];
-        _tableSize = 0;
+        _minIndexTableForBold = new int **[_N_];
         for (int s=0; s < _N_; s++) {
             _table[s] = new double *[_N_];
             _minIndexArray[s] = new int *[_N_];
             _leftKArray[s] = new int *[_N_];
-            _minIndexArrayBold[s] = new int *[_N_];
+            _minIndexTableForBold[s] = new int *[_N_];
             int k;
             for (int e=s; e < _N_; e++) {
                 k = (e-s+1 < _K_ ? e-s+1 : _K_);
@@ -29,8 +27,8 @@ namespace binary {
                 _minIndexArray[s][e] = new int[k]{};
                 _leftKArray[s][e] = new int[k]{};
                 if (_BOLD_) {
-                    _minIndexArrayBold[s][e] = new int[k]{};
-                    memset(_minIndexArrayBold[s][e], -1, k*sizeof(int));
+                    _minIndexTableForBold[s][e] = new int[k]{};
+                    memset(_minIndexTableForBold[s][e], -1, k * sizeof(int));
                 }
             }
         }
@@ -52,7 +50,7 @@ namespace binary {
                 delete _leftKArray[s][e];
 
                 if (_BOLD_) {
-                    delete _minIndexArrayBold[s][e];
+                    delete _minIndexTableForBold[s][e];
                 }
             }
             delete _table[s];
@@ -211,7 +209,6 @@ namespace binary {
                     // skip cases when #numBins<#numLeves
                     numBins(s, e);
                     if (*_numBins < k) {
-//                        printf("s=%d, e=%d, k=%d, #numBins(%d)<#numLeaves(%d); meaningless; skip\n", s, e, k, *_numBins, k);
                         continue;
                     }
 
@@ -233,8 +230,8 @@ namespace binary {
                         double minSE2 = std::numeric_limits<double>::infinity();
                         int leftI2 = 0;
 
-                        int endTmp = (_minIndexArrayBold[s][e][*_kTmpIdx] == -1 ?
-                            e : _minIndexArrayBold[s][e][*_kTmpIdx] + _PENALTY_);
+                        int endTmp = (_minIndexTableForBold[s][e][*_kTmpIdx] == -1 ?
+                                      e : _minIndexTableForBold[s][e][*_kTmpIdx] + _PENALTY_);
                         if (endTmp > e)
                             endTmp = e;
 
@@ -268,7 +265,7 @@ namespace binary {
                             }
                         }
 
-                        _minIndexArrayBold[s][e][*_kTmpIdx] = leftI2;
+                        _minIndexTableForBold[s][e][*_kTmpIdx] = leftI2;
 
                     }
                     _minIndexArray[s][e][kIdx] = leftI;
@@ -322,12 +319,6 @@ namespace binary {
 
     void Detector::binarySplit(int s, int e, int k, bool add, int lv)
     {
-//        std::string gap = "";
-//        for (int i=0; i<lv; i++)
-//            gap += " ";
-
-//        printf("%s----binarySplit k=%d----\n", gap.c_str(), k);
-
         indexKtmp(k);
 
         if (add) {
@@ -335,18 +326,13 @@ namespace binary {
         }
 
         if (k == 1) {
-//            printf("%sk==1, return\n\n", gap.c_str());
             return;
         }
         else {
-//            printf("%s_minIndexArray[%d][%d][%d]=%f\n", gap.c_str(), s, e, *_kTmpIdx, _minIndexArray[s][e][*_kTmpIdx]);
-//            printf("%s_leftKArray[%d][%d][%d]=%f\n", gap.c_str(), s, e, *_kTmpIdx, _leftKArray[s][e][*_kTmpIdx]);
 
             int i = _minIndexArray[s][e][*_kTmpIdx];
 
             int kTmp = _leftKArray[s][e][*_kTmpIdx];
-
-//            printf("%si=%d, kTmp=%d\n", gap.c_str(), i, kTmp);
 
             _boundary.emplace_back(i+1, -1);
 
@@ -475,9 +461,6 @@ namespace binary {
                     }
                 }
             }
-
-//            if (!converged)
-//                continue;
 
             if (ab1[0] < ab2[0])
                 trueNodeList = nodeList1;

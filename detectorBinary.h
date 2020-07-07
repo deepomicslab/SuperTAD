@@ -21,20 +21,16 @@ namespace binary {
     private:
         Data *_data;
         Eigen::MatrixXd *_edgeCount;
-        Writer _writer;
         binary::Tree *_binaryTree;
         std::vector<binary::TreeNode *> *_nodeList;
-        int _tableSize;
         double ***_table;
-        int **_sizeTable;
-        int ***_minIndexArrayBold;
-//        double **_baseTable;
-//        double _gLogSum{};
+        int ***_minIndexTableForBold;
+
         int ***_minIndexArray;
         int ***_leftKArray;
         std::vector<std::pair<int, int>> _boundary;
         std::set<binary::TreeNode *> _trueNodeList;
-//        std::map<int, int> _kToIdx;
+
         int *_numBins;
         int *_kTmpIdx;
         int *_kMinusKtmpIdx;
@@ -50,16 +46,11 @@ namespace binary {
 
         void fillTable();
 
-//        int indexK(int k) { return _kToIdx.find(k)->second; };
         void indexKtmp(int k) { *_kTmpIdx = k - 1; }
 
-        void indexKminusKtmp(int k) { *_kMinusKtmpIdx = k - 1; }
-
         void indexK(int k, int &kIdx) { kIdx = k - 1; }
-//        int indexK(int k) { return k-1; }
 
         void numBins(int s, int e) { *_numBins = e - s + 1; }
-//        int numBins(int &s, int &e) { return e-s+1; }
 
         void backTrace(int k, bool add = false);
 
@@ -79,7 +70,6 @@ namespace binary {
 
         bool simpleLinearRegression(std::vector<std::pair<int, binary::TreeNode *>> &nodeList, double ab[]);
 
-        int indexEnd(int s, int e) { return e-s; }
     };
 }
 

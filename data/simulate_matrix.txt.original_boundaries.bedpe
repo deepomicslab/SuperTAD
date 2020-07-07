@@ -1,12 +1,12 @@
 #chrom1	start1	end1	chrom2	start2	end2	name
 #SuperTAD v1.1
-1	0	34	1	0	34	node1
-1	0	10	1	0	10	node2
-1	11	34	1	11	34	node3
-1	11	23	1	11	23	node4
-1	24	34	1	24	34	node5
-1	35	69	1	35	69	node6
-1	35	47	1	35	47	node7
-1	48	69	1	48	69	node8
-1	48	59	1	48	59	node9
-1	60	69	1	60	69	node10
+1	1	35	1	1	35	node1
+1	1	11	1	1	11	node2
+1	12	35	1	12	35	node3
+1	12	24	1	12	24	node4
+1	25	35	1	25	35	node5
+1	36	70	1	36	70	node6
+1	36	48	1	36	48	node7
+1	49	70	1	49	70	node8
+1	49	60	1	49	60	node9
+1	61	70	1	61	70	node10

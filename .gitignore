@@ -1,6 +1,7 @@
 .idea
 cmake-build-*
 .vscode
+.DS_Store
 data
 test.cpp
 

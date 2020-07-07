@@ -9,7 +9,8 @@ Data::Data(std::string fileName)
 {
     _N_ = Reader::parseMatrix(_contactMat, _INPUT_);
     if (_FAST_) {
-        _PENALTY_ = pow(10, (int)floor(log10(_N_)));
+        if (_PENALTY_<0)
+            _PENALTY_ = pow(10, (int)floor(log10(_N_)));
         printf("fast mode penalty=%d\n", _PENALTY_);
     }
     std::cout << "#bins=" << _N_ << std::endl;

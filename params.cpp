@@ -25,7 +25,7 @@ bool _VERBOSE_ = false;
 std::string _TMP_PATH_;
 
 bool _FAST_ = true;
-int _PENALTY_ = 1;
+int _PENALTY_ = -1;
 
 bool _DEBUG_ = false;
 

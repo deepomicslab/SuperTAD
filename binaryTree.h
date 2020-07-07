@@ -9,7 +9,7 @@
 #include <vector>
 #include <stack>
 #include <iostream>
-
+#include "params.h"
 
 namespace binary {
   

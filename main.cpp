@@ -40,6 +40,8 @@ int printUsage(char *argv[], int err)
     info += "\t-h <int>: hierarchy number (default 2)\n";
     info += "\t--no-filter: do not filter TADs\n";
     info += "\t--no-bold: disable bold mode\n";
+    info += "\t-f/--fast: enable fast mode for binary mode\n";
+    info += "\t--no-fast: disable fast mode for binary mode\n";
     info += "\t--bedpe: write output in BEDPE format\n";
     info += "\t--chrom1 <string>: chrom1 label\n";
     info += "\t--chrom2 <string>: chrom2 label (if only chrom1 is given, assume chrom1 and 2 are identical)\n";
@@ -121,9 +123,14 @@ int parseArg(int argc, char *argv[])
             _TMP_PATH_ = tmp;
         }
 
-        if (std::string(*(argv+i))==std::string("--no-bold")) {
-            _BOLD_ = false;
-            printf("bold mode is disabled, it may cause extra execution time\n");
+        if (std::string(*(argv+i))==std::string("-f") || std::string(*(argv+i))==std::string("--fast")) {
+            _FAST_ = true;
+            printf("fast mode is enabled, it may cause extra execution time\n");
+        }
+
+        if (std::string(*(argv+i))==std::string("--no-fast")) {
+            _FAST_ = false;
+            printf("fast mode is disabled, it may cause extra execution time\n");
         }
 
         if (std::string(*(argv+i))==std::string("--bedpe")) {
@@ -193,10 +200,7 @@ int main (int argc, char *argv[])
         dH.execute();
     }
 
-    t = std::clock() - t;
-
-    if (_VERBOSE_)
-        std::cout << "running time: " << (float)t/CLOCKS_PER_SEC << "s\n";
+    printf("running time: %fs\n", (float)(std::clock() - t)/CLOCKS_PER_SEC);
 
     return 0;
 }

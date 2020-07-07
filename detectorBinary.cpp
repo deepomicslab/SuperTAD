@@ -26,7 +26,7 @@ namespace binary {
                 _table[s][e] = new double[k]{};
                 _minIndexArray[s][e] = new int[k]{};
                 _leftKArray[s][e] = new int[k]{};
-                if (_BOLD_) {
+                if (_FAST_) {
                     _minIndexTableForBold[s][e] = new int[k]{};
                     memset(_minIndexTableForBold[s][e], -1, k * sizeof(int));
                 }
@@ -49,7 +49,7 @@ namespace binary {
                 delete _minIndexArray[s][e];
                 delete _leftKArray[s][e];
 
-                if (_BOLD_) {
+                if (_FAST_) {
                     delete _minIndexTableForBold[s][e];
                 }
             }
@@ -77,9 +77,9 @@ namespace binary {
 
         int index = -1;
         if (_DETERMINE_K_) {
-            printf("start determine k\n");
             if (_VERBOSE_)
-                printf("========\n");
+                printf("start determine k\n========\n");
+
             double entropy;
 
             // determine K
@@ -105,14 +105,14 @@ namespace binary {
                 if (_VERBOSE_)
                     std::cout << "========\n";
             }
-            for (int i = 0; i < normLeaves.size(); i++) {
-                std::cout << normLeaves[i].first << ", " << normLeaves[i].second << std::endl;
-            }
-            sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
-            index = normLeaves[0].first;
-            printf("chose k=%d\n", index);
-            printf("finish determine k\n");
 
+            sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
+//            index = normLeaves[0].first;
+//            printf("chose k=%d\n", index);
+            if (_VERBOSE_)
+                printf("finish determine k\n");
+            else
+                printf("determine k\n");
         }
         else {
 
@@ -137,7 +137,8 @@ namespace binary {
         }
 
         index = normLeaves[0].first;
-        printf("obtain optimal structure\n");
+        printf("obtain optimal structure at k=%d\n", index);
+        fflush(stdout);
         backTrace(index, true);
 
         _nodeList = &_binaryTree->nodeList();
@@ -145,8 +146,13 @@ namespace binary {
 
         // filter
         if (_FILTERING_) {
-            printf("start filtering\n");
-            std::clock_t t = std::clock();
+            std::clock_t tTmp;
+            if (_VERBOSE_) {
+                printf("start filtering\n");
+                tTmp = std::clock();
+            }
+            else
+                printf("filter nodes\n");
 
             calculateD (_binaryTree->root());
             calculateDensity(_binaryTree->root());
@@ -158,8 +164,7 @@ namespace binary {
 
             Writer::writeTree(_OUTPUT_ + ".filter_boundaries", trueNodes);
             if (_VERBOSE_)
-                printf("filtering consumes %fs\n", (float)(std::clock() - t) / CLOCKS_PER_SEC);
-
+                printf("filtering consumes %fs\n", (float)(std::clock() - tTmp) / CLOCKS_PER_SEC);
         }
 
     }
@@ -167,12 +172,16 @@ namespace binary {
 
     void Detector::fillTable()
     {
-        if (_VERBOSE_)
+        std::clock_t t;
+        if (_VERBOSE_) {
             printf("filling dp table\n");
+            t = std::clock();
+        }
 
         // process k=1
         if (_VERBOSE_)
-            printf("filling base cases\n");
+            printf("filling base case\n");
+
         for (int s = 0; s < _N_; s++) {
             for (int e = s; e < _N_; e++) {
                 double currentVol = _data->getVol(s, e);
@@ -185,6 +194,7 @@ namespace binary {
                 _table[s][e][0] = binSum / (2. * _data->_edgeSum);
             }
         }
+
         if (_VERBOSE_)
             printf("finish filling base case where k=1, _table[0][%d][0]=%f\n", _N_ - 1, _table[0][_N_ - 1][0]);
 
@@ -286,13 +296,20 @@ namespace binary {
             }
         }
 
+        if (_VERBOSE_)
+            printf("filling table consumes %fs\n", (float)(std::clock()-t)/CLOCKS_PER_SEC);
+
         return;
     }
 
 
     void Detector::backTrace (int k, bool add)
     {
-        printf("start backtrace\n");
+        if (_VERBOSE_)
+            printf("start backtrace\n");
+        else
+            printf("backtrace k=%d\n", k);
+
         init();
 
         binarySplit(0, _N_ - 1, k, add);
@@ -301,13 +318,13 @@ namespace binary {
 
         sort(_boundary.begin(), _boundary.end(), utils::cmpBoundary);
         for (int i = 0; i < _boundary.size(); i++) {
-            if (i == _boundary.size() - 1) {
+            if (i == _boundary.size() - 1)
                 _boundary[i].second = _N_ - 1;
-            } else {
+            else
                 _boundary[i].second = _boundary[i + 1].first - 1;
-            }
         }
-        printf("finish backtrace\n");
+        if (_VERBOSE_)
+            printf("finish backtrace\n");
     }
 
 
@@ -321,15 +338,12 @@ namespace binary {
     {
         indexKtmp(k);
 
-        if (add) {
+        if (add)
             _binaryTree->add(s, e, *_kTmpIdx);
-        }
 
-        if (k == 1) {
+        if (k == 1)
             return;
-        }
         else {
-
             int i = _minIndexArray[s][e][*_kTmpIdx];
 
             int kTmp = _leftKArray[s][e][*_kTmpIdx];

@@ -33,7 +33,8 @@ OPTIONS:
     -k <int>: number of leaves in candidate coding tree (default NAN)\n
     -h <int>: hierarchy number (default 2)\n
     --no-filter: do not filter TADs\n
-    --no-bold: disable bold mode\n
+    -f/--fast: enable fast mode for binary mode
+    --no-fast: disable fast mode for binary mode
     --bedpe: write output in BEDPE format\n
     --chrom1 <string>: chrom1 label\n
     --chrom2 <string>: chrom2 label (if only chrom1 is given, assume chrom1 and 2 are identical)\n

@@ -28,7 +28,7 @@ namespace multi {
         int **_minIndexArray;
         int **_leftKArray;
         std::map<int, int> _kToIdx;
-        std::vector<utils::boundary> _boundaries;
+        std::vector<boundary> _boundaries;
         int _k;
 
     public:

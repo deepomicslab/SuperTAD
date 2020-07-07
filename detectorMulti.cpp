@@ -76,9 +76,9 @@ namespace multi {
         t = std::clock() - t;
         std::cout << "fillTable took: " << (float)t/CLOCKS_PER_SEC << "s\n";
 
-        std::vector<utils::intDoublePair> sumOfEntropy;
+        std::vector<intDoublePair> sumOfEntropy;
         std::vector<double> sumOfLeaves;
-        std::vector<utils::intDoublePair> normLeaves;
+        std::vector<intDoublePair> normLeaves;
 
 //        std::cout << "_K=" << _K << std::endl;
         int index = -1;

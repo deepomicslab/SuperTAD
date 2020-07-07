@@ -81,7 +81,7 @@ namespace binary {
 
         std::vector<double> sumOfEntropy;
         std::vector<double> sumOfLeaves;
-        std::vector<utils::intDoublePair> normLeaves;
+        std::vector<intDoublePair> normLeaves;
 
         int index = -1;
         if (_DETERMINE_K_) {
@@ -263,7 +263,7 @@ namespace binary {
 //                        // ************************
 
 //                        int endTmp = (minIforLastK[s][e][*_kTmpIdx] == -1 ? e : minIforLastK[s][e][*_kTmpIdx] + 2);
-                        int endTmp = (_minIndexArrayBold[s][e][*_kTmpIdx] == -1 ? e : _minIndexArrayBold[s][e][*_kTmpIdx] + 2);
+                        int endTmp = (_minIndexArrayBold[s][e][*_kTmpIdx] == -1 ? e : _minIndexArrayBold[s][e][*_kTmpIdx] + _PENALTY_);
 
                         for (int i=s; i<endTmp; i++) {
                             numBins(s, i);
@@ -298,7 +298,7 @@ namespace binary {
 //                        minIforLastK[s][e][*_kTmpIdx] = leftI2;
                         _minIndexArrayBold[s][e][*_kTmpIdx] = leftI2;
 
-                        // debug *************************
+                        // test *************************
                         for (int i=s; i<e; i++) {
                             if (i-s+1 < kTmp || e-(i+1)+1 < k-kTmp)
                                 continue;

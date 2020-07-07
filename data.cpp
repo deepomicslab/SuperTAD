@@ -10,8 +10,10 @@ Data::Data(std::string fileName)
 //    _reader = new Reader(fileName);
 //    _N_ = _reader->parseMatrix(_contactMat, _INPUT_);
     _N_ = Reader::parseMatrix(_contactMat, _INPUT_);
-    if (_BOLD_)
-        _PENALTY_ = _N_/10;
+    if (_BOLD_) {
+        _PENALTY_ = 10 * (int)floor(log10(_N_));
+        printf("bold mode penalty=%d\n", _PENALTY_);
+    }
     std::cout << "#bins=" << _N_ << std::endl;
     if (_K_ < 0) {
         _K_ = sqrt(_N_) + 5;

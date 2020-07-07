@@ -64,7 +64,7 @@ public:
     template<class T>
     static void writeTreeAsBedpe(std::string filePath, std::vector<T *> &nodeList);
 
-    static void writeBoundaries(std::string filePath, std::vector<utils::boundary> &boundaryList);
+    static void writeBoundaries(std::string filePath, std::vector<boundary> &boundaryList);
 
     static void dumpMatrix(Eigen::MatrixXd &mat, std::string outPath);
 

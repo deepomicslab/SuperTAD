@@ -216,7 +216,7 @@ void Writer::writeTreeAsBedpe(std::string filePath, std::vector<T *> &nodeList)
 }
 
 
-void Writer::writeBoundaries(std::string filePath, std::vector<utils::boundary> &boundaryList)
+void Writer::writeBoundaries(std::string filePath, std::vector<boundary> &boundaryList)
 {
     std::ofstream file;
     file.open(filePath);
@@ -225,7 +225,7 @@ void Writer::writeBoundaries(std::string filePath, std::vector<utils::boundary> 
         if (_VERBOSE_)
             printf("start writing boundaries into: %s\n", filePath.c_str());
 
-        for (std::vector<utils::boundary>::iterator it=boundaryList.begin(); it!=boundaryList.end(); it++) {
+        for (std::vector<boundary>::iterator it=boundaryList.begin(); it!=boundaryList.end(); it++) {
             for (int i=it->first; i<=it->second; i++)
                 file << i << " ";
             file << "\n";

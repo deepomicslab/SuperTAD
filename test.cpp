@@ -13,11 +13,17 @@
 
 
 int main() {
-    std::string str = "data/sub_chr6_200_KR100kb_matrix.txt.filter_boundaries.txt";
-    int pos = str.rfind("/");
-    std::cout << "substr: " << str.substr(0, pos) << std::endl;
-    std::cout << "substr: " << str.substr(pos+1) << std::endl;
+    std::cout << log10(30010) << std::endl;
+    std::cout << floor(log10(30010)) << std::endl;
 }
+
+
+//int main() {
+//    std::string str = "data/sub_chr6_200_KR100kb_matrix.txt.filter_boundaries.txt";
+//    int pos = str.rfind("/");
+//    std::cout << "substr: " << str.substr(0, pos) << std::endl;
+//    std::cout << "substr: " << str.substr(pos+1) << std::endl;
+//}
 
 
 //int main() {

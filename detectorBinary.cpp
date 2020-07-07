@@ -169,10 +169,6 @@ namespace binary {
 
     void Detector::fillTable()
     {
-//        // test ***********
-//        str_2_i2dMap map;
-//        // ****************
-
         if (_VERBOSE_)
             printf("filling dp table\n");
 
@@ -198,9 +194,6 @@ namespace binary {
         int kIdx;
         bool breakFlag = false;
 
-//        // test ************
-//        int maxPenalty = 0;
-//        // *****************
         for (int k = 2; k <= _K_; k++) {
 
             if (breakFlag)
@@ -223,19 +216,11 @@ namespace binary {
                     }
 
                     double minSE, se, parentVol;
-//                    double minSEtest, seTest;
                     int leftI, leftK;
-//                    int leftItest, leftKtest;
 
                     minSE = std::numeric_limits<double>::infinity();
                     leftI = 0;
                     leftK = 0;
-
-//                    // test ******************
-//                    minSEtest = std::numeric_limits<double>::infinity();
-//                    leftItest = 0;
-//                    leftKtest = 0;
-//                    // ************************
 
                     /*
                      * find min{S(s,i,kTmp)+H_l(s,e,i)+S(i+1,e,k-kTmp)+H_r(s,e,i)}
@@ -248,12 +233,10 @@ namespace binary {
                         double minSE2 = std::numeric_limits<double>::infinity();
                         int leftI2 = 0;
 
-//                        // test *******************
-//                        std::string key = std::to_string(s) + "_" + std::to_string(e) + "_" + std::to_string(k) + "_" + std::to_string(kTmp);
-//                        i2dMap map2;
-//                        // ************************
-
-                        int endTmp = (_minIndexArrayBold[s][e][*_kTmpIdx] == -1 ? e : _minIndexArrayBold[s][e][*_kTmpIdx] + _PENALTY_);
+                        int endTmp = (_minIndexArrayBold[s][e][*_kTmpIdx] == -1 ?
+                            e : _minIndexArrayBold[s][e][*_kTmpIdx] + _PENALTY_);
+                        if (endTmp > e)
+                            endTmp = e;
 
                         for (int i=s; i<endTmp; i++) {
                             numBins(s, i);
@@ -287,35 +270,6 @@ namespace binary {
 
                         _minIndexArrayBold[s][e][*_kTmpIdx] = leftI2;
 
-//                        // test *************************
-//                        for (int i=s; i<e; i++) {
-//                            if (i-s+1 < kTmp || e-(i+1)+1 < k-kTmp)
-//                                continue;
-//                            seTest = _table[s][i][*_kTmpIdx];
-//                            seTest += _table[i + 1][e][*_kMinusKtmpIdx];
-//                            parentVol = _data->getVol(s, e);
-//                            seTest += _data->getSE(s, i, parentVol);
-//                            seTest += _data->getSE(i + 1, e, parentVol);
-//                            if (seTest < minSEtest) {
-//                                minSEtest = seTest;
-//                                leftItest = i;
-//                                leftKtest = kTmp;
-//                                maxPenalty = leftItest - leftI > maxPenalty ? leftItest - leftI : maxPenalty;
-//                            }
-////                            // test ****************
-////                            map2.emplace(i, se);
-////                            // *********************
-//                        }
-////                        // test ****************
-////                        map.emplace(key, map2);
-////                        // *********************
-//
-//                        if (leftI != leftItest) {
-//                            fprintf(stderr,
-//                                    "s=%d, e=%d, k=%d, kTmp=%d, endTmp=%d, leftI=%d, leftK=%d, leftItest=%d, leftKtest=%d\n",
-//                                    s, e, k, kTmp, endTmp, leftI, leftK, leftItest, leftKtest);
-//                        }
-//                        // *******************************
                     }
                     _minIndexArray[s][e][kIdx] = leftI;
                     _table[s][e][kIdx] = minSE;
@@ -334,16 +288,6 @@ namespace binary {
                        k, _N_ - 1, kIdx, _table[0][_N_ - 1][kIdx]);
             }
         }
-
-//        // test ***************************************
-//        fprintf(stderr, "maxPenalty=%d\n", maxPenalty);
-//        // ********************************************
-
-//        // test ************************
-//        if (_TMP_PATH_!="") {
-//            Writer::writeListOfCoordinates(map, _TMP_PATH_);
-//        }
-//        // *****************************
 
         return;
     }

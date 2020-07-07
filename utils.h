@@ -24,11 +24,7 @@ namespace utils {
 
     double randDouble(double low=0., double high=1.);
 
-//    typedef std::pair<int, int> boundary;
-
     inline bool cmpBoundary(const boundary &p1, const boundary &p2) { return p1.first < p2.first; }
-
-//    typedef std::pair<int, double> intDoublePair;
 
     inline bool cmpIntDoublePairBySecond(const intDoublePair &p1, const intDoublePair &p2) { return p1.second < p2.second; }
 
@@ -37,7 +33,19 @@ namespace utils {
     void copyDoubleArray(double from[], double to[], int n);
 
     template<typename T>
-    void print3DArray(T ***array, int n, int m, int w);
+    void print3DArray(T ***array, int n, int m, int w)
+    {
+        for (int i = 0; i < n; i++) {
+            printf("----i=%d----\n", i);
+            for (int j=0; j<m; j++) {
+                for (int k=0; k<w; k++) {
+                    std::cout << array[i][j][k] << " ";
+                }
+                std::cout << "\n";
+            }
+            std::cout << "\n";
+        }
+    }
 
 //    template<typename T, U>
 //    void printPairVec(std::vector<std::pair<T, U> ) {
@@ -47,9 +55,9 @@ namespace utils {
 //    }
 
     template<typename T>
-    static void print2Dtable(T **table);
+    void print2Dtable(T **table);
 
-    std::string license();
+    std::string version();
 
 }
 

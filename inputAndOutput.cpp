@@ -97,123 +97,54 @@ int Reader::parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath)
 //}
 
 
-void Writer::writeTree(std::string filePath, std::vector<binary::TreeNode *> &nodeList)
-{
-    std::ofstream outFile;
-    outFile.open(filePath);
-    if (outFile.is_open()) {
-        if (_VERBOSE_)
-            printf("start writing binary tree into: %s\n", filePath.c_str());
-
-        for (int i = 0; i < nodeList.size(); i++) {
-            for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
-                outFile << std::to_string(j + 1) << " ";
-            outFile << "\n";
-        }
-        outFile.close();
-
-        if (_VERBOSE_)
-            std::cout << "finish writing binary tree\n";
-        else
-            printf("write binary tree into: %s\n", filePath.c_str());
-    }
-    else
-        std::cerr << "cannot open file: " << filePath << "\n";
-}
-
-
-void Writer::writeTree(std::string filePath, std::vector<multi::TreeNode *> &nodeList)
-{
-    std::ofstream outFile;
-    outFile.open(filePath);
-    if (outFile.is_open()) {
-        if (_VERBOSE_)
-            printf("start writing multi-nary tree into %s\n", filePath.c_str());
-
-        for (int i = 0; i < nodeList.size(); i++) {
-            for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
-                outFile << std::to_string(j + 1) << " ";
-            outFile << "\n";
-        }
-        outFile.close();
-
-        if (_VERBOSE_)
-            std::cout << "finish writing multi-nary tree\n";
-        else
-            printf("write tree into: %s\n", filePath.c_str());
-    }
-    else
-        std::cerr << "cannot open file: " << filePath << "\n";
-}
+//void Writer::writeTree(std::string filePath, std::vector<binary::TreeNode *> &nodeList)
+//{
+//    std::ofstream outFile;
+//    outFile.open(filePath);
+//    if (outFile.is_open()) {
+//        if (_VERBOSE_)
+//            printf("start writing binary tree into: %s\n", filePath.c_str());
+//
+//        for (int i = 0; i < nodeList.size(); i++) {
+//            for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
+//                outFile << std::to_string(j + 1) << " ";
+//            outFile << "\n";
+//        }
+//        outFile.close();
+//
+//        if (_VERBOSE_)
+//            std::cout << "finish writing binary tree\n";
+//        else
+//            printf("write binary tree into: %s\n", filePath.c_str());
+//    }
+//    else
+//        std::cerr << "cannot open file: " << filePath << "\n";
+//}
 
 
-template<class T>
-void Writer::writeTree(std::string filePath, std::vector<T *> &nodeList)
-{
-    if (_BEDPE_)
-        writeTreeAsBedpe(filePath+".bedpe", nodeList);
-    else
-        writeTreeAsBinList(filePath+".txt", nodeList);
-}
-
-
-template<class T>
-void Writer::writeTreeAsBinList(std::string filePath, std::vector<T *> &nodeList)
-{
-    std::ofstream outFile;
-    outFile.open(filePath);
-    if (outFile.is_open()) {
-        if (_VERBOSE_)
-            printf("start writing tree into %s\n", filePath.c_str());
-
-        for (int i = 0; i < nodeList.size(); i++) {
-            for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
-                outFile << std::to_string(j + 1) << " ";
-            outFile << "\n";
-        }
-        outFile.close();
-
-        if (_VERBOSE_)
-            std::cout << "finish writing tree\n";
-        else
-            printf("write tree into: %s\n", filePath.c_str());
-    }
-    else {
-        std::cerr << "cannot open file: " << filePath << "\n";
-    }
-}
-
-
-template<class T>
-void Writer::writeTreeAsBedpe(std::string filePath, std::vector<T *> &nodeList)
-{
-    FILE *outFile = NULL;
-    outFile = std::fopen(filePath.c_str(), "w");
-    if (outFile) {
-        if (_VERBOSE_)
-            printf("start writing tree into %s\n", filePath.c_str());
-
-        fprintf(outFile, "#chrom1\tstart1\tend1\tchrom2\tstart2\tend2\tname\n");
-
-        int chr1Start, chr1End, chr2Start, chr2End;
-        for (int i = 0; i < nodeList.size(); i++) {
-            chr1Start = _CHROM1_START_ + (nodeList[i]->_val[0]-1) * _RESOLUTION_;
-            chr1End =   _CHROM1_START_ + (nodeList[i]->_val[1]-1) * _RESOLUTION_;
-            chr2Start = _CHROM2_START_ + (nodeList[i]->_val[0]-1) * _RESOLUTION_;
-            chr2End =   _CHROM2_START_ + (nodeList[i]->_val[1]-1) * _RESOLUTION_;
-            fprintf(outFile, "%s\t%d\t%d\t%s\t%d\t%d\t%node%d\n",
-                _CHROM1_, chr1Start, chr1End, _CHROM2_, chr2Start, chr2End, i);
-        }
-        fclose(outFile);
-
-        if (_VERBOSE_)
-            printf("finish writing tree\n");
-        else
-            printf("write tree into: %s\n", filePath.c_str());
-    }
-    else
-        fprintf(stderr, "cannot open file: %s\n", filePath);
-}
+//void Writer::writeTree(std::string filePath, std::vector<multi::TreeNode *> &nodeList)
+//{
+//    std::ofstream outFile;
+//    outFile.open(filePath);
+//    if (outFile.is_open()) {
+//        if (_VERBOSE_)
+//            printf("start writing multi-nary tree into %s\n", filePath.c_str());
+//
+//        for (int i = 0; i < nodeList.size(); i++) {
+//            for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
+//                outFile << std::to_string(j + 1) << " ";
+//            outFile << "\n";
+//        }
+//        outFile.close();
+//
+//        if (_VERBOSE_)
+//            std::cout << "finish writing multi-nary tree\n";
+//        else
+//            printf("write tree into: %s\n", filePath.c_str());
+//    }
+//    else
+//        std::cerr << "cannot open file: " << filePath << "\n";
+//}
 
 
 void Writer::writeBoundaries(std::string filePath, std::vector<boundary> &boundaryList)

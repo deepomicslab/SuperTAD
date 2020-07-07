@@ -36,12 +36,6 @@ namespace binary {
         }
         _boundary.reserve(_K_);
         _binaryTree = new binary::Tree();
-
-//        int k = 1;
-//        for (int i = 0; i < _K; i++)
-//            _kToIdx.emplace (k++, i);
-//        std::cout << "_kToIndex.size=" << _kToIdx.size () << "\n";
-
         _numBins = new int(0);
         _kTmpIdx = new int(0);
         _kMinusKtmpIdx = new int(0);
@@ -99,7 +93,6 @@ namespace binary {
                 entropy = _table[0][_N_ - 1][*_kTmpIdx];
                 if (_VERBOSE_)
                     printf("min structure entropy=%f\n", entropy);
-//                printf("_table[0][_N-1][%d]=%f\n", *_kTmpIdx, entropy);
                 sumOfEntropy.emplace_back(entropy);
 
                 backTrace(k);
@@ -110,7 +103,6 @@ namespace binary {
                 }
                 sumOfLeaves.emplace_back(leafSum);
                 double divisor = log2(_N_ / (double) k) + (_N_ * (k - 1) / (double) (k * (_N_ - 1))) * log2(k);
-//                std::cout << "leafSum=" << leafSum << ", divisor=" << divisor << std::endl;
                 normLeaves.emplace_back(k, leafSum / divisor);
                 if (_VERBOSE_)
                     std::cout << "========\n";
@@ -127,7 +119,6 @@ namespace binary {
         else {
 
             int kTmp = _K_;
-//            std::cout << "kTmp=" << kTmp << std::endl;
             indexKtmp(kTmp);
 
             double entropy = _table[0][_N_ - 1][*_kTmpIdx];
@@ -144,7 +135,6 @@ namespace binary {
             }
             sumOfLeaves.emplace_back(leafSum);
             double divisor = log2(_N_ / (double) kTmp) + (_N_ * (kTmp - 1) / (double) (kTmp * (_N_ - 1))) * log2(kTmp);
-//            std::cout << "leafSum=" << leafSum << ", divisor=" << divisor << std::endl;
             normLeaves.emplace_back(kTmp, leafSum/divisor);
         }
 
@@ -153,9 +143,9 @@ namespace binary {
         backTrace(index, true);
 
         _nodeList = &_binaryTree->nodeList();
-        _writer.writeTree(_OUTPUT_ + ".original_boundaries", *_nodeList);
+        Writer::writeTree(_OUTPUT_ + ".original_boundaries", *_nodeList);
 
-        // filtering
+        // filter
         if (_FILTERING_) {
             printf("start filtering\n");
             std::clock_t t = std::clock();
@@ -168,7 +158,7 @@ namespace binary {
                 trueNodes.emplace_back((*it));
             }
 
-            _writer.writeTree(_OUTPUT_ + ".filter_boundaries", trueNodes);
+            Writer::writeTree(_OUTPUT_ + ".filter_boundaries", trueNodes);
             if (_VERBOSE_)
                 printf("filtering consumes %fs\n", (float)(std::clock() - t) / CLOCKS_PER_SEC);
 
@@ -208,10 +198,9 @@ namespace binary {
         int kIdx;
         bool breakFlag = false;
 
-//        int minIforLastK[_N_][_N_][_K_], minI[_N_][_N_][_K_];
-//        memset(minIforLastK, -1, _N_*_N_*_K_*sizeof(int));
-
-        int maxPenalty = 0;
+//        // test ************
+//        int maxPenalty = 0;
+//        // *****************
         for (int k = 2; k <= _K_; k++) {
 
             if (breakFlag)
@@ -233,18 +222,20 @@ namespace binary {
                         continue;
                     }
 
-                    double minSE, se, parentVol, minSEtest, seTest;
-                    int leftI, leftK, leftItest, leftKtest;
+                    double minSE, se, parentVol;
+//                    double minSEtest, seTest;
+                    int leftI, leftK;
+//                    int leftItest, leftKtest;
 
                     minSE = std::numeric_limits<double>::infinity();
                     leftI = 0;
                     leftK = 0;
 
-                    // debug ******************
-                    minSEtest = std::numeric_limits<double>::infinity();
-                    leftItest = 0;
-                    leftKtest = 0;
-                    // ************************
+//                    // test ******************
+//                    minSEtest = std::numeric_limits<double>::infinity();
+//                    leftItest = 0;
+//                    leftKtest = 0;
+//                    // ************************
 
                     /*
                      * find min{S(s,i,kTmp)+H_l(s,e,i)+S(i+1,e,k-kTmp)+H_r(s,e,i)}
@@ -262,7 +253,6 @@ namespace binary {
 //                        i2dMap map2;
 //                        // ************************
 
-//                        int endTmp = (minIforLastK[s][e][*_kTmpIdx] == -1 ? e : minIforLastK[s][e][*_kTmpIdx] + 2);
                         int endTmp = (_minIndexArrayBold[s][e][*_kTmpIdx] == -1 ? e : _minIndexArrayBold[s][e][*_kTmpIdx] + _PENALTY_);
 
                         for (int i=s; i<endTmp; i++) {
@@ -295,38 +285,37 @@ namespace binary {
                             }
                         }
 
-//                        minIforLastK[s][e][*_kTmpIdx] = leftI2;
                         _minIndexArrayBold[s][e][*_kTmpIdx] = leftI2;
 
-                        // test *************************
-                        for (int i=s; i<e; i++) {
-                            if (i-s+1 < kTmp || e-(i+1)+1 < k-kTmp)
-                                continue;
-                            seTest = _table[s][i][*_kTmpIdx];
-                            seTest += _table[i + 1][e][*_kMinusKtmpIdx];
-                            parentVol = _data->getVol(s, e);
-                            seTest += _data->getSE(s, i, parentVol);
-                            seTest += _data->getSE(i + 1, e, parentVol);
-                            if (seTest < minSEtest) {
-                                minSEtest = seTest;
-                                leftItest = i;
-                                leftKtest = kTmp;
-                                maxPenalty = leftItest - leftI > maxPenalty ? leftItest - leftI : maxPenalty;
-                            }
-//                            // test ****************
-//                            map2.emplace(i, se);
-//                            // *********************
-                        }
-//                        // test ****************
-//                        map.emplace(key, map2);
-//                        // *********************
-
-                        if (leftI != leftItest) {
-                            fprintf(stderr,
-                                    "s=%d, e=%d, k=%d, kTmp=%d, endTmp=%d, leftI=%d, leftK=%d, leftItest=%d, leftKtest=%d\n",
-                                    s, e, k, kTmp, endTmp, leftI, leftK, leftItest, leftKtest);
-                        }
-                        // *******************************
+//                        // test *************************
+//                        for (int i=s; i<e; i++) {
+//                            if (i-s+1 < kTmp || e-(i+1)+1 < k-kTmp)
+//                                continue;
+//                            seTest = _table[s][i][*_kTmpIdx];
+//                            seTest += _table[i + 1][e][*_kMinusKtmpIdx];
+//                            parentVol = _data->getVol(s, e);
+//                            seTest += _data->getSE(s, i, parentVol);
+//                            seTest += _data->getSE(i + 1, e, parentVol);
+//                            if (seTest < minSEtest) {
+//                                minSEtest = seTest;
+//                                leftItest = i;
+//                                leftKtest = kTmp;
+//                                maxPenalty = leftItest - leftI > maxPenalty ? leftItest - leftI : maxPenalty;
+//                            }
+////                            // test ****************
+////                            map2.emplace(i, se);
+////                            // *********************
+//                        }
+////                        // test ****************
+////                        map.emplace(key, map2);
+////                        // *********************
+//
+//                        if (leftI != leftItest) {
+//                            fprintf(stderr,
+//                                    "s=%d, e=%d, k=%d, kTmp=%d, endTmp=%d, leftI=%d, leftK=%d, leftItest=%d, leftKtest=%d\n",
+//                                    s, e, k, kTmp, endTmp, leftI, leftK, leftItest, leftKtest);
+//                        }
+//                        // *******************************
                     }
                     _minIndexArray[s][e][kIdx] = leftI;
                     _table[s][e][kIdx] = minSE;
@@ -340,16 +329,15 @@ namespace binary {
                 }
             }
 
-//            memset(minIforLastK, -1,  _N_*_N_*_K_*sizeof(int));
-//            memcpy(minIforLastK, minI, _N_*_N_*_K_*sizeof(int));
-
             if (_VERBOSE_) {
                 printf("finishing filling upper events where k=%d, _table[0][%d][%d]=%f\n",
                        k, _N_ - 1, kIdx, _table[0][_N_ - 1][kIdx]);
             }
         }
 
-        fprintf(stderr, "maxPenalty=%d\n", maxPenalty);
+//        // test ***************************************
+//        fprintf(stderr, "maxPenalty=%d\n", maxPenalty);
+//        // ********************************************
 
 //        // test ************************
 //        if (_TMP_PATH_!="") {

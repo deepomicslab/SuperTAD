@@ -43,23 +43,8 @@ namespace utils {
         }
     }
 
-    template<typename T>
-    void print3DArray(T ***array, int n, int m, int w)
-    {
-        for (int i = 0; i < n; i++) {
-            printf("----i=%d----\n", i);
-            for (int j=0; j<m; j++) {
-                for (int k=0; k<w; k++) {
-                    std::cout << array[i][j][k] << " ";
-                }
-                std::cout << "\n";
-            }
-            std::cout << "\n";
-        }
-    }
 
-
-    std::string license()
+    std::string version()
     {
         return "SuperTAD v1.1";
     }

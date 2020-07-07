@@ -66,7 +66,7 @@ void Data::init()
     for (int i=1; i < _N_; i++) {
         _sumOfGtimesLogG.emplace_back(_sumOfGtimesLogG[i-1] + getGtimesLogG(_edgeCount.coeff(i,i)));
     }
-    
+
     if (_VERBOSE_)
         printf("finish initialization\n");
     else

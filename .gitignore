@@ -2,3 +2,5 @@
 cmake-build-*
 .vscode
 data
+test.cpp
+

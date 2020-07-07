@@ -28,27 +28,18 @@ private:
     std::map<int, std::pair<int64_t, int64_t>> _chrom2Idx2Interval;
 
     Eigen::MatrixXd _contactMat;
-//    bool _sym;
 
     // upper tri is intra; lower tri is inter
     Eigen::MatrixXd _edgeCount;
 
-//    double **** _asymEdgeCount;
-
-//    Reader *_reader;
-
 public:
     double _edgeSum;
-
-//    double *_sumOfGtimesLogG;
 
     std::vector<double> _sumOfGtimesLogG;
 
     Data(std::string fileName);
 
-    ~Data();
-
-//    void init0();
+    ~Data() {};
 
     void init();
 

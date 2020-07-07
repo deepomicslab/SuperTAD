@@ -83,7 +83,6 @@ int Reader::parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath)
         exit(1);
     }
 
-    return 0;
 }
 
 

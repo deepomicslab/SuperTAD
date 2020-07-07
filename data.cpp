@@ -7,8 +7,6 @@
 
 Data::Data(std::string fileName)
 {
-//    _reader = new Reader(fileName);
-//    _N_ = _reader->parseMatrix(_contactMat, _INPUT_);
     _N_ = Reader::parseMatrix(_contactMat, _INPUT_);
     if (_BOLD_) {
         _PENALTY_ = 10 * (int)floor(log10(_N_));
@@ -22,12 +20,6 @@ Data::Data(std::string fileName)
 }
 
 
-Data::~Data()
-{
-//    delete _reader;
-}
-
-
 void Data::init()
 {
     if (_VERBOSE_)
@@ -37,7 +29,6 @@ void Data::init()
 
     // calculate edge count(sum)
     _edgeCount.resize(_N_, _N_);
-//    _edgeCount.setZero();
     for (int k=1; k < _N_; k++) {
         for (int i=0; i < _N_ - k; i++) {
             int j = i+k;
@@ -69,21 +60,13 @@ void Data::init()
     }
     setEdgeSum();
 
-//    if (_DEBUG_) {
-//        std::cout << "_edgeCount=" << _edgeCount << std::endl;
-//        std::cout << "finish calculating edge count(sum); running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";
-////        Writer::dumpMatrix(_edgeCount, _INPUT+".init.txt");
-//    }
-
     // calculate sum of g*log(g)
     t = std::clock();
     _sumOfGtimesLogG.emplace_back(getGtimesLogG(_edgeCount.coeff(0,0)) );
     for (int i=1; i < _N_; i++) {
         _sumOfGtimesLogG.emplace_back(_sumOfGtimesLogG[i-1] + getGtimesLogG(_edgeCount.coeff(i,i)));
     }
-//    if (_DEBUG_)
-//        std::cout << "finish calculating sum of g*log(g); running time=" << (float)(std::clock()-t) / CLOCKS_PER_SEC << "s\n";
-
+    
     if (_VERBOSE_)
         printf("finish initialization\n");
     else

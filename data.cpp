@@ -9,7 +9,7 @@ Data::Data(std::string fileName)
 {
     _N_ = Reader::parseMatrix(_contactMat, _INPUT_);
     if (_BOLD_) {
-        _PENALTY_ = 10 * (int)floor(log10(_N_));
+        _PENALTY_ = pow(10, (int)floor(log10(_N_)));
         printf("bold mode penalty=%d\n", _PENALTY_);
     }
     std::cout << "#bins=" << _N_ << std::endl;

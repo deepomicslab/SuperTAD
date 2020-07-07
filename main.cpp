@@ -133,6 +133,11 @@ int parseArg(int argc, char *argv[])
             printf("fast mode is disabled, it may cause extra execution time\n");
         }
 
+        if (std::string(*(argv+i))==std::string("--penalty")) {
+            _PENALTY_ = atoi(*(argv + ++i));
+            printf("fast mode penalty is set to %d\n", _PENALTY_);
+        }
+
         if (std::string(*(argv+i))==std::string("--bedpe")) {
             _BEDPE_ = true;
             printf("output will be written in BEDPE format\n");

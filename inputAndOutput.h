@@ -17,8 +17,6 @@
 #include "data.h"
 
 
-std::string concatePath(std::string path1, std::string path2);
-
 bool pathExist(const std::string &s);
 
 class Reader {

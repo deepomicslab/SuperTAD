@@ -5,25 +5,11 @@
 #include "inputAndOutput.h"
 
 
-std::string concatePath(std::string path1, std::string path2)
-{
-//  if (path1[path1.length ()-11] == '/')
-//    path1 = path1[]
-    return "";
-}
-
-
 bool pathExist(const std::string &s)
 {
     struct stat buffer;
     return (stat(s.c_str(), &buffer) == 0);
 }
-
-
-//Reader::Reader(std::string fileName)
-//{
-//    _filePath = fileName;
-//}
 
 
 int Reader::parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath)
@@ -84,66 +70,6 @@ int Reader::parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath)
     }
 
 }
-
-
-//int Reader::parseTree(Eigen::MatrixXd &contactMat, std::vector<std::string> &fileNames)
-//{
-//    for (int i=0; i<fileNames.size(); i++) {
-//        _infile.open(fileNames[i]);
-//
-//        _infile.close();
-//    }
-//}
-
-
-//void Writer::writeTree(std::string filePath, std::vector<binary::TreeNode *> &nodeList)
-//{
-//    std::ofstream outFile;
-//    outFile.open(filePath);
-//    if (outFile.is_open()) {
-//        if (_VERBOSE_)
-//            printf("start writing binary tree into: %s\n", filePath.c_str());
-//
-//        for (int i = 0; i < nodeList.size(); i++) {
-//            for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
-//                outFile << std::to_string(j + 1) << " ";
-//            outFile << "\n";
-//        }
-//        outFile.close();
-//
-//        if (_VERBOSE_)
-//            std::cout << "finish writing binary tree\n";
-//        else
-//            printf("write binary tree into: %s\n", filePath.c_str());
-//    }
-//    else
-//        std::cerr << "cannot open file: " << filePath << "\n";
-//}
-
-
-//void Writer::writeTree(std::string filePath, std::vector<multi::TreeNode *> &nodeList)
-//{
-//    std::ofstream outFile;
-//    outFile.open(filePath);
-//    if (outFile.is_open()) {
-//        if (_VERBOSE_)
-//            printf("start writing multi-nary tree into %s\n", filePath.c_str());
-//
-//        for (int i = 0; i < nodeList.size(); i++) {
-//            for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
-//                outFile << std::to_string(j + 1) << " ";
-//            outFile << "\n";
-//        }
-//        outFile.close();
-//
-//        if (_VERBOSE_)
-//            std::cout << "finish writing multi-nary tree\n";
-//        else
-//            printf("write tree into: %s\n", filePath.c_str());
-//    }
-//    else
-//        std::cerr << "cannot open file: " << filePath << "\n";
-//}
 
 
 void Writer::writeBoundaries(std::string filePath, std::vector<boundary> &boundaryList)

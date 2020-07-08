@@ -23,10 +23,14 @@ Data::Data(std::string fileName)
 
 void Data::init()
 {
-    if (_VERBOSE_)
-        std::cout << "start data initialization\n";
+    std::clock_t tTmp;
 
-    std::clock_t t = std::clock();
+    if (_VERBOSE_) {
+        std::cout << "start data initialization\n";
+        tTmp = std::clock();
+    }
+    else
+        printf("initialize\n");
 
     // calculate edge count(sum)
     _edgeCount.resize(_N_, _N_);
@@ -62,16 +66,13 @@ void Data::init()
     setEdgeSum();
 
     // calculate sum of g*log(g)
-    t = std::clock();
     _sumOfGtimesLogG.emplace_back(getGtimesLogG(_edgeCount.coeff(0,0)) );
     for (int i=1; i < _N_; i++) {
         _sumOfGtimesLogG.emplace_back(_sumOfGtimesLogG[i-1] + getGtimesLogG(_edgeCount.coeff(i,i)));
     }
 
     if (_VERBOSE_)
-        printf("finish initialization\n");
-    else
-        printf("initialize\n");
+        printf("finish initialization\ninitialization consumes %fs\n", (float)(std::clock()-tTmp)/CLOCKS_PER_SEC);
 }
 
 

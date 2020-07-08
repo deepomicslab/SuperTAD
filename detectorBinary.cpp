@@ -15,6 +15,7 @@ namespace binary {
         _minIndexArray = new int **[_N_];
         _leftKArray = new int **[_N_];
         _minIndexTableForBold = new int **[_N_];
+        int size = 0;
         for (int s=0; s < _N_; s++) {
             _table[s] = new double *[_N_];
             _minIndexArray[s] = new int *[_N_];
@@ -23,6 +24,7 @@ namespace binary {
             int k;
             for (int e=s; e < _N_; e++) {
                 k = (e-s+1 < _K_ ? e-s+1 : _K_);
+                size += k;
                 _table[s][e] = new double[k]{};
                 _minIndexArray[s][e] = new int[k]{};
                 _leftKArray[s][e] = new int[k]{};
@@ -32,6 +34,7 @@ namespace binary {
                 }
             }
         }
+        printf("db table size=%d\n", size);
         _boundary.reserve(_K_);
         _binaryTree = new binary::Tree();
         _numBins = new int(0);
@@ -69,16 +72,22 @@ namespace binary {
 
     void Detector::execute ()
     {
+        std::clock_t tTmp;
+
         fillTable();
 
         std::vector<double> sumOfEntropy;
         std::vector<double> sumOfLeaves;
         std::vector<intDoublePair> normLeaves;
 
-        int index = -1;
+
+
+        int index;
         if (_DETERMINE_K_) {
-            if (_VERBOSE_)
+            if (_VERBOSE_) {
                 printf("start determine k\n========\n");
+                tTmp = std::clock();
+            }
 
             double entropy;
 
@@ -107,10 +116,11 @@ namespace binary {
             }
 
             sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
-//            index = normLeaves[0].first;
-//            printf("chose k=%d\n", index);
-            if (_VERBOSE_)
+
+            if (_VERBOSE_) {
                 printf("finish determine k\n");
+                printf("determination consumes %fs\n", (float)(std::clock()-tTmp)/CLOCKS_PER_SEC);
+            }
             else
                 printf("determine k\n");
         }
@@ -141,12 +151,12 @@ namespace binary {
         fflush(stdout);
         backTrace(index, true);
 
+
         _nodeList = &_binaryTree->nodeList();
         Writer::writeTree(_OUTPUT_ + ".original_boundaries", *_nodeList);
 
         // filter
         if (_FILTERING_) {
-            std::clock_t tTmp;
             if (_VERBOSE_) {
                 printf("start filtering\n");
                 tTmp = std::clock();
@@ -172,15 +182,19 @@ namespace binary {
 
     void Detector::fillTable()
     {
-        std::clock_t t;
+        std::clock_t t, tTmp;
         if (_VERBOSE_) {
-            printf("filling dp table\n");
+            printf("start filling dp table\n");
             t = std::clock();
         }
+        else
+            printf("fill dp table\n");
 
         // process k=1
-        if (_VERBOSE_)
-            printf("filling base case\n");
+        if (_VERBOSE_) {
+            printf("start filling base case\n");
+            tTmp = std::clock();
+        }
 
         for (int s = 0; s < _N_; s++) {
             for (int e = s; e < _N_; e++) {
@@ -195,26 +209,43 @@ namespace binary {
             }
         }
 
-        if (_VERBOSE_)
-            printf("finish filling base case where k=1, _table[0][%d][0]=%f\n", _N_ - 1, _table[0][_N_ - 1][0]);
+        if (_VERBOSE_) {
+            printf("finish filling base case where k=1, _table[0][%d][0]=%fs\nfilling base case consumes %fs\n",
+                   _N_ - 1, _table[0][_N_ - 1][0], (float) (std::clock() - tTmp)/CLOCKS_PER_SEC);
+        }
 
         // process k>=2
-        int kIdx;
+        if (_VERBOSE_) {
+            printf("start filling upper cases\n");
+            tTmp = std::clock();
+        }
+
+        int kIdx, k, s, e;
         bool breakFlag = false;
 
-        for (int k = 2; k <= _K_; k++) {
+        for (k = 2; k <= _K_; k++) {
 
-            if (breakFlag)
+            if (breakFlag) {
+                if (_VERBOSE_)
+                    printf("break at loop k; s=%d, e=%d, k=%d\n", s, e, k);
                 break;
+            }
+
             indexK(k, kIdx);
 
-            for (int s = 0; s < _N_; s++) {
-                if (breakFlag)
+            for (s = 0; s < _N_; s++) {
+                if (breakFlag) {
+                    if (_VERBOSE_)
+                        printf("break at loop s; s=%d, e=%d, k=%d\n", s, e, k);
                     break;
+                }
 
-                for (int e = s; e < _N_; e++) {
-                    if (breakFlag)
+                for (e = s; e < _N_; e++) {
+                    if (breakFlag) {
+                        if (_VERBOSE_)
+                            printf("break at loop e; s=%d, e=%d, k=%d\n", s, e, k);
                         break;
+                    }
 
                     // skip cases when #numBins<#numLeves
                     numBins(s, e);
@@ -291,22 +322,25 @@ namespace binary {
             }
 
             if (_VERBOSE_) {
-                printf("finishing filling upper events where k=%d, _table[0][%d][%d]=%f\n",
+                printf("finishing filling upper case where k=%d, _table[0][%d][%d]=%fs\n",
                        k, _N_ - 1, kIdx, _table[0][_N_ - 1][kIdx]);
             }
         }
 
         if (_VERBOSE_)
-            printf("filling table consumes %fs\n", (float)(std::clock()-t)/CLOCKS_PER_SEC);
+            printf("finish filling table\nfilling table consumes %fs\n", (float)(std::clock()-tTmp)/CLOCKS_PER_SEC);
 
         return;
     }
 
 
-    void Detector::backTrace (int k, bool add)
+    void Detector::backTrace(int k, bool add)
     {
-        if (_VERBOSE_)
+        std::clock_t tTmp;
+        if (_VERBOSE_) {
             printf("start backtrace\n");
+            tTmp = std::clock();
+        }
         else
             printf("backtrace k=%d\n", k);
 
@@ -323,8 +357,9 @@ namespace binary {
             else
                 _boundary[i].second = _boundary[i + 1].first - 1;
         }
-        if (_VERBOSE_)
-            printf("finish backtrace\n");
+        if (_VERBOSE_) {
+            printf("finish backtrace\nbacktrace consumes %fs\n", (float)(std::clock()-tTmp)/CLOCKS_PER_SEC);
+        }
     }
 
 

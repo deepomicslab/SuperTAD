@@ -40,7 +40,6 @@ int printUsage(char *argv[], int err)
     info += "\t-h <int>: hierarchy number (default 2)\n";
     info += "\t--no-filter: do not filter TADs\n";
     info += "\t--no-bold: disable bold mode\n";
-    info += "\t-f/--fast: enable fast mode for binary mode\n";
     info += "\t--no-fast: disable fast mode for binary mode\n";
     info += "\t--bedpe: write output in BEDPE format\n";
     info += "\t--chrom1 <string>: chrom1 label\n";
@@ -123,14 +122,9 @@ int parseArg(int argc, char *argv[])
             _TMP_PATH_ = tmp;
         }
 
-        if (std::string(*(argv+i))==std::string("-f") || std::string(*(argv+i))==std::string("--fast")) {
-            _FAST_ = true;
-            printf("fast mode is enabled, it may cause extra execution time\n");
-        }
-
         if (std::string(*(argv+i))==std::string("--no-fast")) {
             _FAST_ = false;
-            printf("fast mode is disabled, it may cause extra execution time\n");
+            printf("disable fast mode\n");
         }
 
         if (std::string(*(argv+i))==std::string("--penalty")) {
@@ -174,6 +168,9 @@ int parseArg(int argc, char *argv[])
         _WORK_DIR_ = _INPUT_.substr(0, pos);
         _OUTPUT_ = _WORK_DIR_ + "/" + _INPUT_.substr(pos + 1);
     }
+
+    if (_FAST_)
+        printf("enable fast mode\n");
 
     return 0;
 }

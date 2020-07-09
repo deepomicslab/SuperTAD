@@ -23,33 +23,50 @@
 class Data {
 private:
     std::string _chrom1;
+
     std::string _chrom2;
+
     std::map<int, std::pair<int64_t, int64_t>> _chrom1Idx2Interval;
+
     std::map<int, std::pair<int64_t, int64_t>> _chrom2Idx2Interval;
 
     Eigen::MatrixXd _contactMat;
+    double **_contactArray;
 
     // upper tri is intra; lower tri is inter
-    Eigen::MatrixXd _edgeCount;
+    Eigen::MatrixXd _edgeCountMat;
+    double **_edgeCountArray;
 
 public:
     double _edgeSum;
+
+    double _doubleEdgeSum;
+
+    double **_logVolTable;
+
+    double **_volTable;
 
     std::vector<double> _sumOfGtimesLogG;
 
     Data(std::string fileName);
 
-    ~Data() {};
+    ~Data();
 
     void init();
 
-    Eigen::MatrixXd & edgeCount() { return _edgeCount; }
+    Eigen::MatrixXd & edgeCount() { return _edgeCountMat; }
 
     double getVol(int s, int e);
 
-    double getSE(int start, int end, double parentVol);
+    double getSE(int s, int e, double parentVol);
 
-    double getSE(int start, int end, double parentVol, double currentVol);
+    double getSEwithLogPV(int s, int e, double logPV);
+
+    double getSE(int s, int e, double parentVol, double currentVol);
+
+    double getSEwithLogs(int s, int e, double logPV, double logCV);
+
+    double getSEwithLogDiff(int s, int e, double logDiff);
 
     void setEdgeSum();
 

@@ -36,6 +36,8 @@ public:
 
     static int parseShort(Eigen::MatrixXd &contactMat, std::string filePath);
 
+    static int parseMatrix2Table(double **&table, std::string path);
+
 //    int parseTree(Eigen::MatrixXd &contactMat, std::vector<std::string> &fileNames);
 };
 

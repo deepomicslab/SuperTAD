@@ -16,13 +16,13 @@ namespace binary {
         _leftKArray = new int **[_N_];
         _minIndexTableForBold = new int **[_N_];
         int size = 0;
-        for (int s=0; s < _N_; s++) {
+        int k, s, e;
+        for (s=0; s < _N_; s++) {
             _table[s] = new double *[_N_];
             _minIndexArray[s] = new int *[_N_];
             _leftKArray[s] = new int *[_N_];
             _minIndexTableForBold[s] = new int *[_N_];
-            int k;
-            for (int e=s; e < _N_; e++) {
+            for (e=s; e < _N_; e++) {
                 k = (e-s+1 < _K_ ? e-s+1 : _K_);
                 size += k;
                 _table[s][e] = new double[k]{};
@@ -80,8 +80,6 @@ namespace binary {
         std::vector<double> sumOfLeaves;
         std::vector<intDoublePair> normLeaves;
 
-
-
         int index;
         if (_DETERMINE_K_) {
             if (_VERBOSE_) {
@@ -89,27 +87,31 @@ namespace binary {
                 tTmp = std::clock();
             }
 
-            double entropy;
+            double entropy, leafSum, parentVol, currentVol, divisor;
 
             // determine K
             for (int k = 2; k <= _K_; k++) {
                 if (_VERBOSE_)
-                    std::cout << "k=" << k << std::endl;
+                    printf("k=%d\n", k);
+
                 indexKtmp(k);
 
                 entropy = _table[0][_N_ - 1][*_kTmpIdx];
                 if (_VERBOSE_)
                     printf("min structure entropy=%f\n", entropy);
+
                 sumOfEntropy.emplace_back(entropy);
 
                 backTrace(k);
-                double leafSum = 0;
+
+                leafSum = 0;
+                parentVol = 2.*_data->_edgeSum;
                 for (int leaf = 0; leaf < _boundary.size(); leaf++) {
-                    leafSum += _data->getSE(_boundary[leaf].first, _boundary[leaf].second, 2.*_data->_edgeSum);
+                    leafSum += _data->getSE(_boundary[leaf].first, _boundary[leaf].second, parentVol);
                     leafSum += _table[_boundary[leaf].first][_boundary[leaf].second][0];
                 }
                 sumOfLeaves.emplace_back(leafSum);
-                double divisor = log2(_N_ / (double) k) + (_N_ * (k - 1) / (double) (k * (_N_ - 1))) * log2(k);
+                divisor = log2(_N_ / (double) k) + (_N_ * (k - 1) / (double) (k * (_N_ - 1))) * log2(k);
                 normLeaves.emplace_back(k, leafSum / divisor);
                 if (_VERBOSE_)
                     std::cout << "========\n";
@@ -182,7 +184,7 @@ namespace binary {
 
     void Detector::fillTable()
     {
-        std::clock_t t, tTmp;
+        std::clock_t t, tBaseTmp, tUpperTmp, tVol, tSE, tTmp, tLog;
         if (_VERBOSE_) {
             printf("start filling dp table\n");
             t = std::clock();
@@ -193,7 +195,7 @@ namespace binary {
         // process k=1
         if (_VERBOSE_) {
             printf("start filling base case\n");
-            tTmp = std::clock();
+            tBaseTmp = std::clock();
         }
 
         for (int s = 0; s < _N_; s++) {
@@ -211,17 +213,19 @@ namespace binary {
 
         if (_VERBOSE_) {
             printf("finish filling base case where k=1, _table[0][%d][0]=%fs\nfilling base case consumes %fs\n",
-                   _N_ - 1, _table[0][_N_ - 1][0], (float) (std::clock() - tTmp)/CLOCKS_PER_SEC);
+                   _N_ - 1, _table[0][_N_ - 1][0], (float) (std::clock() - tBaseTmp) / CLOCKS_PER_SEC);
         }
 
         // process k>=2
         if (_VERBOSE_) {
             printf("start filling upper cases\n");
-            tTmp = std::clock();
+            tUpperTmp = std::clock();
         }
 
-        int kIdx, k, s, e;
+        int kIdx, k, s, e, leftI, leftK, leftI2, endTmp;
+        double minSE, tmpSE, parentVol, logPV, currentVol, minSE2, logPdC;
         bool breakFlag = false;
+        tLog = 0;
 
         for (k = 2; k <= _K_; k++) {
 
@@ -253,25 +257,22 @@ namespace binary {
                         continue;
                     }
 
-                    double minSE, se, parentVol;
-                    int leftI, leftK;
-
                     minSE = std::numeric_limits<double>::infinity();
                     leftI = 0;
                     leftK = 0;
 
                     /*
-                     * find min{S(s,i,kTmp)+H_l(s,e,i)+S(i+1,e,k-kTmp)+H_r(s,e,i)}
-                     * loop all meaningful comb of i, kTmp
+                     * find min{S(s,i,k')+H_l(s,e,i)+S(i+1,e,k-k')+H_r(s,e,i)}
+                     * loop all meaningful comb of i, k'
                      */
                     for (int kTmp=1; kTmp<k; kTmp++) {
                         indexKtmp(kTmp);
                         indexK(k-kTmp, *_kMinusKtmpIdx);
 
-                        double minSE2 = std::numeric_limits<double>::infinity();
-                        int leftI2 = 0;
+                        minSE2 = std::numeric_limits<double>::infinity();
+                        leftI2 = 0;
 
-                        int endTmp = (_minIndexTableForBold[s][e][*_kTmpIdx] == -1 ?
+                        endTmp = (_minIndexTableForBold[s][e][*_kTmpIdx] == -1 ?
                                       e : _minIndexTableForBold[s][e][*_kTmpIdx] + _PENALTY_);
                         if (endTmp > e)
                             endTmp = e;
@@ -290,18 +291,51 @@ namespace binary {
                                 continue;
                             }
 
-                            se = _table[s][i][*_kTmpIdx];
-                            se += _table[i+1][e][*_kMinusKtmpIdx];
+                            // S(s,i,k')+S(i+1,e,k-k')
+                            tmpSE = _table[s][i][*_kTmpIdx] + _table[i + 1][e][*_kMinusKtmpIdx];
+
                             parentVol = _data->getVol(s, e);
-                            se += _data->getSE(s, i, parentVol);
-                            se += _data->getSE(i+1, e, parentVol);
-                            if (se < minSE) {
-                                minSE = se;
+                            logPV = _data->_logVolTable[s][e-s];
+
+                            // H_l(s,e,i)
+                            if (_TEST_LOG2_TIME_) {
+                                currentVol = _data->getVol(s, i);
+                                if (currentVol > 0 && parentVol >= currentVol) {
+                                    tTmp = std::clock();
+                                    logPdC = log2(parentVol / currentVol);
+                                    tLog += std::clock() - tTmp;
+                                } else
+                                    logPdC = 0;
+                                tmpSE += _data->getSEwithLogDiff(s, i, logPdC);
+                            }
+                            else if (_TEST_LOG_VOL_TABLE_)
+                                tmpSE += _data->getSEwithLogPV(s, i, logPV);
+                            else
+                                tmpSE += _data->getSE(s, i, parentVol);
+
+                            // H_r(s,e,i)
+                            if (_TEST_LOG2_TIME_) {
+                                currentVol = _data->getVol(i + 1, e);
+                                if (currentVol > 0 && parentVol >= currentVol) {
+                                    tTmp = std::clock();
+                                    logPdC = log2(parentVol / currentVol);
+                                    tLog += std::clock() - tTmp;
+                                } else
+                                    logPdC = 0;
+                                tmpSE += _data->getSEwithLogDiff(i + 1, e, logPdC);
+                            }
+                            else if (_TEST_LOG_VOL_TABLE_)
+                                tmpSE += _data->getSEwithLogPV(i+1, e, logPV);
+                            else
+                                tmpSE += _data->getSE(i + 1, e, parentVol);
+
+                            if (tmpSE < minSE) {
+                                minSE = tmpSE;
                                 leftI = i;
                                 leftK = kTmp;
                             }
-                            if (se < minSE2) {
-                                minSE2 = se;
+                            if (tmpSE < minSE2) {
+                                minSE2 = tmpSE;
                                 leftI2 = i;
                             }
                         }
@@ -322,13 +356,19 @@ namespace binary {
             }
 
             if (_VERBOSE_) {
-                printf("finishing filling upper case where k=%d, _table[0][%d][%d]=%fs\n",
+                printf("finishing filling upper case where k=%d, _table[0][%d][%d]=%f\n",
                        k, _N_ - 1, kIdx, _table[0][_N_ - 1][kIdx]);
             }
         }
 
-        if (_VERBOSE_)
-            printf("finish filling table\nfilling table consumes %fs\n", (float)(std::clock()-tTmp)/CLOCKS_PER_SEC);
+        if (_VERBOSE_) {
+            printf("finish filling upper cases\nfilling upper cases consumes %fs\n",
+                   (float) (std::clock() - tUpperTmp) / CLOCKS_PER_SEC);
+            printf("finish filling table\nfilling table consumes %fs\n",
+                   (float) (std::clock() - t) / CLOCKS_PER_SEC);
+            printf("calculating logarithm consumes %fs\n",
+                   (float) tLog / CLOCKS_PER_SEC);
+        }
 
         return;
     }

@@ -38,41 +38,65 @@ namespace multi {
 
     void DetectorH1::execute() {
         _table[0][0] = _data->getSE(0, 0, 2. *_data->_edgeSum);
+
+        double currentVol, parentVol, binSum;
+
+        if (_VERBOSE_)
+            printf("start k=0\n");
+
         for (int i=1; i < _N_; i++) {
-            double currentVol = _data->getVol(0, i);
-            double binSum = _data->getGtimesLogG(currentVol) - _data->_sumOfGtimesLogG[i];
-            _table[i][0] = _data->getSE(0, i, 2. * _data->_edgeSum, currentVol) + binSum/(2. *_data->_edgeSum);
+            parentVol = 2. * _data->_edgeSum;
+            currentVol = _data->getVol(0, i);
+            binSum = _data->getGtimesLogG(currentVol) - _data->_sumOfGtimesLogG[i];
+            _table[i][0] = _data->getSE(0, i, parentVol, currentVol) + binSum/(2. *_data->_edgeSum);
         }
-        printf("finish k=0, SE=%f \n", _table[_N_ - 1][0]);
-        std::cout << "start to calculate upper case\n";
+
+        if (_VERBOSE_)
+            printf("finish k=0, se=%f\n", _table[_N_ - 1][0]);
+
+        if (_VERBOSE_)
+            printf("start calculating h=1\n");
+
+        double minSE, tmpSE;
+        int minIdx;
         for (int a=1; a < _K_; a++) {
-            double minTmp;
-            int minIdx;
+            if (_VERBOSE_)
+                printf("start k=%d\n", a);
             for (int b=0; b < _N_; b++) {
-                minTmp= std::numeric_limits<double>::infinity();
+                minSE = std::numeric_limits<double>::infinity();
                 minIdx = 0;
                 for (int i=0; i<b; i++) {
-                    double tmp = _table[i][a-1];
+                    tmpSE = _table[i][a - 1];
                     if (i+1==b)
-                        tmp += _data->getSE(b, b, 2. * _data->_edgeSum);
+                        tmpSE += _data->getSE(b, b, 2. * _data->_edgeSum);
                     else {
-                        double currentVol = _data->getVol(i+1, b);
-                        tmp += _data->getSE(i+1, b, 2. * _data->_edgeSum, currentVol);
-                        double binSum = _data->getGtimesLogG(currentVol) - (_data->_sumOfGtimesLogG[b] - _data->_sumOfGtimesLogG[i]);
-                        tmp += binSum / (2. * _data->_edgeSum);
+                        parentVol = 2. * _data->_edgeSum;
+                        currentVol = _data->getVol(i+1, b);
+                        tmpSE += _data->getSE(i + 1, b, parentVol, currentVol);
+                        binSum = _data->getGtimesLogG(currentVol) - (_data->_sumOfGtimesLogG[b] - _data->_sumOfGtimesLogG[i]);
+                        tmpSE += binSum / (2. * _data->_edgeSum);
                     }
-                    if (tmp<minTmp) {
-                        minTmp = tmp;
+                    if (tmpSE < minSE) {
+                        minSE = tmpSE;
                         minIdx = i;
                     }
                 }
                 _minIndexArray[b][a] = minIdx;
-                _table[b][a] = minTmp;
+                _table[b][a] = minSE;
             }
-            printf("finish k=%d, structure entropy=%f \n", a, minTmp);
+            if (_VERBOSE_)
+                printf("finish k=%d, structure entropy=%f\n", a, minSE);
         }
+
+        if (_VERBOSE_)
+            printf("finish calculating h=1\n");
+
         if (_DETERMINE_K_) {
-            std::cout << "start to determine k\n";
+            if (_VERBOSE_)
+                std::cout << "start to determine k\n";
+            else
+                printf("determine k\n");
+
             double *y = _table[_N_ - 1];
             int tmpIdx = 0;
             double tmpValue = y[0];
@@ -83,7 +107,9 @@ namespace multi {
                 }
             }
             _k = tmpIdx + 1;
-            printf("the optimal k is %d \n", _k);
+            if (_VERBOSE_)
+                printf("finish determine k\n");
+            printf("optimal k=%d \n", _k);
         }
 
         backTrace();
@@ -112,9 +138,9 @@ namespace multi {
             else
                 _boundaries.emplace_back(boundaries[i - 1] + 2, boundaries[i]+1);
         }
-        for (int i = 0; i < _boundaries.size(); i++) {
-            std::cout << "boundary[" << i << "]=(" << _boundaries[i].first << ", " << _boundaries[i].second << ")\n";
-        }
+//        for (int i = 0; i < _boundaries.size(); i++) {
+//            std::cout << "boundary[" << i << "]=(" << _boundaries[i].first << ", " << _boundaries[i].second << ")\n";
+//        }
     }
 
 }

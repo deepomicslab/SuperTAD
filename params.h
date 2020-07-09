@@ -44,4 +44,9 @@ extern int _RESOLUTION_;
 // for output in bedpe
 extern bool _BEDPE_;
 
+// debug
+extern bool _TEST_LOG2_TIME_;
+extern bool _TEST_LOG_VOL_TABLE_;
+extern bool _TEST_FAST_;
+
 #endif //PROGRAM_PARAMS_H

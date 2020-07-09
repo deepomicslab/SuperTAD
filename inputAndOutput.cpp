@@ -72,6 +72,62 @@ int Reader::parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath)
 }
 
 
+int Reader::parseMatrix2Table(double **&table, std::string path)
+{
+    if (path == "") {
+        fprintf(stderr, "input must be provided\n");
+        exit(1);
+    }
+
+    if (!pathExist(path)) {
+        fprintf(stderr, "input file not exist\n");
+        exit(1);
+    }
+
+    std::ifstream file;
+    file.exceptions(std::ifstream::badbit);
+    try {
+        file.open(path);
+        if (file.is_open()) {
+            if (_VERBOSE_)
+                printf("start parsing input: %s\n", path.c_str());
+            _N_ = 0;
+            std::string line;
+            double c;
+            getline(file, line);
+            std::istringstream iss(line);
+            while (iss >> c)
+                _N_++;
+            iss.clear();
+            table = new double *[_N_];
+
+            iss.str(line);
+            int i=0, j=0;
+            table[i] = new double [_N_]{};
+            for (;j<_N_;j++) {
+                iss >> c;
+                table[i][j] = c;
+            }
+            iss.clear();
+
+            while (getline(file, line)) {
+                iss.str(line);
+                table[++i] = new double [_N_]{};
+                for (j=0; j<_N_; j++) {
+                    iss >> c;
+                    table[i][j] = c;
+                }
+                iss.clear();
+            }
+        }
+    }
+    catch (const std::ifstream::failure& e) {
+        printf("exception reading file\n");
+        exit(1);
+    }
+}
+
+
 void Writer::writeBoundaries(std::string filePath, std::vector<boundary> &boundaryList)
 {
     std::ofstream file;
@@ -80,6 +136,8 @@ void Writer::writeBoundaries(std::string filePath, std::vector<boundary> &bounda
     {
         if (_VERBOSE_)
             printf("start writing boundaries into: %s\n", filePath.c_str());
+        else
+            printf("write boundaries into: %s\n", filePath.c_str());
 
         for (std::vector<boundary>::iterator it=boundaryList.begin(); it!=boundaryList.end(); it++) {
             for (int i=it->first; i<=it->second; i++)
@@ -90,8 +148,6 @@ void Writer::writeBoundaries(std::string filePath, std::vector<boundary> &bounda
 
         if (_VERBOSE_)
             printf("finish writing boundaries\n");
-        else
-            printf("write boundaries into: %s\n", filePath.c_str());
     }
     else
         std::cerr << "cannot open file: " << filePath << "\n";

@@ -158,6 +158,12 @@ int parseArg(int argc, char *argv[])
             printf("starting pos on chrom2: %d", _CHROM2_START_);
         }
 
+        // debug
+        if (std::string(*(argv + i)) == std::string("--test-log2")) {
+            _TEST_LOG2_TIME_ = true;
+            printf("test log2 execution time\n");
+        }
+
         i++;
     }
 

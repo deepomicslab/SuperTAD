@@ -33,7 +33,7 @@ namespace utils {
     void copyDoubleArray(double from[], double to[], int n);
 
     template<typename T>
-    void print3DArray(T ***array, int n, int m, int w)
+    void print3Darray(T ***array, int n, int m, int w)
     {
         for (int i = 0; i < n; i++) {
             printf("----i=%d----\n", i);
@@ -55,7 +55,15 @@ namespace utils {
 //    }
 
     template<typename T>
-    void print2Dtable(T **table);
+    void print2Dtable(T **array, int n, int m)
+    {
+        for (int i = 0; i < n; i++) {
+            for (int j=0; j < m; j++) {
+                printf("%f\t", array[i][j]);
+            }
+            printf("\n");
+        }
+    }
 
     std::string version();
 

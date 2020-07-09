@@ -116,12 +116,6 @@ int parseArg(int argc, char *argv[])
             std::cout << "disable filtering\n";
         }
 
-        if (std::string(*(argv + i)) == std::string("--tmp-path")) {
-            std::string tmp = std::string(*(argv + ++i));
-            std::cout << "tmp_path=" << tmp << "\n";
-            _TMP_PATH_ = tmp;
-        }
-
         if (std::string(*(argv+i))==std::string("--no-fast")) {
             _FAST_ = false;
             printf("disable fast mode\n");
@@ -159,9 +153,20 @@ int parseArg(int argc, char *argv[])
         }
 
         // debug
-        if (std::string(*(argv + i)) == std::string("--test-log2")) {
+        if (std::string(*(argv + i)) == std::string("--test-log-time")) {
             _TEST_LOG2_TIME_ = true;
             printf("test log2 execution time\n");
+        }
+
+        if (std::string(*(argv + i)) == std::string("--test-pre-log")) {
+            _TEST_LOG_VOL_TABLE_ = true;
+            printf("test pre-calculate log volume table time\n");
+        }
+
+        if (std::string(*(argv + i)) == std::string("--tmp-path")) {
+            std::string tmp = std::string(*(argv + ++i));
+            std::cout << "tmp_path=" << tmp << "\n";
+            _TMP_PATH_ = tmp;
         }
 
         i++;

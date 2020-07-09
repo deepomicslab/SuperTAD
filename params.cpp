@@ -39,6 +39,6 @@ int _RESOLUTION_ = 1;
 bool _BEDPE_ = false;
 
 bool _TEST_LOG2_TIME_ = false;
-bool _TEST_LOG_VOL_TABLE_ = true;
+bool _TEST_LOG_VOL_TABLE_ = false;
 bool _TEST_FAST_ = false;
 

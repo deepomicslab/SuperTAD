@@ -22,7 +22,6 @@ Data::Data(std::string fileName)
 
     if (_FAST_) {
         if (_PENALTY_<0) {
-//            _PENALTY_ = pow(10, (int)floor(log10(_N_)));
             _PENALTY_ = ceil(_N_/10);
         }
         printf("fast mode penalty=%d\n", _PENALTY_);
@@ -188,7 +187,7 @@ double Data::getSEwithLogPV(int s, int e, double logPV)
 {
 //    if (_LOG_VOL_TABLE_)
 //        return _logVolTable[s][e-s] > 0 ? _edgeCountMat(e, s) / _doubleEdgeSum * (logPV - _logVolTable[s][e-s]) : 0;
-    if (_LOG_VOL_TABLE_)
+    if (_PRE_LOG_)
         return _logVolTable[s][e-s] > 0 ? _edgeCountArray[e][s] / _doubleEdgeSum * (logPV - _logVolTable[s][e-s]) : 0;
     else {
         double currentVol = getVol(s, e);

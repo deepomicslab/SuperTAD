@@ -308,7 +308,7 @@ namespace binary {
                                     logPdC = 0;
                                 tmpSE += _data->getSEwithLogDiff(s, i, logPdC);
                             }
-                            else if (_LOG_VOL_TABLE_)
+                            else if (_PRE_LOG_)
                                 tmpSE += _data->getSEwithLogPV(s, i, logPV);
                             else
                                 tmpSE += _data->getSE(s, i, parentVol);
@@ -324,7 +324,7 @@ namespace binary {
                                     logPdC = 0;
                                 tmpSE += _data->getSEwithLogDiff(i+1, e, logPdC);
                             }
-                            else if (_LOG_VOL_TABLE_)
+                            else if (_PRE_LOG_)
                                 tmpSE += _data->getSEwithLogPV(i+1, e, logPV);
                             else
                                 tmpSE += _data->getSE(i+1, e, parentVol);

@@ -39,7 +39,6 @@ int printUsage(char *argv[], int err)
     info += "\t-k <int>: number of leaves in candidate coding tree (default NAN)\n";
     info += "\t-h <int>: hierarchy number (default 2)\n";
     info += "\t--no-filter: do not filter TADs\n";
-    info += "\t--no-bold: disable bold mode\n";
     info += "\t--no-fast: disable fast mode for binary mode\n";
     info += "\t--bedpe: write output in BEDPE format\n";
     info += "\t--chrom1 <string>: chrom1 label\n";
@@ -153,20 +152,19 @@ int parseArg(int argc, char *argv[])
         }
 
         // debug
+        if (std::string(*(argv + i)) == std::string("--no-pre-log")) {
+            _PRE_LOG_ = false;
+            printf("test pre-calculate log volume table time\n");
+        }
+
         if (std::string(*(argv + i)) == std::string("--test-log-time")) {
             _TEST_LOG2_TIME_ = true;
             printf("test log2 execution time\n");
         }
 
-        if (std::string(*(argv + i)) == std::string("--test-pre-log")) {
-            _LOG_VOL_TABLE_ = true;
-            printf("test pre-calculate log volume table time\n");
-        }
-
-        if (std::string(*(argv + i)) == std::string("--tmp-path")) {
-            std::string tmp = std::string(*(argv + ++i));
-            std::cout << "tmp_path=" << tmp << "\n";
-            _TMP_PATH_ = tmp;
+        if (std::string(*(argv + i)) == std::string("--no-pre-log")) {
+            _PRE_LOG_ = false;
+            printf("do not pre-calculate log-volume table; longer execution time\n");
         }
 
         i++;

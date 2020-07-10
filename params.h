@@ -8,6 +8,10 @@
 #include <string>
 
 
+extern std::string _WORK_DIR_;
+extern std::string _INPUT_;
+extern std::string _OUTPUT_;
+
 extern bool _BINARY_;
 extern bool _MULTI_;
 extern bool _MULTI_H_;
@@ -18,19 +22,14 @@ extern int _N_;
 extern int _H_;
 
 extern float _THRESHOLD_;  //avoid the precision issue
-extern std::string _WORK_DIR_;
-extern std::string _INPUT_;
-extern std::string _OUTPUT_;
+extern bool _PRE_LOG_;
+
 extern bool _FILTERING_;
-
-extern bool _VERBOSE_;
-
-extern std::string _TMP_PATH_;
 
 extern bool _FAST_;
 extern int _PENALTY_;
 
-extern bool _DEBUG_;
+extern bool _VERBOSE_;
 
 // for matrix input
 extern std::string _CHROM1_;
@@ -45,8 +44,9 @@ extern int _RESOLUTION_;
 extern bool _BEDPE_;
 
 // debug
+extern bool _DEBUG_;
 extern bool _TEST_LOG2_TIME_;
-extern bool _LOG_VOL_TABLE_;
 extern bool _TEST_FAST_;
+extern std::string _TMP_PATH_;
 
 #endif //PROGRAM_PARAMS_H

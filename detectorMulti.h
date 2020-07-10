@@ -36,7 +36,7 @@ namespace multi {
     class Detector {
     private:
         Data * _data;
-        Eigen::MatrixXd * _edgeCount;
+//        Eigen::MatrixXd * _edgeCount;
         Writer _writer;
         multi::Tree _multiTree;
         std::vector<multi::TreeNode *> * _nodeList;

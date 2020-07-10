@@ -8,7 +8,7 @@ namespace multi {
 
     DetectorH1::DetectorH1(Data &data) {
         _data = &data;
-        _edgeCount = &data.edgeCount();
+//        _edgeCount = &data.edgeCount();
         int k=1;
         for (int i=0; i < _K_; i++) {
             _kToIdx.emplace(k++, i);

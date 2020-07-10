@@ -20,7 +20,7 @@ namespace binary {
     class Detector {
     private:
         Data *_data;
-        Eigen::MatrixXd *_edgeCount;
+//        Eigen::MatrixXd *_edgeCount;
         binary::Tree *_binaryTree;
         std::vector<binary::TreeNode *> *_nodeList;
         double ***_table;

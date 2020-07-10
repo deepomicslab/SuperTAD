@@ -32,11 +32,11 @@ public:
 
     ~Reader() {};
 
-    static int parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath);
+    static void parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath);
 
     static int parseShort(Eigen::MatrixXd &contactMat, std::string filePath);
 
-    static int parseMatrix2Table(double **&table, std::string path);
+    static void parseMatrix2Table(double **&table, std::string path);
 
 //    int parseTree(Eigen::MatrixXd &contactMat, std::vector<std::string> &fileNames);
 };

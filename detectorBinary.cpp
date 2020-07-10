@@ -10,7 +10,7 @@ namespace binary {
     Detector::Detector (Data &data)
     {
         _data = &data;
-        _edgeCount = &data.edgeCount();
+//        _edgeCount = &data.edgeCount();
         _table = new double **[_N_];
         _minIndexArray = new int **[_N_];
         _leftKArray = new int **[_N_];
@@ -308,26 +308,26 @@ namespace binary {
                                     logPdC = 0;
                                 tmpSE += _data->getSEwithLogDiff(s, i, logPdC);
                             }
-                            else if (_TEST_LOG_VOL_TABLE_)
+                            else if (_LOG_VOL_TABLE_)
                                 tmpSE += _data->getSEwithLogPV(s, i, logPV);
                             else
                                 tmpSE += _data->getSE(s, i, parentVol);
 
                             // H_r(s,e,i)
                             if (_TEST_LOG2_TIME_) {
-                                currentVol = _data->getVol(i + 1, e);
+                                currentVol = _data->getVol(i+1, e);
                                 if (currentVol > 0 && parentVol >= currentVol) {
                                     tTmp = std::clock();
                                     logPdC = log2(parentVol / currentVol);
                                     tLog += std::clock() - tTmp;
                                 } else
                                     logPdC = 0;
-                                tmpSE += _data->getSEwithLogDiff(i + 1, e, logPdC);
+                                tmpSE += _data->getSEwithLogDiff(i+1, e, logPdC);
                             }
-                            else if (_TEST_LOG_VOL_TABLE_)
+                            else if (_LOG_VOL_TABLE_)
                                 tmpSE += _data->getSEwithLogPV(i+1, e, logPV);
                             else
-                                tmpSE += _data->getSE(i + 1, e, parentVol);
+                                tmpSE += _data->getSE(i+1, e, parentVol);
 
                             if (tmpSE < minSE) {
                                 minSE = tmpSE;
@@ -434,9 +434,10 @@ namespace binary {
 
     void Detector::calculateD (binary::TreeNode &node)
     {
-        int start = node._val[0];
-        int end = node._val[1];
-        node._D = (double) _edgeCount->coeff(start, end) / ((end - start + 1) * (end - start) * .5);
+        int s = node._val[0];
+        int e = node._val[1];
+//        node._D = (double) _edgeCount->coeff(start, end) / ((end - start + 1) * (end - start) * .5);
+        node._D = (double) _data->_edgeCountArray[s][e] / ((e - s + 1) * (e - s) * .5);
         if (node._left != NULL)
             calculateD (*node._left);
         if (node._right != NULL)

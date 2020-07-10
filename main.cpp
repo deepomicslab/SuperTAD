@@ -159,7 +159,7 @@ int parseArg(int argc, char *argv[])
         }
 
         if (std::string(*(argv + i)) == std::string("--test-pre-log")) {
-            _TEST_LOG_VOL_TABLE_ = true;
+            _LOG_VOL_TABLE_ = true;
             printf("test pre-calculate log volume table time\n");
         }
 

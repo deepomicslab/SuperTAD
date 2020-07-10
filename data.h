@@ -30,14 +30,15 @@ private:
 
     std::map<int, std::pair<int64_t, int64_t>> _chrom2Idx2Interval;
 
-    Eigen::MatrixXd _contactMat;
+//    Eigen::MatrixXd _contactMat;
     double **_contactArray;
 
     // upper tri is intra; lower tri is inter
-    Eigen::MatrixXd _edgeCountMat;
-    double **_edgeCountArray;
+//    Eigen::MatrixXd _edgeCountMat;
 
 public:
+    double **_edgeCountArray;
+
     double _edgeSum;
 
     double _doubleEdgeSum;
@@ -54,7 +55,7 @@ public:
 
     void init();
 
-    Eigen::MatrixXd & edgeCount() { return _edgeCountMat; }
+//    Eigen::MatrixXd & edgeCount() { return _edgeCountMat; }
 
     double getVol(int s, int e);
 
@@ -68,7 +69,7 @@ public:
 
     double getSEwithLogDiff(int s, int e, double logDiff);
 
-    void setEdgeSum();
+//    void setEdgeSum();
 
     double getGtimesLogG(double binG);
 };

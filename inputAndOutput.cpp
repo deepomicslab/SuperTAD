@@ -12,7 +12,7 @@ bool pathExist(const std::string &s)
 }
 
 
-int Reader::parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath)
+void Reader::parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath)
 {
     if (filePath == "") {
         std::cerr << "input must be provided\n";
@@ -28,7 +28,7 @@ int Reader::parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath)
     inFile.exceptions(std::ifstream::badbit);
     try {
         inFile.open(filePath);
-        int count = 0;
+        _N_ = 0;
         if (inFile.is_open()) {
             if (_VERBOSE_)
                 printf("start parsing input: %s\n", filePath.c_str());
@@ -42,9 +42,9 @@ int Reader::parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath)
                     std::string lineBack = line;
                     std::istringstream issBack(lineBack);
                     while (issBack >> c) {
-                        count++;
+                        _N_++;
                     }
-                    contactMat.resize(count, count);
+                    contactMat.resize(_N_, _N_);
                     init = true;
                 }
                 int pos2 = 0;
@@ -61,8 +61,6 @@ int Reader::parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath)
             printf("finish parsing input\n");
         else
             printf("parse input: %s\n", filePath.c_str());
-
-        return count;
     }
     catch (const std::ifstream::failure& e) {
         printf("exception reading file\n");
@@ -72,7 +70,7 @@ int Reader::parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath)
 }
 
 
-int Reader::parseMatrix2Table(double **&table, std::string path)
+void Reader::parseMatrix2Table(double **&table, std::string path)
 {
     if (path == "") {
         fprintf(stderr, "input must be provided\n");

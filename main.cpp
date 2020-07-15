@@ -78,6 +78,21 @@ int parseArg(int argc, char *argv[])
             std::cout << "working dir: " << _WORK_DIR_ << std::endl;
         }
 
+        if (std::string(*(argv+i))==std::string("--bedpe")) {
+            _BEDPE_ = true;
+            printf("output will be written in BEDPE format\n");
+        }
+
+        if (std::string(*(argv+i))==std::string("--short")) {
+            _BEDPE_ = true;
+            printf("output will be written in Juicer short with score format\n");
+        }
+
+        if (std::string(*(argv+i))==std::string("--bedgraph")) {
+            _BEDPE_ = true;
+            printf("output will be written in bedgraph format\n");
+        }
+
         if (std::string(*(argv + i)) == std::string("-v") || std::string(*(argv + i)) == std::string("--verbose")) {
             _VERBOSE_ = true;
             setbuf(stdout, NULL);
@@ -86,16 +101,19 @@ int parseArg(int argc, char *argv[])
 
         if (std::string(*(argv + i)) == std::string("-b")) {
             _BINARY_ = true;
+            _MULTI_ = false;
             std::cout << "do binary\n";
         }
 
         if (std::string(*(argv + i)) == std::string("-m")) {
             _MULTI_ = true;
+            _BINARY_ = false;
             std::cout << "do multi\n";
         }
 
-        if (std::string(*(argv+i)) == std::string("-H")) {
+        if (std::string(*(argv+i)) == std::string("-h1")) {
             _MULTI_H_ = true;
+            _BINARY_ = false;
             std::cout << "do new_multi\n";
         }
 
@@ -125,11 +143,6 @@ int parseArg(int argc, char *argv[])
             printf("fast mode penalty is set to %d\n", _PENALTY_);
         }
 
-        if (std::string(*(argv+i))==std::string("--bedpe")) {
-            _BEDPE_ = true;
-            printf("output will be written in BEDPE format\n");
-        }
-
         if (std::string(*(argv + i)) == std::string("--chrom1")) {
             _CHROM1_ = std::string(*(argv + ++i));
             _CHROM2_ = _CHROM1_;
@@ -149,6 +162,11 @@ int parseArg(int argc, char *argv[])
         if (std::string(*(argv + i)) == std::string("--chrom2-start")) {
             _CHROM2_START_ = atoi(*(argv + ++i));
             printf("starting pos on chrom2: %d", _CHROM2_START_);
+        }
+
+        if (std::string(*(argv + i)) == std::string("-r") || std::string(*(argv + i)) == std::string("--resolution") ) {
+            _RESOLUTION_ = atoi(*(argv + ++i));
+            printf("resolution=%d", _RESOLUTION_);
         }
 
         // debug
@@ -176,6 +194,7 @@ int parseArg(int argc, char *argv[])
         int pos = _INPUT_.rfind("/");
         _WORK_DIR_ = _INPUT_.substr(0, pos);
         _OUTPUT_ = _WORK_DIR_ + "/" + _INPUT_.substr(pos + 1);
+        printf("_OUTPUT_=%s\n", _OUTPUT_.c_str());
     }
 
     if (_FAST_)

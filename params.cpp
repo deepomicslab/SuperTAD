@@ -31,8 +31,8 @@ bool _VERBOSE_ = false;
 // for matrix input
 std::string _CHROM1_ = "1";
 std::string _CHROM2_ = "1";
-int64_t _CHROM1_START_ = 1;
-int64_t _CHROM2_START_ = 1;
+int64_t _CHROM1_START_ = 0;
+int64_t _CHROM2_START_ = 0;
 int _RESOLUTION_ = 1;
 
 bool _BEDPE_ = false;

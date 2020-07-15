@@ -11,10 +11,11 @@ namespace multi {
         _data = &data;
 //        _edgeCount = &data.edgeCount();
 
-        int k = 1;
-        for (int i = 0; i < _K_; i++) {
-            _kToIdx.emplace(k++, i);
-        }
+//        int k = 1, i=0;
+//        for (; i<_K_; i++, k++) {
+//            _kToIdx.emplace(k, i);
+//        }
+
         _boundaries.reserve(_K_);
         _table = new double ****[_N_];
         _minIndexArray = new int ****[_N_];
@@ -86,7 +87,8 @@ namespace multi {
             // determine K
             for (int num = 2; num < _K_ + 1; num++) {
                 printf("--------\nk=%d\n", num);
-                sumOfEntropy.emplace_back(num, _table[0][_N_ - 1][indexK(num)][_H_ - 1][_N_ - 1]);
+//                sumOfEntropy.emplace_back(num, _table[0][_N_ - 1][indexK(num)][_H_ - 1][_N_ - 1]);
+                sumOfEntropy.emplace_back(num, _table[0][_N_ - 1][num-1][_H_ - 1][_N_ - 1]);
 
                 backTrace(num, _H_);
 
@@ -120,10 +122,13 @@ namespace multi {
                 index = normLeaves[0].first;
             }
             std::cout << "k chosen=" << index << std::endl;
-        } else {
+        }
+        else {
             int num = _K_;
             printf("--------\nk=%d\n", num);
-            sumOfEntropy.emplace_back(num, _table[0][_N_ - 1][indexK(num)][_H_ - 1][_N_ - 1]);
+//            sumOfEntropy.emplace_back(num, _table[0][_N_ - 1][indexK(num)][_H_ - 1][_N_ - 1]);
+            sumOfEntropy.emplace_back(num, _table[0][_N_ - 1][num-1][_H_-1][_N_-1]);
+
             backTrace(num, _H_);
             double leafSum = 0;
             for (int leaf = 0; leaf < _boundaries.size(); leaf++) {
@@ -146,7 +151,7 @@ namespace multi {
         for (int i = 0; i < _nodeList->size(); i++) {
             std::cout << (*_nodeList)[i]->_val[0] << ", " <<  (*_nodeList)[i]->_val[1] << std::endl;
         }
-        _writer.writeTree(_OUTPUT_ + ".original_boundaries", *_nodeList);
+        _writer.writeTree(_OUTPUT_ + ".multi.original", *_nodeList);
     }
 
 
@@ -167,7 +172,9 @@ namespace multi {
         }
 
         t = std::clock() - t;
-        std::cout << "part1 took: " << (float)t/CLOCKS_PER_SEC << "s\n";
+        if (_VERBOSE_) {
+            std::cout << "filling base case: " << (float) t / CLOCKS_PER_SEC << "s\n";
+        }
 
         t = std::clock();
 //        std::cout << "_K=" << _K << std::endl;
@@ -219,7 +226,8 @@ namespace multi {
                             double minTmp, currentVol, parentVol;
                             int minIdx, leftK;
                             if (end - start + 1 >= cluster) {
-                                minTmp = _table[start][end][indexK(cluster)][height - 1][end];
+//                                minTmp = _table[start][end][indexK(cluster)][height - 1][end];
+                                minTmp = _table[start][end][cluster-1][height-1][end];
                                 parentVol = _data->getVol(start, parentEnd);
                                 minTmp += _data->getSE(start, end, parentVol);
                                 minIdx = start;
@@ -228,13 +236,17 @@ namespace multi {
                                     for (int mid = start; mid < end; mid++) {
                                         double tmp;
                                         if (binaryK == 1) {
-                                            tmp = _table[start][mid][indexK(binaryK)][height - 1][mid] +
-                                                  _table[mid + 1][end][indexK(cluster - binaryK)][height - 1][end];
+//                                            tmp = _table[start][mid][indexK(binaryK)][height - 1][mid] +
+//                                                  _table[mid + 1][end][indexK(cluster - binaryK)][height - 1][end];
+                                            tmp = _table[start][mid][binaryK-1][height-1][mid] +
+                                                  _table[mid + 1][end][cluster-binaryK-1][height-1][end];
                                             tmp += _data->getSE(start, mid, parentVol);
                                         }
                                         else {
-                                            tmp = _table[start][mid][indexK(binaryK)][height][parentEnd] +
-                                                  _table[mid + 1][end][indexK(cluster - binaryK)][height - 1][end];
+//                                            tmp = _table[start][mid][indexK(binaryK)][height][parentEnd] +
+//                                                  _table[mid + 1][end][indexK(cluster - binaryK)][height - 1][end];
+                                            tmp = _table[start][mid][binaryK-1][height][parentEnd] +
+                                                  _table[mid + 1][end][cluster-binaryK-1][height-1][end];
                                         }
 
                                         tmp += _data->getSE(mid + 1, end, parentVol);
@@ -251,9 +263,12 @@ namespace multi {
                                 minIdx = 0;
                                 leftK = 0;
                             }
-                            _minIndexArray[start][end][indexK(cluster)][height][parentEnd] = minIdx;
-                            _table[start][end][indexK(cluster)][height][parentEnd] = minTmp;
-                            _leftKArray[start][end][indexK(cluster)][height][parentEnd] = leftK;
+//                            _minIndexArray[start][end][indexK(cluster)][height][parentEnd] = minIdx;
+//                            _table[start][end][indexK(cluster)][height][parentEnd] = minTmp;
+//                            _leftKArray[start][end][indexK(cluster)][height][parentEnd] = leftK;
+                            _minIndexArray[start][end][cluster-1][height][parentEnd] = minIdx;
+                            _table[start][end][cluster-1][height][parentEnd] = minTmp;
+                            _leftKArray[start][end][cluster-1][height][parentEnd] = leftK;
                         }
                     }
                 }
@@ -310,28 +325,37 @@ namespace multi {
         if (k == 1) {
             if (add)
                 _multiTree.insert(start, end);
-            printf("filling-------------%d %d %d %d k=1, parentEnd: %d %f\n", start, end, k, h, parentEnd, _table[start][end][indexK(k)][h][parentEnd]);
+            if (_VERBOSE_) {
+                printf("filling-------------%d %d %d %d k=1, parentEnd: %d %f\n",
+                       start, end, k, h, parentEnd, _table[start][end][k-1][h][parentEnd]);
+            }
             return;
         }
         else {
             if (h != 0) {
 //        std::cout << "1. start=" << start << ", end=" << end << ", k=" << k << ", indexK(k)=" << indexK (k) << ", h=" << h << ", parentEnd=" << parentEnd << std::endl;
 //        std::cout << "_leftKArray[start][end][indexK(k)][h][parentEnd]=" << _leftKArray[start][end][indexK(k)][h][parentEnd] << "\n\n";
-                int leftK = _leftKArray[start][end][indexK(k)][h][parentEnd];
+//                int leftK = _leftKArray[start][end][indexK(k)][h][parentEnd];
+                int leftK = _leftKArray[start][end][k-1][h][parentEnd];
                 if (leftK == 0) {
                     if (add)
                         _multiTree.insert(start, end);
-                    printf("filling-------------%d %d %d %d leftK=1, parentEnd: %d %f\n", start, end, k, h, parentEnd, _table[start][end][indexK(k)][h][parentEnd]);
+                    if (_VERBOSE_) {
+                        printf("filling-------------%d %d %d %d leftK=1, parentEnd: %d %f\n",
+                               start, end, k, h, parentEnd, _table[start][end][k - 1][h][parentEnd]);
+                    }
                     multiSplit(start, end, k, h-1, end, add);
                 }
                 else {
-                    int midPos = _minIndexArray[start][end][indexK(k)][h][parentEnd];
+//                    int midPos = _minIndexArray[start][end][indexK(k)][h][parentEnd];
+                    int midPos = _minIndexArray[start][end][k-1][h][parentEnd];
 //          std::cout << "2. start=" << start << ", end=" << end << ", k=" << k << ", indexK(k)=" << indexK(k) << ", h=" << h << ", parentEnd=" << parentEnd << ", midPos=" << midPos << std::endl;
 //          std::cout << "_minIndexArray[start][end][indexK(k)][h][parentEnd]=" << _minIndexArray[start][end][indexK(k)][h][parentEnd] << "\n\n";
                     _boundaries.emplace_back(midPos + 1, 0);
                     if (add)
                         _multiTree.insert(midPos+1, end);
-                    printf("filling-------------%d %d %d %d h!=1, parentEnd: %d %f\n", start, end, k, h, parentEnd, _table[start][end][indexK(k)][h][parentEnd]);
+                    printf("filling-------------%d %d %d %d h!=1, parentEnd: %d %f\n",
+                        start, end, k, h, parentEnd, _table[start][end][k-1][h][parentEnd]);
                     multiSplit(start, midPos, leftK, h, parentEnd, add);
                     multiSplit(midPos + 1, end, k-leftK, h-1, end, add);
                 }
@@ -339,11 +363,13 @@ namespace multi {
             else {
 //        std::cout << "3. start=" << start << ", end=" << end << ", k=" << k << ", indexK(k)=" << indexK(k) << ", h=" << h << ", parentEnd=" << parentEnd << std::endl;
 //        std::cout << "_minIndexArray[start][end][indexK(k)][h][parentEnd]=" << _minIndexArray[start][end][indexK(k)][h][parentEnd] << "\n\n";
-                int midPos = _minIndexArray[start][end][indexK(k)][h][parentEnd];
+//                int midPos = _minIndexArray[start][end][indexK(k)][h][parentEnd];
+                int midPos = _minIndexArray[start][end][k-1][h][parentEnd];
                 _boundaries.emplace_back(midPos + 1, 0);
                 if (add)
                     _multiTree.insert(midPos+1, end);
-                printf("filling-------------%d %d %d %d h=1, parentEnd: %d %f\n", start, end, k, h, parentEnd, _table[start][end][indexK(k)][h][parentEnd]);
+                printf("filling-------------%d %d %d %d h=1, parentEnd: %d %f\n",
+                    start, end, k, h, parentEnd, _table[start][end][k-1][h][parentEnd]);
                 multiSplit(start, midPos, k-1, h, parentEnd, add);
             }
         }

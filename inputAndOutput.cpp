@@ -126,16 +126,16 @@ void Reader::parseMatrix2Table(double **&table, std::string path)
 }
 
 
-void Writer::writeBoundaries(std::string filePath, std::vector<boundary> &boundaryList)
+void Writer::writeBoundaries(std::string path, std::vector<boundary> &boundaryList)
 {
     std::ofstream file;
-    file.open(filePath);
+    file.open(path);
     if (file.is_open())
     {
         if (_VERBOSE_)
-            printf("start writing boundaries into: %s\n", filePath.c_str());
+            printf("start writing boundaries into: %s\n", path.c_str());
         else
-            printf("write boundaries into: %s\n", filePath.c_str());
+            printf("write boundaries into: %s\n", path.c_str());
 
         for (std::vector<boundary>::iterator it=boundaryList.begin(); it!=boundaryList.end(); it++) {
             for (int i=it->first; i<=it->second; i++)
@@ -148,42 +148,42 @@ void Writer::writeBoundaries(std::string filePath, std::vector<boundary> &bounda
             printf("finish writing boundaries\n");
     }
     else
-        std::cerr << "cannot open file: " << filePath << "\n";
+        std::cerr << "cannot open file: " << path << "\n";
 }
 
 
-void Writer::dumpMatrix(Eigen::MatrixXd &mat, std::string outPath)
+void Writer::dumpMatrix(Eigen::MatrixXd &mat, std::string path)
 {
-    std::ofstream file(outPath);
+    std::ofstream file(path);
 
     if (file.is_open()) {
-        printf("start dumping matrix into: %s\n", outPath.c_str());
+        printf("start dumping matrix into: %s\n", path.c_str());
 
         file << mat << '\n';
         if (_VERBOSE_)
             printf("finish dumping matrix\n");
         else
-            printf("dump matrix into: %s\n", outPath.c_str());
+            printf("dump matrix into: %s\n", path.c_str());
 
         file.close();
     }
     else
-        std::cerr << "cannot open file: " << outPath << "\n";
+        std::cerr << "cannot open file: " << path << "\n";
 }
 
 
-void Writer::dumpCoordinates(i2dMap &map, std::string outPath, std::ofstream *f)
+void Writer::dumpCoordinates(i2dMap &map, std::string path, std::ofstream *f)
 {
     bool append = false;
     if (f) {
         append = true;
     } else {
-        std::ofstream file(outPath);
+        std::ofstream file(path);
         f = &file;
     }
     if (f->is_open()) {
         if (_VERBOSE_)
-            printf("start dumping coordinates into: %s\n", outPath.c_str());
+            printf("start dumping coordinates into: %s\n", path.c_str());
 
         for (auto it=map.begin(); it!=map.end(); it++) {
             *f << it->first << "\t" << it->second << "\n";
@@ -194,10 +194,10 @@ void Writer::dumpCoordinates(i2dMap &map, std::string outPath, std::ofstream *f)
         if (_VERBOSE_)
             printf("finish dumping coordinates\n");
         else
-            printf("dump coordinates into: %s", outPath.c_str());
+            printf("dump coordinates into: %s", path.c_str());
     }
     else
-        std::cerr << "cannot open file: " << outPath << "\n";
+        std::cerr << "cannot open file: " << path << "\n";
 }
 
 

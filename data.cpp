@@ -20,7 +20,7 @@ Data::Data(std::string fileName)
         _edgeCountArray[s] = new double [_N_];
     }
 
-    if (_FAST_) {
+    if (_BINARY_ && _FAST_) {
         if (_PENALTY_<0) {
             _PENALTY_ = ceil(_N_/10);
         }

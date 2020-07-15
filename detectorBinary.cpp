@@ -81,13 +81,13 @@ namespace binary {
         std::vector<intDoublePair> normLeaves;
 
         int index;
+        double entropy, leafSum, parentVol, currentVol, divisor, logPV;
+
         if (_DETERMINE_K_) {
             if (_VERBOSE_) {
                 printf("start determine k\n========\n");
                 tTmp = std::clock();
             }
-
-            double entropy, leafSum, parentVol, currentVol, divisor;
 
             // determine K
             for (int k = 2; k <= _K_; k++) {
@@ -105,9 +105,14 @@ namespace binary {
                 backTrace(k);
 
                 leafSum = 0;
-                parentVol = 2.*_data->_edgeSum;
+//                parentVol = 2.*_data->_edgeSum;
+//                for (int leaf = 0; leaf < _boundary.size(); leaf++) {
+//                    leafSum += _data->getSE(_boundary[leaf].first, _boundary[leaf].second, parentVol);
+//                    leafSum += _table[_boundary[leaf].first][_boundary[leaf].second][0];
+//                }
+                logPV = log2(_data->_doubleEdgeSum);
                 for (int leaf = 0; leaf < _boundary.size(); leaf++) {
-                    leafSum += _data->getSE(_boundary[leaf].first, _boundary[leaf].second, parentVol);
+                    leafSum += _data->getSEwithLogPV(_boundary[leaf].first, _boundary[leaf].second, logPV);
                     leafSum += _table[_boundary[leaf].first][_boundary[leaf].second][0];
                 }
                 sumOfLeaves.emplace_back(leafSum);
@@ -131,17 +136,19 @@ namespace binary {
             int kTmp = _K_;
             indexKtmp(kTmp);
 
-            double entropy = _table[0][_N_ - 1][*_kTmpIdx];
+            entropy = _table[0][_N_ - 1][*_kTmpIdx];
             sumOfEntropy.emplace_back(entropy);
 
             backTrace(kTmp);
-            double leafSum = 0;
-            int currentStart, currentEnd;
+            leafSum = 0;
+//            for (int leaf = 0; leaf < _boundary.size(); leaf++) {
+//                leafSum += _data->getSE(_boundary[leaf].first, _boundary[leaf].second, _data->_doubleEdgeSum);
+//                leafSum += _table[_boundary[leaf].first][_boundary[leaf].second][0];
+//            }
+            logPV = log2(_data->_doubleEdgeSum);
             for (int leaf = 0; leaf < _boundary.size(); leaf++) {
-                currentStart = _boundary[leaf].first;
-                currentEnd = _boundary[leaf].second;
-                leafSum += _data->getSE(currentStart, currentEnd, 2. * _data->_edgeSum);
-                leafSum += _table[currentStart][currentEnd][0];
+                leafSum += _data->getSEwithLogPV(_boundary[leaf].first, _boundary[leaf].second, logPV);
+                leafSum += _table[_boundary[leaf].first][_boundary[leaf].second][0];
             }
             sumOfLeaves.emplace_back(leafSum);
             double divisor = log2(_N_ / (double) kTmp) + (_N_ * (kTmp - 1) / (double) (kTmp * (_N_ - 1))) * log2(kTmp);
@@ -155,7 +162,7 @@ namespace binary {
 
 
         _nodeList = &_binaryTree->nodeList();
-        Writer::writeTree(_OUTPUT_ + ".original_boundaries", *_nodeList);
+        Writer::writeTree(_OUTPUT_ + ".binary.original", *_nodeList);
 
         // filter
         if (_FILTERING_) {
@@ -174,7 +181,7 @@ namespace binary {
                 trueNodes.emplace_back((*it));
             }
 
-            Writer::writeTree(_OUTPUT_ + ".filter_boundaries", trueNodes);
+            Writer::writeTree(_OUTPUT_ + ".binary.filter", trueNodes);
             if (_VERBOSE_)
                 printf("filtering consumes %fs\n", (float)(std::clock() - tTmp) / CLOCKS_PER_SEC);
         }

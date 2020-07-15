@@ -13,28 +13,37 @@
 #include "binaryTree.h"
 #include "inputAndOutput.h"
 #include "utils.h"
-
+#include <string.h>
 
 namespace binary {
 
     class Detector {
     private:
         Data *_data;
-//        Eigen::MatrixXd *_edgeCount;
+
         binary::Tree *_binaryTree;
+
         std::vector<binary::TreeNode *> *_nodeList;
+
         double ***_table;
+
         int ***_minIndexTableForBold;
 
         int ***_minIndexArray;
+
         int ***_leftKArray;
+
         std::vector<std::pair<int, int>> _boundary;
+
         std::set<binary::TreeNode *> _trueNodeList;
 
         int *_numBins;
+
         int *_kTmpIdx;
+
         int *_kMinusKtmpIdx;
 
+        float **_scoreTable;
     public:
         Detector(Data &data);
 

@@ -10,7 +10,6 @@ namespace binary {
     Detector::Detector (Data &data)
     {
         _data = &data;
-//        _edgeCount = &data.edgeCount();
         _table = new double **[_N_];
         _minIndexArray = new int **[_N_];
         _leftKArray = new int **[_N_];
@@ -493,8 +492,9 @@ namespace binary {
 
     void Detector::filterNodes()
     {
-        Eigen::MatrixXi scoreMat(_nodeList->size(), _nodeList->size());
-        scoreMat.setZero();
+        _scoreTable = new float *[_nodeList->size()];
+        for (int i=0; i<_nodeList->size(); i++)
+            _scoreTable[i] = new float[_nodeList->size()]{};
 
         std::vector<std::pair<int, binary::TreeNode *>> nodeList1, nodeList2, trueNodeList;
         nodeList1.reserve(_nodeList->size() / 2);
@@ -568,7 +568,7 @@ namespace binary {
                 time++;
                 for (int m = 0; m < trueNodeList.size() - 1; m++) {
                     for (int n = m + 1; n < trueNodeList.size(); n++) {
-                        scoreMat(trueNodeList[m].first, trueNodeList[n].first)++;
+                        _scoreTable[trueNodeList[m].first][trueNodeList[n].first]++;
                     }
                 }
             }
@@ -576,7 +576,7 @@ namespace binary {
 
         for (int i = 0; i < _nodeList->size(); i++) {
             for (int j = i + 1; j < _nodeList->size(); j++) {
-                if (scoreMat.coeff(i, j) > threshold) {
+                if (_scoreTable[i][j] > threshold) {
                     _trueNodeList.emplace((*_nodeList)[i]);
                     _trueNodeList.emplace((*_nodeList)[j]);
                 }

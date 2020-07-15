@@ -9,13 +9,6 @@ namespace multi {
     Detector::Detector(Data &data)
     {
         _data = &data;
-//        _edgeCount = &data.edgeCount();
-
-//        int k = 1, i=0;
-//        for (; i<_K_; i++, k++) {
-//            _kToIdx.emplace(k, i);
-//        }
-
         _boundaries.reserve(_K_);
         _table = new double ****[_N_];
         _minIndexArray = new int ****[_N_];

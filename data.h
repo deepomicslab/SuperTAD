@@ -10,7 +10,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <Eigen/Dense>
 #include <cmath>
 #include <string>
 #include <map>
@@ -30,13 +29,11 @@ private:
 
     std::map<int, std::pair<int64_t, int64_t>> _chrom2Idx2Interval;
 
-//    Eigen::MatrixXd _contactMat;
     double **_contactArray;
 
-    // upper tri is intra; lower tri is inter
-//    Eigen::MatrixXd _edgeCountMat;
-
 public:
+
+    // upper tri is intra; lower tri is inter
     double **_edgeCountArray;
 
     double _edgeSum;
@@ -55,8 +52,6 @@ public:
 
     void init();
 
-//    Eigen::MatrixXd & edgeCount() { return _edgeCountMat; }
-
     double getVol(int s, int e);
 
     double getSE(int s, int e, double parentVol);
@@ -68,8 +63,6 @@ public:
     double getSEwithLogs(int s, int e, double logPV, double logCV);
 
     double getSEwithLogDiff(int s, int e, double logDiff);
-
-//    void setEdgeSum();
 
     double getGtimesLogG(double binG);
 };

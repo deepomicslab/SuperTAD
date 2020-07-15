@@ -9,7 +9,6 @@
 #include <iostream>
 #include <fstream>
 #include <sys/stat.h>
-#include <Eigen/Dense>
 #include "binaryTree.h"
 #include "multiTree.h"
 #include "utils.h"
@@ -21,31 +20,16 @@ bool pathExist(const std::string &s);
 
 class Reader {
 private:
-//    std::ifstream _infile;
-//    std::string _filePath;
-//    std::vector<std::string> _fileNames;
-
 public:
-//    Reader(std::string fileName);
-
     Reader() {};
 
     ~Reader() {};
 
-    static void parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath);
-
-    static int parseShort(Eigen::MatrixXd &contactMat, std::string filePath);
-
     static void parseMatrix2Table(double **&table, std::string path);
-
-//    int parseTree(Eigen::MatrixXd &contactMat, std::vector<std::string> &fileNames);
 };
 
 
 class Writer {
-private:
-//    std::ofstream _outfile;
-
 public:
     Writer() {};
 
@@ -207,8 +191,6 @@ public:
     }
 
     static void writeBoundaries(std::string path, std::vector<boundary> &boundaryList);
-
-    static void dumpMatrix(Eigen::MatrixXd &mat, std::string path);
 
     static void dumpCoordinates(i2dMap &map, std::string path, std::ofstream *f=NULL);
 

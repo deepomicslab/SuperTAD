@@ -12,64 +12,6 @@ bool pathExist(const std::string &s)
 }
 
 
-void Reader::parseMatrix(Eigen::MatrixXd &contactMat, std::string filePath)
-{
-    if (filePath == "") {
-        std::cerr << "input must be provided\n";
-        exit(1);
-    }
-
-    if (!pathExist(filePath)) {
-        printf("input file doesn't exist\n");
-        exit(1);
-    }
-
-    std::ifstream inFile;
-    inFile.exceptions(std::ifstream::badbit);
-    try {
-        inFile.open(filePath);
-        _N_ = 0;
-        if (inFile.is_open()) {
-            if (_VERBOSE_)
-                printf("start parsing input: %s\n", filePath.c_str());
-            std::string line;
-            double c;
-            bool init = false;
-            int pos1 = 0;
-            while (getline(inFile, line)) {
-                std::istringstream iss(line);
-                if (!init) {
-                    std::string lineBack = line;
-                    std::istringstream issBack(lineBack);
-                    while (issBack >> c) {
-                        _N_++;
-                    }
-                    contactMat.resize(_N_, _N_);
-                    init = true;
-                }
-                int pos2 = 0;
-                while (iss >> c) {
-                    contactMat(pos1, pos2) = c;
-                    pos2++;
-                }
-                pos1++;
-            }
-            inFile.close();
-        }
-
-        if (_VERBOSE_)
-            printf("finish parsing input\n");
-        else
-            printf("parse input: %s\n", filePath.c_str());
-    }
-    catch (const std::ifstream::failure& e) {
-        printf("exception reading file\n");
-        exit(1);
-    }
-
-}
-
-
 void Reader::parseMatrix2Table(double **&table, std::string path)
 {
     if (path == "") {
@@ -146,26 +88,6 @@ void Writer::writeBoundaries(std::string path, std::vector<boundary> &boundaryLi
 
         if (_VERBOSE_)
             printf("finish writing boundaries\n");
-    }
-    else
-        std::cerr << "cannot open file: " << path << "\n";
-}
-
-
-void Writer::dumpMatrix(Eigen::MatrixXd &mat, std::string path)
-{
-    std::ofstream file(path);
-
-    if (file.is_open()) {
-        printf("start dumping matrix into: %s\n", path.c_str());
-
-        file << mat << '\n';
-        if (_VERBOSE_)
-            printf("finish dumping matrix\n");
-        else
-            printf("dump matrix into: %s\n", path.c_str());
-
-        file.close();
     }
     else
         std::cerr << "cannot open file: " << path << "\n";

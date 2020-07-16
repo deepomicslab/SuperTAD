@@ -39,7 +39,7 @@ namespace multi {
     Detector::~Detector ()
     {
         for (int s = 0; s < _N_; s++) {
-            for (int e = 0; e < _N_; e++) {
+            for (int e = s; e < _N_; e++) {
                 for (int k = 0; k < _K_; k++) {
                     for (int h = 0; h < _H_; h++) {
                         delete _table[s][e][k][h];
@@ -273,10 +273,10 @@ namespace multi {
 
     void Detector::initH(int h)
     {
-        for (int i = 0; i < _N_; i++) {
-            for (int j = 0; j < _N_; j++) {
+        for (int s = 0; s < _N_; s++) {
+            for (int e = s; e < _N_; e++) {
                 for (int k = 0; k < _N_; k++) {
-                    _table[i][j][0][h][k] = std::numeric_limits<double>::infinity();
+                    _table[s][e][0][h][k] = std::numeric_limits<double>::infinity();
                 }
             }
         }

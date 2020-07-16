@@ -275,11 +275,17 @@ namespace binary {
                         indexKtmp(kTmp);
                         indexK(k-kTmp, *_kMinusKtmpIdx);
 
-                        minSE2 = std::numeric_limits<double>::infinity();
-                        leftI2 = 0;
+                        if (_FAST_) {
+                            minSE2 = std::numeric_limits<double>::infinity();
+                            leftI2 = 0;
+                        }
 
-                        endTmp = (_minIndexTableForBold[s][e][*_kTmpIdx] == -1 ?
+                        if (_FAST_) {
+                            endTmp = (_minIndexTableForBold[s][e][*_kTmpIdx] == -1 ?
                                       e : _minIndexTableForBold[s][e][*_kTmpIdx] + _PENALTY_);
+                        } else
+                            endTmp = e;
+
                         if (endTmp > e)
                             endTmp = e;
 
@@ -306,12 +312,14 @@ namespace binary {
                             // H_l(s,e,i)
                             if (_TEST_LOG2_TIME_) {
                                 currentVol = _data->getVol(s, i);
+
                                 if (currentVol > 0 && parentVol >= currentVol) {
                                     tTmp = std::clock();
                                     logPdC = log2(parentVol / currentVol);
                                     tLog += std::clock() - tTmp;
                                 } else
                                     logPdC = 0;
+
                                 tmpSE += _data->getSEwithLogDiff(s, i, logPdC);
                             }
                             else if (_PRE_LOG_)
@@ -322,12 +330,14 @@ namespace binary {
                             // H_r(s,e,i)
                             if (_TEST_LOG2_TIME_) {
                                 currentVol = _data->getVol(i+1, e);
+
                                 if (currentVol > 0 && parentVol >= currentVol) {
                                     tTmp = std::clock();
                                     logPdC = log2(parentVol / currentVol);
                                     tLog += std::clock() - tTmp;
                                 } else
                                     logPdC = 0;
+
                                 tmpSE += _data->getSEwithLogDiff(i+1, e, logPdC);
                             }
                             else if (_PRE_LOG_)
@@ -340,13 +350,15 @@ namespace binary {
                                 leftI = i;
                                 leftK = kTmp;
                             }
-                            if (tmpSE < minSE2) {
+
+                            if (_FAST_ && tmpSE < minSE2) {
                                 minSE2 = tmpSE;
                                 leftI2 = i;
                             }
                         }
 
-                        _minIndexTableForBold[s][e][*_kTmpIdx] = leftI2;
+                        if (_FAST_)
+                            _minIndexTableForBold[s][e][*_kTmpIdx] = leftI2;
 
                     }
                     _minIndexArray[s][e][kIdx] = leftI;

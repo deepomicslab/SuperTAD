@@ -116,10 +116,15 @@ int parseArg(int argc, char *argv[])
             printf("do multi for H=1\n");
         }
 
-        if (std::string(*(argv + i)) == std::string("-k")) {
+        if (std::string(*(argv + i)) == std::string("-K")) {
             _K_ = atoi(*(argv + ++i));
             _DETERMINE_K_ = false;
             printf("K=%d\n", _K_);
+        }
+
+        if (std::string(*(argv + i)) == std::string("-k")) {
+            _K_ = atoi(*(argv + ++i));
+            printf("set max K to %d\n", _K_);
         }
 
         if (std::string(*(argv + i)) == std::string("-h")) {

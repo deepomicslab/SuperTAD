@@ -200,21 +200,25 @@ namespace multi {
             }
         }
 
-        for (int cluster = 1; cluster < _K_; cluster++) {
+        for (int k = 1; k < _K_; k++) {
             for (int s = 0; s < _N_; s++) {
                 for (int parentEnd = s; parentEnd < _N_; parentEnd++) {
                     for (int e = s; e < parentEnd + 1; e++) {
+
+//                        if (e-s+1 < k)
+//                            continue;
+
                         double parentVol = _data->getVol(s, parentEnd);
                         double minTmp = std::numeric_limits<double>::infinity();
                         int minIdx = 0;
                         for (int i = s; i < e; i++) {
                             double tmp;
-                            if (cluster - 1 == 0) {
-                                tmp = _table[s][i][cluster - 1][0][i];
+                            if (k - 1 == 0) {
+                                tmp = _table[s][i][k - 1][0][i];
                                 tmp += _data->getSE(s, i, parentVol);
                             }
                             else {
-                                tmp = _table[s][i][cluster - 1][0][parentEnd];
+                                tmp = _table[s][i][k - 1][0][parentEnd];
                             }
 
                             tmp += _data->getSE(i + 1, e, parentVol);
@@ -225,8 +229,8 @@ namespace multi {
                                 minIdx = i;
                             }
                         }
-                        _minIndexArray[s][e][cluster][0][parentEnd] = minIdx;
-                        _table[s][e][cluster][0][parentEnd] = minTmp;
+                        _minIndexArray[s][e][k][0][parentEnd] = minIdx;
+                        _table[s][e][k][0][parentEnd] = minTmp;
                     }
                 }
             }
@@ -234,41 +238,52 @@ namespace multi {
 
         for (int h = 1; h < _H_; h++) {
             initH(h);
-            for (int cluster = 2; cluster < _K_ + 1; cluster++) {
+            for (int k = 2; k < _K_ + 1; k++) {
                 for (int s = 0; s < _N_; s++) {
                     for (int parentEnd = s; parentEnd < _N_; parentEnd++) {
                         for (int e = s; e < parentEnd + 1; e++) {
+
+//                            if (e-s+1 < k)
+//                                continue;
+
                             double minTmp, currentVol, parentVol;
                             int minIdx, leftK;
-                            if (e - s + 1 >= cluster) {
+                            if (e - s + 1 >= k) {
 //                                minTmp = _table[start][end][indexK(cluster)][height - 1][end];
-                                minTmp = _table[s][e][cluster - 1][h - 1][e];
+                                minTmp = _table[s][e][k - 1][h - 1][e];
                                 parentVol = _data->getVol(s, parentEnd);
                                 minTmp += _data->getSE(s, e, parentVol);
                                 minIdx = s;
                                 leftK = 0;
-                                for (int binaryK = 1; binaryK < cluster; binaryK++) {
-                                    for (int mid = s; mid < e; mid++) {
+                                for (int kTmp = 1; kTmp < k; kTmp++) {
+                                    for (int i = s; i < e; i++) {
+
+//                                        if (i-s+1 < kTmp)
+//                                            continue;
+//
+//                                        if (e-i+1 < k-kTmp)
+//                                            continue;
+
                                         double tmp;
-                                        if (binaryK == 1) {
+                                        if (kTmp == 1) {
 //                                            tmp = _table[start][mid][indexK(binaryK)][height - 1][mid] +
 //                                                  _table[mid + 1][end][indexK(cluster - binaryK)][height - 1][end];
-                                            tmp = _table[s][mid][binaryK - 1][h - 1][mid] +
-                                                  _table[mid + 1][e][cluster - binaryK - 1][h - 1][e];
-                                            tmp += _data->getSE(s, mid, parentVol);
+                                            tmp = _table[s][i][kTmp - 1][h - 1][i] +
+                                                  _table[i + 1][e][k - kTmp - 1][h - 1][e];
+                                            tmp += _data->getSE(s, i, parentVol);
                                         }
                                         else {
 //                                            tmp = _table[start][mid][indexK(binaryK)][height][parentEnd] +
 //                                                  _table[mid + 1][end][indexK(cluster - binaryK)][height - 1][end];
-                                            tmp = _table[s][mid][binaryK - 1][h][parentEnd] +
-                                                  _table[mid + 1][e][cluster - binaryK - 1][h - 1][e];
+                                            tmp = _table[s][i][kTmp - 1][h][parentEnd] +
+                                                  _table[i + 1][e][k - kTmp - 1][h - 1][e];
                                         }
 
-                                        tmp += _data->getSE(mid + 1, e, parentVol);
+                                        tmp += _data->getSE(i + 1, e, parentVol);
                                         if (tmp <= minTmp) {
                                             minTmp = tmp;
-                                            minIdx = mid;
-                                            leftK = binaryK;
+                                            minIdx = i;
+                                            leftK = kTmp;
                                         }
                                     }
                                 }
@@ -281,9 +296,9 @@ namespace multi {
 //                            _minIndexArray[start][end][indexK(cluster)][height][parentEnd] = minIdx;
 //                            _table[start][end][indexK(cluster)][height][parentEnd] = minTmp;
 //                            _leftKArray[start][end][indexK(cluster)][height][parentEnd] = leftK;
-                            _minIndexArray[s][e][cluster - 1][h][parentEnd] = minIdx;
-                            _table[s][e][cluster - 1][h][parentEnd] = minTmp;
-                            _leftKArray[s][e][cluster - 1][h][parentEnd] = leftK;
+                            _minIndexArray[s][e][k - 1][h][parentEnd] = minIdx;
+                            _table[s][e][k - 1][h][parentEnd] = minTmp;
+                            _leftKArray[s][e][k - 1][h][parentEnd] = leftK;
                         }
                     }
                 }

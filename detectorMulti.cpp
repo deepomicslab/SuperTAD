@@ -115,12 +115,25 @@ namespace multi {
                 fflush(stdout);
 
             }
-            if (_VERBOSE_)
+            if (_VERBOSE_){
                 printf("--------\n");
+                printf("sumOfEntropy:\n");
+                for (int i=0; i<sumOfEntropy.size(); i++)
+                    printf("(%d, %f)\n", sumOfEntropy[i].first, sumOfEntropy[i].second);
+                printf("normLeaves:\n");
+                for (int i=0; i<normLeaves.size(); i++)
+                    printf("(%d, %f)\n", normLeaves[i].first, normLeaves[i].second);
+            }
 
             if (_H_ == 1 || _H_ == 2) {
-                sort(sumOfEntropy.begin(), sumOfEntropy.end(), utils::cmpIntDoublePairBySecond);
-                kOpt = sumOfEntropy[0].first;
+                if (_optimalK_ < _K_)
+                    kOpt = _optimalK_;
+                else {
+//                    sort(sumOfEntropy.begin(), sumOfEntropy.end(), utils::cmpIntDoublePairBySecond);
+//                    kOpt = sumOfEntropy[0].first;
+                    sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
+                    kOpt = normLeaves[0].first;
+                }
             }
             else {
                 sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
@@ -286,6 +299,18 @@ namespace multi {
                             _leftKArray[s][e][cluster - 1][h][parentEnd] = leftK;
                         }
                     }
+                }
+                if ( _table[0][_N_ - 1][cluster-1][_H_ - 1][_N_ - 1] <  _table[0][_N_ - 1][cluster-2][_H_ - 1][_N_ - 1]){
+                    _optimalK_ = cluster;
+                    printf("--------\noptimalK=%d, table=%f\n", _optimalK_, _table[0][_N_ - 1][cluster-1][_H_ - 1][_N_ - 1]);
+                }
+                else{
+                    if (_VERBOSE_)
+                        printf("finish filling db table\n");
+
+                    if (_DEBUG_)
+                        printf("filling db table consumes %fs\n", (float)(std::clock() - t)/CLOCKS_PER_SEC);
+                    return;
                 }
             }
         }

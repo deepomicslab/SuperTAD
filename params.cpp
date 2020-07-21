@@ -14,6 +14,7 @@ bool _MULTI_ = false;
 bool _MULTI_H_ = false;
 
 int _K_ = -999;
+int _optimalK_ = -999;
 bool _DETERMINE_K_ = true;
 int _N_ = -999;
 int _H_ = 2;

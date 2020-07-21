@@ -28,7 +28,10 @@ Data::Data(std::string fileName)
     }
 
     if (_DETERMINE_K_ && _K_ < 0) {
-        _K_ = sqrt(_N_) + 5;
+        if (_BINARY_)
+            _K_ = sqrt(_N_) + 5;
+        else
+            _K_ = _N_ / 3 ;
         printf("set max K to %d\n", _K_);
     }
 }

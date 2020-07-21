@@ -17,6 +17,7 @@ extern bool _MULTI_;
 extern bool _MULTI_H_;
 
 extern int _K_;
+extern int _optimalK_;
 extern bool _DETERMINE_K_;
 extern int _N_;
 extern int _H_;

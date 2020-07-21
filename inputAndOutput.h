@@ -84,7 +84,7 @@ public:
                 bin2Start = _CHROM1_START_ + bin2Idx * _RESOLUTION_;
                 bin2End = _CHROM1_START_ + (bin2Idx+1) * _RESOLUTION_;
                 fprintf(outFile, "%s\t%d\t%d\t%d\t%d\t%d\t%d\n",
-                        _CHROM1_.c_str(), bin1Idx, bin1Start, bin1End, bin2Idx, bin2Start, bin2End);
+                        _CHROM1_.c_str(), bin1Idx+1, bin1Start, bin1End, bin2Idx+1, bin2Start, bin2End);
             }
             fclose(outFile);
 

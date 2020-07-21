@@ -25,7 +25,7 @@ public:
 
     ~Reader() {};
 
-    static void parseMatrix2Table(double **&table, std::string path);
+    static void parseMatrix2Array(double **&table, std::string path);
 };
 
 

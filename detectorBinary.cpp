@@ -190,7 +190,7 @@ namespace binary {
 
     void Detector::fillTable()
     {
-        std::clock_t t, tBaseTmp, tUpperTmp, tVol, tSE, tTmp, tLog;
+        std::clock_t t, tBaseTmp, tUpperTmp, tVol, tSE, tTmp;
         if (_VERBOSE_) {
             printf("start filling dp table\n");
             t = std::clock();
@@ -231,7 +231,6 @@ namespace binary {
         int kIdx, k, s, e, leftI, leftK, leftI2, endTmp;
         double minSE, tmpSE, parentVol, logPV, currentVol, minSE2, logPdC;
         bool breakFlag = false;
-        tLog = 0;
 
         for (k = 2; k <= _K_; k++) {
 
@@ -310,19 +309,7 @@ namespace binary {
                             logPV = _data->_logVolTable[s][e-s];
 
                             // H_l(s,e,i)
-                            if (_TEST_LOG2_TIME_) {
-                                currentVol = _data->getVol(s, i);
-
-                                if (currentVol > 0 && parentVol >= currentVol) {
-                                    tTmp = std::clock();
-                                    logPdC = log2(parentVol / currentVol);
-                                    tLog += std::clock() - tTmp;
-                                } else
-                                    logPdC = 0;
-
-                                tmpSE += _data->getSEwithLogDiff(s, i, logPdC);
-                            }
-                            else if (_PRE_LOG_)
+                            if (_PRE_LOG_)
                                 tmpSE += _data->getSEwithLogPV(s, i, logPV);
                             else
                                 tmpSE += _data->getSE(s, i, parentVol);
@@ -334,8 +321,8 @@ namespace binary {
                                 if (currentVol > 0 && parentVol >= currentVol) {
                                     tTmp = std::clock();
                                     logPdC = log2(parentVol / currentVol);
-                                    tLog += std::clock() - tTmp;
-                                } else
+                                }
+                                else
                                     logPdC = 0;
 
                                 tmpSE += _data->getSEwithLogDiff(i+1, e, logPdC);
@@ -382,10 +369,11 @@ namespace binary {
         if (_VERBOSE_) {
             printf("finish filling upper cases\nfilling upper cases consumes %fs\n",
                    (float) (std::clock() - tUpperTmp) / CLOCKS_PER_SEC);
+        }
+
+        if (_VERBOSE_) {
             printf("finish filling table\nfilling table consumes %fs\n",
                    (float) (std::clock() - t) / CLOCKS_PER_SEC);
-            printf("calculating logarithm consumes %fs\n",
-                   (float) tLog / CLOCKS_PER_SEC);
         }
 
         return;

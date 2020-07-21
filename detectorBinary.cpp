@@ -34,7 +34,7 @@ namespace binary {
             }
         }
         printf("db table size=%d\n", size);
-        _boundary.reserve(_K_);
+        _boundaries.reserve(_K_);
         _binaryTree = new binary::Tree();
         _numBins = new int(0);
         _kTmpIdx = new int(0);
@@ -79,19 +79,20 @@ namespace binary {
         std::vector<double> sumOfLeaves;
         std::vector<intDoublePair> normLeaves;
 
-        int index;
         double entropy, leafSum, parentVol, currentVol, divisor, logPV;
 
         if (_DETERMINE_K_) {
             if (_VERBOSE_) {
-                printf("start determine k\n========\n");
+                printf("start determine optimal K\n");
                 tTmp = std::clock();
             }
+            else
+                printf("determine K\n");
 
-            // determine K
             for (int k = 2; k <= _K_; k++) {
+
                 if (_VERBOSE_)
-                    printf("k=%d\n", k);
+                    printf("--------\nK=%d\n", k);
 
                 indexKtmp(k);
 
@@ -110,67 +111,73 @@ namespace binary {
 //                    leafSum += _table[_boundary[leaf].first][_boundary[leaf].second][0];
 //                }
                 logPV = log2(_data->_doubleEdgeSum);
-                for (int leaf = 0; leaf < _boundary.size(); leaf++) {
-                    leafSum += _data->getSEwithLogPV(_boundary[leaf].first, _boundary[leaf].second, logPV);
-                    leafSum += _table[_boundary[leaf].first][_boundary[leaf].second][0];
+                for (int leaf = 0; leaf < _boundaries.size(); leaf++) {
+                    leafSum += _data->getSEwithLogPV(_boundaries[leaf].first, _boundaries[leaf].second, logPV);
+                    leafSum += _table[_boundaries[leaf].first][_boundaries[leaf].second][0];
                 }
                 sumOfLeaves.emplace_back(leafSum);
                 divisor = log2(_N_ / (double) k) + (_N_ * (k - 1) / (double) (k * (_N_ - 1))) * log2(k);
                 normLeaves.emplace_back(k, leafSum / divisor);
-                if (_VERBOSE_)
-                    std::cout << "========\n";
+
             }
+            if (_VERBOSE_)
+                printf("--------\n");
 
             sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
+            printf("optimal K is %d\n", normLeaves[0].first);
 
-            if (_VERBOSE_) {
-                printf("finish determine k\n");
-                printf("determination consumes %fs\n", (float)(std::clock()-tTmp)/CLOCKS_PER_SEC);
-            }
-            else
-                printf("determine k\n");
+            if (_VERBOSE_)
+                printf("finish determine optimal K\n");
+
+            if (_DEBUG_)
+                printf("determining optimal K consumes %fs\n", (float)(std::clock()-tTmp)/CLOCKS_PER_SEC);
+
+            backTrace(normLeaves[0].first, true);
+
         }
         else {
-
-            int kTmp = _K_;
-            indexKtmp(kTmp);
+            indexKtmp(_K_);
 
             entropy = _table[0][_N_ - 1][*_kTmpIdx];
             sumOfEntropy.emplace_back(entropy);
 
-            backTrace(kTmp);
+            backTrace(_K_, true);
             leafSum = 0;
 //            for (int leaf = 0; leaf < _boundary.size(); leaf++) {
 //                leafSum += _data->getSE(_boundary[leaf].first, _boundary[leaf].second, _data->_doubleEdgeSum);
 //                leafSum += _table[_boundary[leaf].first][_boundary[leaf].second][0];
 //            }
             logPV = log2(_data->_doubleEdgeSum);
-            for (int leaf = 0; leaf < _boundary.size(); leaf++) {
-                leafSum += _data->getSEwithLogPV(_boundary[leaf].first, _boundary[leaf].second, logPV);
-                leafSum += _table[_boundary[leaf].first][_boundary[leaf].second][0];
+            for (int leaf = 0; leaf < _boundaries.size(); leaf++) {
+                leafSum += _data->getSEwithLogPV(_boundaries[leaf].first, _boundaries[leaf].second, logPV);
+                leafSum += _table[_boundaries[leaf].first][_boundaries[leaf].second][0];
             }
             sumOfLeaves.emplace_back(leafSum);
-            double divisor = log2(_N_ / (double) kTmp) + (_N_ * (kTmp - 1) / (double) (kTmp * (_N_ - 1))) * log2(kTmp);
-            normLeaves.emplace_back(kTmp, leafSum/divisor);
+            double divisor = log2(_N_ / (double) _K_) + (_N_ * (_K_ - 1) / (double) (_K_ * (_N_ - 1))) * log2(_K_);
+            normLeaves.emplace_back(_K_, leafSum / divisor);
         }
 
-        index = normLeaves[0].first;
-        printf("obtain optimal structure at k=%d\n", index);
-        fflush(stdout);
-        backTrace(index, true);
-
-
         _nodeList = &_binaryTree->nodeList();
+        if (_VERBOSE_) {
+            printf("nodes:");
+            for (int i = 0; i < _nodeList->size(); i++) {
+                printf("(%d, %d)", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+                if (i < _nodeList->size()-1)
+                    printf(", ");
+            }
+            printf("\n");
+        }
+
+
         Writer::writeTree(_OUTPUT_ + ".binary.original", *_nodeList);
 
-        // filter
         if (_FILTERING_) {
             if (_VERBOSE_) {
                 printf("start filtering\n");
                 tTmp = std::clock();
             }
             else
-                printf("filter nodes\n");
+                printf("filter\n");
 
             calculateD (_binaryTree->root());
             calculateDensity(_binaryTree->root());
@@ -180,9 +187,13 @@ namespace binary {
                 trueNodes.emplace_back((*it));
             }
 
-            Writer::writeTree(_OUTPUT_ + ".binary.filter", trueNodes);
             if (_VERBOSE_)
+                printf("finish filtering\n");
+
+            if (_DEBUG_)
                 printf("filtering consumes %fs\n", (float)(std::clock() - tTmp) / CLOCKS_PER_SEC);
+
+            Writer::writeTree(_OUTPUT_ + ".binary.filter", trueNodes);
         }
 
     }
@@ -190,19 +201,13 @@ namespace binary {
 
     void Detector::fillTable()
     {
-        std::clock_t t, tBaseTmp, tUpperTmp, tVol, tSE, tTmp;
+        std::clock_t t, tVol, tSE, tTmp;
         if (_VERBOSE_) {
             printf("start filling dp table\n");
             t = std::clock();
         }
         else
             printf("fill dp table\n");
-
-        // process k=1
-        if (_VERBOSE_) {
-            printf("start filling base case\n");
-            tBaseTmp = std::clock();
-        }
 
         for (int s = 0; s < _N_; s++) {
             for (int e = s; e < _N_; e++) {
@@ -217,15 +222,8 @@ namespace binary {
             }
         }
 
-        if (_VERBOSE_) {
-            printf("finish filling base case where k=1, _table[0][%d][0]=%fs\nfilling base case consumes %fs\n",
-                   _N_ - 1, _table[0][_N_ - 1][0], (float) (std::clock() - tBaseTmp) / CLOCKS_PER_SEC);
-        }
-
-        // process k>=2
-        if (_VERBOSE_) {
+        if (_DEBUG_) {
             printf("start filling upper cases\n");
-            tUpperTmp = std::clock();
         }
 
         int kIdx, k, s, e, leftI, leftK, leftI2, endTmp;
@@ -235,7 +233,7 @@ namespace binary {
         for (k = 2; k <= _K_; k++) {
 
             if (breakFlag) {
-                if (_VERBOSE_)
+                if (_DEBUG_)
                     printf("break at loop k; s=%d, e=%d, k=%d\n", s, e, k);
                 break;
             }
@@ -244,19 +242,18 @@ namespace binary {
 
             for (s = 0; s < _N_; s++) {
                 if (breakFlag) {
-                    if (_VERBOSE_)
+                    if (_DEBUG_)
                         printf("break at loop s; s=%d, e=%d, k=%d\n", s, e, k);
                     break;
                 }
 
                 for (e = s; e < _N_; e++) {
                     if (breakFlag) {
-                        if (_VERBOSE_)
+                        if (_DEBUG_)
                             printf("break at loop e; s=%d, e=%d, k=%d\n", s, e, k);
                         break;
                     }
 
-                    // skip cases when #numBins<#numLeves
                     numBins(s, e);
                     if (*_numBins < k) {
                         continue;
@@ -291,20 +288,15 @@ namespace binary {
                         for (int i=s; i<endTmp; i++) {
                             numBins(s, i);
                             if (*_numBins < kTmp) {
-//                                printf("s=%d, i=%d, e=%d, #numBins=%d, k=%d, kTmp=%d; skip\n",
-//                                    s, i, e, *_numBins, k, kTmp);
                                 continue;
                             }
                             numBins(i+1, e);
                             if (*_numBins < k-kTmp) {
-//                                printf("s=%d, i+1=%d, e=%d, #numBins=%d, k=%d, kTmp=%d, k-kTmp=%d; skip\n",
-//                                       s, i + 1, e, *_numBins, k, kTmp, k - kTmp);
                                 continue;
                             }
 
                             // S(s,i,k')+S(i+1,e,k-k')
                             tmpSE = _table[s][i][*_kTmpIdx] + _table[i + 1][e][*_kMinusKtmpIdx];
-
                             parentVol = _data->getVol(s, e);
                             logPV = _data->_logVolTable[s][e-s];
 
@@ -315,19 +307,7 @@ namespace binary {
                                 tmpSE += _data->getSE(s, i, parentVol);
 
                             // H_r(s,e,i)
-                            if (_TEST_LOG2_TIME_) {
-                                currentVol = _data->getVol(i+1, e);
-
-                                if (currentVol > 0 && parentVol >= currentVol) {
-                                    tTmp = std::clock();
-                                    logPdC = log2(parentVol / currentVol);
-                                }
-                                else
-                                    logPdC = 0;
-
-                                tmpSE += _data->getSEwithLogDiff(i+1, e, logPdC);
-                            }
-                            else if (_PRE_LOG_)
+                            if (_PRE_LOG_)
                                 tmpSE += _data->getSEwithLogPV(i+1, e, logPV);
                             else
                                 tmpSE += _data->getSE(i+1, e, parentVol);
@@ -353,28 +333,26 @@ namespace binary {
                     _leftKArray[s][e][kIdx] = leftK;
 
                     if (k == _K_ && s == 0 && e == _N_ - 1) {
-                        if (_VERBOSE_)
+                        if (_DEBUG_)
                             printf("already obtain optimal solution for minS(1, %d, %d); stop here\n", _N_, _K_);
                         breakFlag=true;
                     }
                 }
             }
 
-            if (_VERBOSE_) {
+            if (_DEBUG_) {
                 printf("finishing filling upper case where k=%d, _table[0][%d][%d]=%f\n",
                        k, _N_ - 1, kIdx, _table[0][_N_ - 1][kIdx]);
             }
         }
 
         if (_VERBOSE_) {
-            printf("finish filling upper cases\nfilling upper cases consumes %fs\n",
-                   (float) (std::clock() - tUpperTmp) / CLOCKS_PER_SEC);
+            printf("finish filling dp table\n");
         }
 
-        if (_VERBOSE_) {
-            printf("finish filling table\nfilling table consumes %fs\n",
-                   (float) (std::clock() - t) / CLOCKS_PER_SEC);
-        }
+        if (_DEBUG_)
+            printf("filling dp table consumes %fs\n", (float) (std::clock() - t) / CLOCKS_PER_SEC);
+
 
         return;
     }
@@ -382,36 +360,37 @@ namespace binary {
 
     void Detector::backTrace(int k, bool add)
     {
-        std::clock_t tTmp;
-        if (_VERBOSE_) {
-            printf("start backtrace\n");
-            tTmp = std::clock();
-        }
-        else
-            printf("backtrace k=%d\n", k);
-
         init();
 
         binarySplit(0, _N_ - 1, k, add);
 
-        _boundary.emplace_back(0, 0);
+        _boundaries.emplace_back(0, 0);
 
-        sort(_boundary.begin(), _boundary.end(), utils::cmpBoundary);
-        for (int i = 0; i < _boundary.size(); i++) {
-            if (i == _boundary.size() - 1)
-                _boundary[i].second = _N_ - 1;
+        sort(_boundaries.begin(), _boundaries.end(), utils::cmpBoundary);
+
+        for (int i = 0; i < _boundaries.size(); i++) {
+            if (i == _boundaries.size() - 1)
+                _boundaries[i].second = _N_ - 1;
             else
-                _boundary[i].second = _boundary[i + 1].first - 1;
+                _boundaries[i].second = _boundaries[i + 1].first - 1;
         }
+
         if (_VERBOSE_) {
-            printf("finish backtrace\nbacktrace consumes %fs\n", (float)(std::clock()-tTmp)/CLOCKS_PER_SEC);
+            printf("boundaries:");
+            for (int i = 0; i < _boundaries.size(); i++) {
+                printf("(%d, %d)", _boundaries[i].first, _boundaries[i].second);
+                if (i < _boundaries.size()-1)
+                    printf(", ");
+            }
+            printf("\n");
         }
+
     }
 
 
     void Detector::init()
     {
-        _boundary.clear();
+        _boundaries.clear();
     }
 
 
@@ -429,7 +408,7 @@ namespace binary {
 
             int kTmp = _leftKArray[s][e][*_kTmpIdx];
 
-            _boundary.emplace_back(i+1, -1);
+            _boundaries.emplace_back(i + 1, -1);
 
             binarySplit(s, i, kTmp, add, lv+1);
 

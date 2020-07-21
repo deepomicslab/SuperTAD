@@ -9,7 +9,7 @@ Data::Data(std::string fileName)
 {
 //    Reader::parseMatrix(_contactMat, _INPUT_);
     Reader::parseMatrix2Table(_contactArray, _INPUT_);
-    printf("#bins=%d", _N_);
+    printf("number of bins is %d\n", _N_);
 
     _logVolTable = new double *[_N_];
     _volTable = new double *[_N_];
@@ -24,12 +24,12 @@ Data::Data(std::string fileName)
         if (_PENALTY_<0) {
             _PENALTY_ = ceil(_N_/10);
         }
-        printf("fast mode penalty=%d\n", _PENALTY_);
+        printf("set fast mode penalty to %d\n", _PENALTY_);
     }
 
-    if (_K_ < 0) {
+    if (_DETERMINE_K_ && _K_ < 0) {
         _K_ = sqrt(_N_) + 5;
-        std::cout << "set K=" << _K_ << "\n";
+        printf("set max K to %d\n", _K_);
     }
 }
 
@@ -50,7 +50,7 @@ void Data::init()
     std::clock_t tTmp;
 
     if (_VERBOSE_) {
-        std::cout << "start data initialization\n";
+        std::cout << "start initialization\n";
         tTmp = std::clock();
     }
     else
@@ -145,7 +145,10 @@ void Data::init()
     }
 
     if (_VERBOSE_)
-        printf("finish initialization\ninitialization consumes %fs\n", (float)(std::clock()-tTmp)/CLOCKS_PER_SEC);
+        printf("finish initialization\n");
+
+    if (_DEBUG_)
+        printf("initialization consumes %fs\n", (float)(std::clock()-tTmp)/CLOCKS_PER_SEC);
 }
 
 
@@ -158,7 +161,7 @@ void Data::init()
 double Data::getVol(int s, int e)
 {
     if (e<s)
-        fprintf(stderr, "s=%d, e=%d, e<s\n");
+        fprintf(stderr, "s=%d, e=%d, e<s\n", s, e);
 
 //    if (s!=e)
 //        return 2. * _edgeCountMat.coeff(s, e) + _edgeCountMat.coeff(e, s);

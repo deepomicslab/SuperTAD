@@ -30,7 +30,10 @@ void Reader::parseMatrix2Table(double **&table, std::string path)
         file.open(path);
         if (file.is_open()) {
             if (_VERBOSE_)
-                printf("start parsing input: %s\n", path.c_str());
+                printf("start parsing input from %s\n", path.c_str());
+            else
+                printf("parse input\n");
+
             _N_ = 0;
             std::string line;
             double c;
@@ -59,6 +62,10 @@ void Reader::parseMatrix2Table(double **&table, std::string path)
                 }
                 iss.clear();
             }
+
+            if (_VERBOSE_)
+                printf("finish parsing input\n");
+
         }
     }
     catch (const std::ifstream::failure& e) {

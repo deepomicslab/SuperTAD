@@ -40,13 +40,13 @@ extern int _RESOLUTION_;
 
 // for input in short bed format
 
-// for output in bedpe
+// output format
 extern bool _BEDPE_;
+extern bool _SHORT_;
+extern bool _BIN_LIST_;
 
 // debug
 extern bool _DEBUG_;
-extern bool _TEST_LOG2_TIME_;
-extern bool _TEST_FAST_;
 extern std::string _TMP_PATH_;
 
 #endif //PROGRAM_PARAMS_H

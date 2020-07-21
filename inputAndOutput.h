@@ -45,7 +45,7 @@ public:
             if (_VERBOSE_)
                 printf("start writing tree into %s\n", filePath.c_str());
             else
-                printf("write tree into: %s\n", filePath.c_str());
+                printf("write tree into %s\n", filePath.c_str());
 
             for (int i = 0; i < nodeList.size(); i++) {
                 for (int j = nodeList[i]->_val[0]; j <= nodeList[i]->_val[1]; j++)
@@ -73,7 +73,7 @@ public:
             if (_VERBOSE_)
                 printf("start writing tree into %s\n", filePath.c_str());
             else
-                printf("write tree into: %s\n", filePath.c_str());
+                printf("write tree into %s\n", filePath.c_str());
 
             int bin1Idx, bin1Start, bin1End, bin2Idx, bin2Start, bin2End;
             for (int i = 0; i < nodeList.size(); i++) {
@@ -106,7 +106,7 @@ public:
             if (_VERBOSE_)
                 printf("start writing tree into %s\n", filePath.c_str());
             else
-                printf("write tree into: %s\n", filePath.c_str());
+                printf("write tree into %s\n", filePath.c_str());
 
             fprintf(outFile, "#chrom1\tstart1\tend1\tchrom2\tstart2\tend2\tname\n");
             fprintf(outFile, "#%s\n", utils::version().c_str());
@@ -151,7 +151,7 @@ public:
             if (_VERBOSE_)
                 printf("start writing tree into %s\n", filePath.c_str());
             else
-                printf("write tree into: %s\n", filePath.c_str());
+                printf("write tree into %s\n", filePath.c_str());
 
             fprintf(outFile, "#chrom1\tstart1\tend1\tchrom2\tstart2\tend2\tname\n");
             fprintf(outFile, "#%s\n", utils::version().c_str());
@@ -180,12 +180,15 @@ public:
     {
         if (_BEDPE_)
             writeTreeAsBedpe(filePath, nodeList);
+        else if (_SHORT_)
+            writeTreeInShort(filePath, nodeList);
+        else if (_BIN_LIST_)
+            writeTreeAsBinList(filePath, nodeList);
         else {
             if (_CHROM1_ != _CHROM2_) {
                 fprintf(stderr, "chromosome indices are not the same, output will be written in BEDPE\n");
                 writeTreeAsBedpe(filePath, nodeList);
             }
-//            writeTreeAsBinList(filePath, nodeList);
             writeTreeIn7Cols(filePath, nodeList);
         }
     }

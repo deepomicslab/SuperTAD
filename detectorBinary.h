@@ -33,7 +33,7 @@ namespace binary {
 
         int ***_leftKArray;
 
-        std::vector<std::pair<int, int>> _boundary;
+        std::vector<std::pair<int, int>> _boundaries;
 
         std::set<binary::TreeNode *> _trueNodeList;
 

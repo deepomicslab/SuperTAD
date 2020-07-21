@@ -35,10 +35,11 @@ int64_t _CHROM1_START_ = 0;
 int64_t _CHROM2_START_ = 0;
 int _RESOLUTION_ = 1;
 
+// output format
 bool _BEDPE_ = false;
+bool _SHORT_ = false;
+bool _BIN_LIST_ = false;
 
 // debug
 bool _DEBUG_ = false;
-bool _TEST_LOG2_TIME_ = false;
-bool _TEST_FAST_ = false;
 std::string _TMP_PATH_;

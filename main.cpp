@@ -19,7 +19,7 @@ int printUsage(char *argv[], int err)
     std::string info;
     info =  "****************************************************************************************\n";
     info += "* SuperTAD: [Super]-fast [T]opological [A]ssociating [D]omain package for Hi-C dataset *\n";
-    info += "* version: 1.1                                                                         *\n";
+    info += "* version: 1.0                                                                        *\n";
     info += "* Bug report to mbwang2016@gmail.com                                                   *\n";
     info += "*                                                                                      *\n";
     info += "* THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS            *\n";
@@ -40,7 +40,6 @@ int printUsage(char *argv[], int err)
     info += "\t-h <int>: hierarchy number (default 2)\n";
     info += "\t--no-filter: do not filter TADs\n";
     info += "\t--no-fast: disable fast mode for binary mode\n";
-    info += "\t--bedpe: write output in BEDPE format\n";
     info += "\t--chrom1 <string>: chrom1 label\n";
     info += "\t--chrom2 <string>: chrom2 label (if only chrom1 is given, assume chrom1 and 2 are identical)\n";
     info += "\t--chrom1-start <int>: start pos on chrom1\n";
@@ -49,9 +48,9 @@ int printUsage(char *argv[], int err)
     info += "\t-v/--verbose: print verbose\n";
 
     if (err)
-        fprintf(stderr, info.c_str());
+        fprintf(stderr, "%s", info.c_str());
     else
-        fprintf(stdout, info.c_str());
+        fprintf(stdout, "%s", info.c_str());
 
     return 0;
 }
@@ -65,7 +64,7 @@ int parseArg(int argc, char *argv[])
     }
 
     _INPUT_ = std::string(*(argv+1));
-    printf("input path: %s\n", _INPUT_.c_str());
+    printf("input file is %s\n", _INPUT_.c_str());
 
     int i = 2;
     while (i < argc) {
@@ -84,13 +83,13 @@ int parseArg(int argc, char *argv[])
         }
 
         if (std::string(*(argv+i))==std::string("--short")) {
-            _BEDPE_ = true;
+            _SHORT_ = true;
             printf("output will be written in Juicer short with score format\n");
         }
 
-        if (std::string(*(argv+i))==std::string("--bedgraph")) {
-            _BEDPE_ = true;
-            printf("output will be written in bedgraph format\n");
+        if (std::string(*(argv+i))==std::string("--bin-list")) {
+            _BIN_LIST_ = true;
+            printf("output will be written as list of bins\n");
         }
 
         if (std::string(*(argv + i)) == std::string("-v") || std::string(*(argv + i)) == std::string("--verbose")) {
@@ -114,13 +113,13 @@ int parseArg(int argc, char *argv[])
         if (std::string(*(argv+i)) == std::string("-h1")) {
             _MULTI_H_ = true;
             _BINARY_ = false;
-            std::cout << "do new_multi\n";
+            printf("do multi for H=1\n");
         }
 
         if (std::string(*(argv + i)) == std::string("-k")) {
             _K_ = atoi(*(argv + ++i));
             _DETERMINE_K_ = false;
-            std::cout << "K=" << _K_ << "\n";
+            printf("K=%d\n", _K_);
         }
 
         if (std::string(*(argv + i)) == std::string("-h")) {
@@ -146,38 +145,33 @@ int parseArg(int argc, char *argv[])
         if (std::string(*(argv + i)) == std::string("--chrom1")) {
             _CHROM1_ = std::string(*(argv + ++i));
             _CHROM2_ = _CHROM1_;
-            printf("chrom1 lable is given as: %s", _CHROM1_.c_str());
+            printf("chrom1 lable is given as %s\n", _CHROM1_.c_str());
         }
 
         if (std::string(*(argv + i)) == std::string("--chrom2")) {
             _CHROM2_ = std::string(*(argv + ++i));
-            printf("chrom1 lable is given as: %s", _CHROM1_.c_str());
+            printf("chrom1 lable is given as %s\n", _CHROM1_.c_str());
         }
 
         if (std::string(*(argv + i)) == std::string("--chrom1-start")) {
-            _CHROM1_START_ = atoi(*(argv + ++i));
-            printf("starting pos on chrom1: %d", _CHROM1_START_);
+            _CHROM1_START_ = atol(*(argv + ++i));
+            printf("starting pos on chrom1 is %ld\n", _CHROM1_START_);
         }
 
         if (std::string(*(argv + i)) == std::string("--chrom2-start")) {
-            _CHROM2_START_ = atoi(*(argv + ++i));
-            printf("starting pos on chrom2: %d", _CHROM2_START_);
+            _CHROM2_START_ = atol(*(argv + ++i));
+            printf("starting pos on chrom2 is %ld\n", _CHROM2_START_);
         }
 
         if (std::string(*(argv + i)) == std::string("-r") || std::string(*(argv + i)) == std::string("--resolution") ) {
             _RESOLUTION_ = atoi(*(argv + ++i));
-            printf("resolution=%d", _RESOLUTION_);
+            printf("set resolution to %dbp\n", _RESOLUTION_);
         }
 
         // debug
         if (std::string(*(argv + i)) == std::string("--no-pre-log")) {
             _PRE_LOG_ = false;
             printf("test pre-calculate log volume table time\n");
-        }
-
-        if (std::string(*(argv + i)) == std::string("--test-log-time")) {
-            _TEST_LOG2_TIME_ = true;
-            printf("test log2 execution time\n");
         }
 
         if (std::string(*(argv + i)) == std::string("--no-pre-log")) {
@@ -197,8 +191,11 @@ int parseArg(int argc, char *argv[])
         printf("_OUTPUT_=%s\n", _OUTPUT_.c_str());
     }
 
-    if (_FAST_)
-        printf("enable fast mode\n");
+    if (_FAST_ && _BINARY_)
+        printf("enable fast mode for binary mode\n");
+
+    if (_DEBUG_)
+        _VERBOSE_ = true;
 
     return 0;
 }
@@ -206,13 +203,13 @@ int parseArg(int argc, char *argv[])
 
 int main (int argc, char *argv[])
 {
-    std::clock_t t = std::clock();
+    std::clock_t t;
 
     if (parseArg(argc, argv))
         exit(1);
 
-    if (_DEBUG_)
-        _VERBOSE_ = true;
+    if (_VERBOSE_)
+        t = std::clock();
 
     Data data(_INPUT_);
     data.init();
@@ -230,7 +227,8 @@ int main (int argc, char *argv[])
         dH.execute();
     }
 
-    printf("running time: %fs\n", (float)(std::clock() - t)/CLOCKS_PER_SEC);
+    if (_VERBOSE_)
+        printf("task finished in %fs\n", (float)(std::clock() - t)/CLOCKS_PER_SEC);
 
     return 0;
 }

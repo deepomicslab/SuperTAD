@@ -36,8 +36,9 @@ namespace binary {
     void Tree::add(int &start, int &end, int &k)
     {
         TreeNode *treeNode = new TreeNode(start, end);
-        if (k == 0) { // k==1???
-            if (_VERBOSE_)
+
+        if (k == 0) {
+            if (_DEBUG_)
                 printf("leaf node: (%d, %d)\n", start, end);
 
             TreeNode *treeExistNode = _t.top ();

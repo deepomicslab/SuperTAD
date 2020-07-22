@@ -191,7 +191,6 @@ int parseArg(int argc, char *argv[])
         _OUTPUT_ = _INPUT_;
     else {
         int pos = _INPUT_.rfind("/");
-        _WORK_DIR_ = _INPUT_.substr(0, pos);
         _OUTPUT_ = _WORK_DIR_ + "/" + _INPUT_.substr(pos + 1);
         printf("_OUTPUT_=%s\n", _OUTPUT_.c_str());
     }

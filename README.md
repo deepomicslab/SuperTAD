@@ -30,7 +30,7 @@ OPTIONS:
     -m: multiple tree version;
     -H: multiple version (h1 fast mode);
     -K <int>: number of clusters in candidate coding tree;
-    -k <int>: max number of clusters in candidate coding tree;
+              if given, SuperTAD won't determine K for global optimal but only provides optimal result under given K;
     -h <int>: hierarchy number (default 2);
     --no-filter: do not filter TADs; only works for binary mode;
     --chrom1 <string>: chrom1 label;

@@ -17,35 +17,36 @@ int printUsage(char *argv[], int err)
 {
 
     std::string info;
-    info =  "****************************************************************************************\n";
-    info += "* SuperTAD: [Super]-fast [T]opological [A]ssociating [D]omain package for Hi-C dataset *\n";
-    info += "* version: 1.0                                                                        *\n";
-    info += "* Bug report to mbwang2016@gmail.com                                                   *\n";
-    info += "*                                                                                      *\n";
-    info += "* THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS            *\n";
-    info += "* OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,          *\n";
-    info += "* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE          *\n";
-    info += "* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER               *\n";
-    info += "* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING              *\n";
-    info += "* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER                  *\n";
-    info += "* DEALINGS IN THE SOFTWARE.                                                            *\n";
-    info += "****************************************************************************************\n";
-    info += "USAGE: " + std::string(argv[0]) + " <input-path> [-option value]\n";
-    info += "OPTIONS:\n";
-    info += "\t-w <string>: working directory; If not given, use current input directory)\n";
-    info += "\t-b: binary tree version\n";
-    info += "\t-m: multiple tree version\n";
-    info += "\t-K <int>: number of clusters in candidate coding tree\n";
-    info += "\t-k <int>: max number of clusters in candidate coding tree\n";
-    info += "\t-h <int>: hierarchy number (default 2)\n";
-    info += "\t--no-filter: do not filter TADs\n";
-//    info += "\t--no-fast: disable fast mode for binary mode\n";
-    info += "\t--chrom1 <string>: chrom1 label\n";
-    info += "\t--chrom2 <string>: chrom2 label (if only chrom1 is given, assume chrom1 and 2 are identical)\n";
-    info += "\t--chrom1-start <int>: start pos on chrom1\n";
-    info += "\t--chrom2-start <int>: start pos on chrom2\n";
-    info += "\t-r/--resolution <int>: resolution\n";
-    info += "\t-v/--verbose: print verbose\n";
+    info +=  "****************************************************************************************\n"
+             "* SuperTAD: [Super]-fast [T]opological [A]ssociating [D]omain package for Hi-C dataset *\n"
+             "* version: 1.0                                                                         *\n"
+             "* Bug report to mbwang2016@gmail.com                                                   *\n"
+             "*                                                                                      *\n"
+             "* THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS              *\n"
+             "* OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,          *\n"
+             "* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE          *\n"
+             "* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER               *\n"
+             "* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING              *\n"
+             "* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER                  *\n"
+             "* DEALINGS IN THE SOFTWARE.                                                            *\n"
+             "****************************************************************************************\n"
+             "USAGE: " + std::string(argv[0]) + " <input-path> [-option value]\n";
+    info += "OPTIONS:\n"
+            "\t-w <string>: working directory; If not given, use current input directory)\n"
+            "\t-b: binary tree version\n"
+            "\t-m: multiple tree version\n"
+            "\t-K <int>: number of clusters in candidate coding tree;\n"
+            "\t          if given, SuperTAD won't determine K for global optimal but only provides optimal result under given K;\n"
+            "\t-k <int>: max number of clusters in candidate coding tree\n"
+            "\t-h <int>: hierarchy number (default 2)\n"
+            "\t--no-filter: do not filter TADs\n"
+//            "\t--no-fast: disable fast mode for binary mode\n"
+            "\t--chrom1 <string>: chrom1 label\n"
+            "\t--chrom2 <string>: chrom2 label (if only chrom1 is given, assume chrom1 and 2 are identical)\n"
+            "\t--chrom1-start <int>: start pos on chrom1\n"
+            "\t--chrom2-start <int>: start pos on chrom2\n"
+            "\t-r/--resolution <int>: resolution\n"
+            "\t-v/--verbose: print verbose\n";
 
     if (err)
         fprintf(stderr, "%s", info.c_str());
@@ -74,7 +75,7 @@ int parseArg(int argc, char *argv[])
 
         if (std::string(*(argv + i)) == std::string("-w")) {
             _WORK_DIR_ = std::string (*(argv + ++i));
-            std::cout << "working dir: " << _WORK_DIR_ << std::endl;
+            printf("working dir is %s\n", _WORK_DIR_.c_str());
         }
 
         if (std::string(*(argv+i))==std::string("--bedpe")) {
@@ -95,19 +96,19 @@ int parseArg(int argc, char *argv[])
         if (std::string(*(argv + i)) == std::string("-v") || std::string(*(argv + i)) == std::string("--verbose")) {
             _VERBOSE_ = true;
             setbuf(stdout, NULL);
-            std::cout << "print verbose\n";
+            printf("print verbose\n");
         }
 
         if (std::string(*(argv + i)) == std::string("-b")) {
             _BINARY_ = true;
             _MULTI_ = false;
-            std::cout << "do binary\n";
+            printf("do binary\n");
         }
 
         if (std::string(*(argv + i)) == std::string("-m")) {
             _MULTI_ = true;
             _BINARY_ = false;
-            std::cout << "do multi\n";
+            printf("do multi\n");
         }
 
         if (std::string(*(argv + i)) == std::string("-K")) {
@@ -123,12 +124,12 @@ int parseArg(int argc, char *argv[])
 
         if (std::string(*(argv + i)) == std::string("-h")) {
             _H_ = atoi(*(argv + ++i));
-            std::cout << "H=" << _H_ << "\n";
+            printf("set H to %d\n", _H_);
         }
 
         if (std::string(*(argv + i)) == std::string("--no-filter")) {
             _FILTERING_ = false;
-            std::cout << "disable filtering\n";
+            printf("disable filtering\n");
         }
 
         if (std::string(*(argv+i))==std::string("--no-fast")) {

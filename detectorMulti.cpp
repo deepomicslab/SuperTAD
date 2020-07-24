@@ -315,9 +315,9 @@ namespace multi {
                         }
                     }
                 }
-                if ( _table[0][_N_ - 1][cluster-1][_H_ - 1][_N_ - 1] <  _table[0][_N_ - 1][cluster-2][_H_ - 1][_N_ - 1]){
-                    _optimalK_ = cluster;
-                    printf("--------\noptimalK=%d, table=%f\n", _optimalK_, _table[0][_N_ - 1][cluster-1][_H_ - 1][_N_ - 1]);
+                if ( _table[0][_N_ - 1][k-1][_H_ - 1][_N_ - 1] <  _table[0][_N_ - 1][k-2][_H_ - 1][_N_ - 1]){
+                    _optimalK_ = k;
+                    printf("--------\noptimalK=%d, table=%f\n", _optimalK_, _table[0][_N_ - 1][k-1][_H_ - 1][_N_ - 1]);
                 }
                 else{
                     if (_VERBOSE_)

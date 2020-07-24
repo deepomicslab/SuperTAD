@@ -35,11 +35,11 @@ int printUsage(char *argv[], int err)
     info += "\t-w <string>: working directory; If not given, use current input directory)\n";
     info += "\t-b: binary tree version\n";
     info += "\t-m: multiple tree version\n";
-    info += "\t-H: multiple version (h1 fast mode)\n";
-    info += "\t-k <int>: number of leaves in candidate coding tree (default NAN)\n";
+    info += "\t-K <int>: number of clusters in candidate coding tree\n";
+    info += "\t-k <int>: max number of clusters in candidate coding tree\n";
     info += "\t-h <int>: hierarchy number (default 2)\n";
     info += "\t--no-filter: do not filter TADs\n";
-    info += "\t--no-fast: disable fast mode for binary mode\n";
+//    info += "\t--no-fast: disable fast mode for binary mode\n";
     info += "\t--chrom1 <string>: chrom1 label\n";
     info += "\t--chrom2 <string>: chrom2 label (if only chrom1 is given, assume chrom1 and 2 are identical)\n";
     info += "\t--chrom1-start <int>: start pos on chrom1\n";
@@ -110,16 +110,10 @@ int parseArg(int argc, char *argv[])
             std::cout << "do multi\n";
         }
 
-        if (std::string(*(argv+i)) == std::string("-h1")) {
-            _MULTI_H_ = true;
-            _BINARY_ = false;
-            printf("do multi for H=1\n");
-        }
-
         if (std::string(*(argv + i)) == std::string("-K")) {
             _K_ = atoi(*(argv + ++i));
             _DETERMINE_K_ = false;
-            printf("K=%d\n", _K_);
+            printf("set K to %d\n", _K_);
         }
 
         if (std::string(*(argv + i)) == std::string("-k")) {
@@ -150,12 +144,12 @@ int parseArg(int argc, char *argv[])
         if (std::string(*(argv + i)) == std::string("--chrom1")) {
             _CHROM1_ = std::string(*(argv + ++i));
             _CHROM2_ = _CHROM1_;
-            printf("chrom1 lable is given as %s\n", _CHROM1_.c_str());
+            printf("chrom1 lable is %s\n", _CHROM1_.c_str());
         }
 
         if (std::string(*(argv + i)) == std::string("--chrom2")) {
             _CHROM2_ = std::string(*(argv + ++i));
-            printf("chrom1 lable is given as %s\n", _CHROM1_.c_str());
+            printf("chrom2 lable is %s\n", _CHROM1_.c_str());
         }
 
         if (std::string(*(argv + i)) == std::string("--chrom1-start")) {
@@ -191,8 +185,9 @@ int parseArg(int argc, char *argv[])
         _OUTPUT_ = _INPUT_;
     else {
         int pos = _INPUT_.rfind("/");
+        _WORK_DIR_ = _INPUT_.substr(0, pos);
         _OUTPUT_ = _WORK_DIR_ + "/" + _INPUT_.substr(pos + 1);
-        printf("_OUTPUT_=%s\n", _OUTPUT_.c_str());
+//        printf("_OUTPUT_=%s\n", _OUTPUT_.c_str());
     }
 
     if (_FAST_ && _BINARY_)
@@ -226,9 +221,9 @@ int main (int argc, char *argv[])
         multi::Detector dm(data);
         dm.execute();
     }
-    else if (_MULTI_H_) {
-        multi::DetectorH1 dH(data);
-        dH.execute();
+    else if (_MULTI_ && _H_==1) {
+        multi::DetectorH1 dm(data);
+        dm.execute();
     }
 
     if (_VERBOSE_)

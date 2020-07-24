@@ -64,7 +64,7 @@ public:
     }
 
     template<class T>
-    static void writeTreeIn7Cols(std::string filePath, std::vector<T *> &nodeList)
+    static void writeTreeIn8Cols(std::string filePath, std::vector<T *> &nodeList)
     {
         filePath += ".tsv";
         FILE *outFile = NULL;
@@ -83,8 +83,8 @@ public:
                 bin2Idx = nodeList[i]->_val[1];
                 bin2Start = _CHROM1_START_ + bin2Idx * _RESOLUTION_;
                 bin2End = _CHROM1_START_ + (bin2Idx+1) * _RESOLUTION_;
-                fprintf(outFile, "%s\t%d\t%d\t%d\t%d\t%d\t%d\n",
-                        _CHROM1_.c_str(), bin1Idx+1, bin1Start, bin1End, bin2Idx+1, bin2Start, bin2End);
+                fprintf(outFile, "%s\t%d\t%d\t%d\t%s\t%d\t%d\t%d\n",
+                        _CHROM1_.c_str(), bin1Idx+1, bin1Start, bin1End, _CHROM2_.c_str(), bin2Idx+1, bin2Start, bin2End);
             }
             fclose(outFile);
 
@@ -185,11 +185,11 @@ public:
         else if (_BIN_LIST_)
             writeTreeAsBinList(filePath, nodeList);
         else {
-            if (_CHROM1_ != _CHROM2_) {
-                fprintf(stderr, "chromosome indices are not the same, output will be written in BEDPE\n");
-                writeTreeAsBedpe(filePath, nodeList);
-            }
-            writeTreeIn7Cols(filePath, nodeList);
+//            if (_CHROM1_ != _CHROM2_) {
+//                fprintf(stderr, "chromosome indices are not the same, output will be written in BEDPE\n");
+//                writeTreeAsBedpe(filePath, nodeList);
+//            }
+            writeTreeIn8Cols(filePath, nodeList);
         }
     }
 

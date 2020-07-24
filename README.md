@@ -29,10 +29,10 @@ OPTIONS:
     -b: binary tree version;
     -m: multiple tree version;
     -H: multiple version (h1 fast mode);
-    -k <int>: number of leaves in candidate coding tree (default NAN);
+    -K <int>: number of clusters in candidate coding tree;
+    -k <int>: max number of clusters in candidate coding tree;
     -h <int>: hierarchy number (default 2);
-    --no-filter: do not filter TADs;
-    --no-fast: disable fast mode for binary mode;
+    --no-filter: do not filter TADs; only works for binary mode;
     --chrom1 <string>: chrom1 label;
     --chrom2 <string>: chrom2 label (if only chrom1 is given, assume chrom1 and 2 are identical);
     --chrom1-start <int>: start pos on chrom1;
@@ -40,52 +40,61 @@ OPTIONS:
     -r/--resolution <int>: resolution;
     -v/--verbose: print verbose;
 ```
+Note that filtering option is only provided in binary mode. It is by default SuperTAD will generate two coding trees 
+before and after filtering in binary mode. 
 
 ## Sample data
 We only supports dense matrix as input for now.
-A simulated contact matrix and a matrix derived from a partition of chromosome subtracted from [*Rao et al, Cell 2014*](https://www.cell.com/fulltext/S0092-8674(14)01497-4)
-are included in ./data .
+A simulated contact matrix and a matrix derived from a partition of chromosome subtracted from 
+[*Rao et al, Cell 2014*](https://www.cell.com/fulltext/S0092-8674(14)01497-4)
+are included in `./data`.
 
 For example,
-By running SuperTAD on ./data/sub_chr6_200_KR100kb_matrix.txt, 
+By running SuperTAD on `./data/sub_chr6_200_KR100kb_matrix.txt`, 
 you first need to compile the program following the first section.
 Then pass the path of the input along with other parameters to the executable.
 
-For simplicity, the basic command looks like this:
-
+The basic command can be like this:
+```
 ./build/SuperTAD ./data/sub_chr6_200_KR100kb_matrix.txt -b -r 1000
+```
 
 If you are not providing working directory, SuperTAD will take the directory where input lies in.
 
 ## Interpret output
-Sample output (with sub_chr6_200_KR100kb_matrix.txt as input, with parameters '-r 1000'):
+SuperTAD provides a uniform eight-column format when analyzing and comparing all the methods. 
+The format kept the bin coordinates of identified boundaries and the bin resolution from contact map input and each 
+column is separated by tab. 
+
+A sample output looks like below:
 ```
-1	0	0	1000	43	43000	44000
-1	0	0	1000	15	15000	16000
-1	0	0	1000	7	7000	8000
-1	8	8000	9000	15	15000	16000
-1	16	16000	17000	43	43000	44000
-1	16	16000	17000	34	34000	35000
-1	16	16000	17000	24	24000	25000
-1	25	25000	26000	34	34000	35000
-1	35	35000	36000	43	43000	44000
-1	44	44000	45000	99	99000	100000
-1	44	44000	45000	59	59000	60000
-1	44	44000	45000	51	51000	52000
-1	52	52000	53000	59	59000	60000
-1	60	60000	61000	99	99000	100000
-1	60	60000	61000	78	78000	79000
-1	60	60000	61000	65	65000	66000
-1	66	66000	67000	78	78000	79000
-1	66	66000	67000	70	70000	71000
-1	71	71000	72000	78	78000	79000
-1	79	79000	80000	99	99000	100000
-1	79	79000	80000	85	85000	86000
-1	86	86000	87000	99	99000	100000
-1	86	86000	87000	94	94000	95000
-1	95	95000	96000	99	99000	100000
+chr1	1	0	1000	chr1	44	43000	44000
+chr1	1	0	1000	chr1	16	15000	16000
+chr1	1	0	1000	chr1	8	7000	8000
+chr1	9	8000	9000	chr1	16	15000	16000
+chr1	17	16000	17000	chr1	44	43000	44000
+chr1	17	16000	17000	chr1	35	34000	35000
+chr1	17	16000	17000	chr1	25	24000	25000
+chr1	26	25000	26000	chr1	35	34000	35000
+chr1	36	35000	36000	chr1	44	43000	44000
+chr1	45	44000	45000	chr1	100	99000	100000
+chr1	45	44000	45000	chr1	60	59000	60000
+chr1	45	44000	45000	chr1	52	51000	52000
+chr1	53	52000	53000	chr1	60	59000	60000
+chr1	61	60000	61000	chr1	100	99000	100000
+chr1	61	60000	61000	chr1	79	78000	79000
+chr1	61	60000	61000	chr1	66	65000	66000
+chr1	67	66000	67000	chr1	79	78000	79000
+chr1	67	66000	67000	chr1	71	70000	71000
+chr1	72	71000	72000	chr1	79	78000	79000
+chr1	80	79000	80000	chr1	100	99000	100000
+chr1	80	79000	80000	chr1	86	85000	86000
+chr1	87	86000	87000	chr1	100	99000	100000
+chr1	87	86000	87000	chr1	95	94000	95000
+chr1	96	95000	96000	chr1	100	99000	100000
 ```
-Each line represents one TAD of which boundary starts with the bin of the first index and ends with the bin of the last index in that line.
+The output file will has either `.binary.original.tsv` or `.binary.filter.tsv` as post-fix for binary mode, 
+and `.multi.original.tsv` for multi-nary mode.
 
 #
 You may find more detailed introduction to SuperTAD [here](https://supertad.deepomics.org)

@@ -30,22 +30,23 @@ int printUsage(char *argv[], int err)
              "* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER                  *\n"
              "* DEALINGS IN THE SOFTWARE.                                                            *\n"
              "****************************************************************************************\n"
-             "USAGE: " + std::string(argv[0]) + " <input-path> [-option value]\n";
-    info += "OPTIONS:\n"
-            "\t-w <string>: working directory; If not given, use current input directory)\n"
-            "\t-b: binary tree version\n"
-            "\t-m: multiple tree version\n"
-            "\t-K <int>: number of clusters in candidate coding tree;\n"
-            "\t          if given, SuperTAD won't determine K for global optimal but only provides optimal result under given K;\n"
-            "\t-k <int>: max number of clusters in candidate coding tree\n"
-            "\t-h <int>: hierarchy number (default 2)\n"
-            "\t--no-filter: do not filter TADs\n"
-//            "\t--no-fast: disable fast mode for binary mode\n"
-            "\t--chrom1 <string>: chrom1 label\n"
-            "\t--chrom2 <string>: chrom2 label (if only chrom1 is given, assume chrom1 and 2 are identical)\n"
-            "\t--chrom1-start <int>: start pos on chrom1\n"
-            "\t--chrom2-start <int>: start pos on chrom2\n"
-            "\t-r/--resolution <int>: resolution\n"
+             "USAGE: " + std::string(argv[0]) + " <input Hi-C matrix> [command] [-option value]\n";
+    info += "COMMANDS:\n"
+            "\tbinary \tThe first mode requires no user-defined parameters, run the nodes filtering by default\n"
+            "\t         --no-filter \t if given, do not filter TADs\n"
+            "\tfilter \tThe nodes filter for optimal coding tree:\n"
+            "\t         ./SuperTAD <input Hi-C matrix> filter -i <original result> [-option values]\n"
+            "\t         -i <string> \t The list of TAD candidates\n"
+            "\tmulti \tThe second mode requires a parameter h to determine the number of layers\n"
+            "\t         -h <int> \t The height of coding tree, default: 2\n"
+            "GLOBAL COMMAND OPTIONS:\n"
+            "\t-w <string>: working directory, default: the directory where the input file is located\n"
+            "\t-K <int>: The number of leaves in the coding tree, default: nan (determined by the algorithm)\n"
+            "\t--chrom1 <string>: chrom1 label, default: chr1\n"
+            "\t--chrom2 <string>: chrom2 label, default: the same as chrom1\n"
+            "\t--chrom1-start <int>: start pos on chrom1, default: 0\n"
+            "\t--chrom2-start <int>: start pos on chrom2, default: the same as --chrom1-start\n"
+            "\t-r/--resolution <int>: bin resolution, default: 10000\n"
             "\t-v/--verbose: print verbose\n";
 
     if (err)
@@ -99,16 +100,23 @@ int parseArg(int argc, char *argv[])
             printf("print verbose\n");
         }
 
-        if (std::string(*(argv + i)) == std::string("-b")) {
+        if (std::string(*(argv + i)) == std::string("binary")) {
             _BINARY_ = true;
             _MULTI_ = false;
             printf("do binary\n");
         }
 
-        if (std::string(*(argv + i)) == std::string("-m")) {
+        if (std::string(*(argv + i)) == std::string("multi")) {
             _MULTI_ = true;
             _BINARY_ = false;
             printf("do multi\n");
+        }
+
+        if (std::string(*(argv + i)) == std::string("filter")) {
+            _MULTI_ = false;
+            _BINARY_ = false;
+            _FILTER_ = true;
+            printf("do filtering\n");
         }
 
         if (std::string(*(argv + i)) == std::string("-K")) {
@@ -150,11 +158,12 @@ int parseArg(int argc, char *argv[])
 
         if (std::string(*(argv + i)) == std::string("--chrom2")) {
             _CHROM2_ = std::string(*(argv + ++i));
-            printf("chrom2 lable is %s\n", _CHROM1_.c_str());
+            printf("chrom2 lable is %s\n", _CHROM2_.c_str());
         }
 
         if (std::string(*(argv + i)) == std::string("--chrom1-start")) {
             _CHROM1_START_ = atol(*(argv + ++i));
+            _CHROM2_START_ = _CHROM1_START_;
             printf("starting pos on chrom1 is %ld\n", _CHROM1_START_);
         }
 
@@ -165,15 +174,10 @@ int parseArg(int argc, char *argv[])
 
         if (std::string(*(argv + i)) == std::string("-r") || std::string(*(argv + i)) == std::string("--resolution") ) {
             _RESOLUTION_ = atoi(*(argv + ++i));
-            printf("set resolution to %dbp\n", _RESOLUTION_);
+            printf("set resolution to %d bp\n", _RESOLUTION_);
         }
 
         // debug
-        if (std::string(*(argv + i)) == std::string("--no-pre-log")) {
-            _PRE_LOG_ = false;
-            printf("test pre-calculate log volume table time\n");
-        }
-
         if (std::string(*(argv + i)) == std::string("--no-pre-log")) {
             _PRE_LOG_ = false;
             printf("do not pre-calculate log-volume table; longer execution time\n");
@@ -218,13 +222,16 @@ int main (int argc, char *argv[])
         binary::Detector db(data);
         db.execute();
     }
-    else if (_MULTI_) {
+    else if (_MULTI_ && _H_ == 1) {
+        multi::DetectorH1 dm(data);
+        dm.execute();
+    }
+    else if (_MULTI_ ) {
         multi::Detector dm(data);
         dm.execute();
     }
-    else if (_MULTI_ && _H_==1) {
-        multi::DetectorH1 dm(data);
-        dm.execute();
+    else if (_FILTER_) {
+        //????????
     }
 
     if (_VERBOSE_)

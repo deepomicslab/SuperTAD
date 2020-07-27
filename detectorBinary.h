@@ -35,7 +35,7 @@ namespace binary {
 
         std::vector<std::pair<int, int>> _boundaries;
 
-        std::set<binary::TreeNode *> _trueNodeList;
+        std::vector<binary::TreeNode *> _trueNodeList;
 
         int *_numBins;
 
@@ -43,7 +43,7 @@ namespace binary {
 
         int *_kMinusKtmpIdx;
 
-        float **_scoreTable;
+        float *_scoreTable;
     public:
         Detector(Data &data);
 
@@ -71,7 +71,7 @@ namespace binary {
 
         double minusParent(double d, binary::TreeNode &node);
 
-        void filterNodes();
+        int * filterNodes();
 
         double getX(binary::TreeNode &node);
 

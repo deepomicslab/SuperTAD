@@ -181,19 +181,32 @@ namespace binary {
 
             calculateD (_binaryTree->root());
             calculateDensity(_binaryTree->root());
-            filterNodes();
-            std::vector<binary::TreeNode *> trueNodes;
-            for (auto it = _trueNodeList.begin(); it != _trueNodeList.end(); it++) {
-                trueNodes.emplace_back((*it));
-            }
+            int *label1;    //  label from 1000 times random experiments
+            label1 = filterNodes();
 
+            for (int i = 0; i < _nodeList->size(); i++){
+                int size = (*_nodeList)[i]->_val[1] - (*_nodeList)[i]->_val[0] + 1;
+                int parent_size = (*_nodeList)[i]->_parent->_val[1] - (*_nodeList)[i]->_parent->_val[0] + 1;
+                double size_diff = abs( sqrt(size*(parent_size-size)) - size);
+                if ( size_diff <= 2 )
+                {
+                    printf("size_diff <= 2, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+                    if (label1[i] > 0 and (*_nodeList)[i]->_se > (*_nodeList)[i]->_parent->_se){
+                        _trueNodeList.emplace_back((*_nodeList)[i]);
+                        printf("both labels are 1, %d, %d, \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+                    }
+                } else{
+                    _trueNodeList.emplace_back((*_nodeList)[i]);
+                    printf("size_diff > 2, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+                }
+            }
             if (_VERBOSE_)
                 printf("finish filtering\n");
 
             if (_DEBUG_)
                 printf("filtering consumes %fs\n", (float)(std::clock() - tTmp) / CLOCKS_PER_SEC);
-
-            Writer::writeTree(_OUTPUT_ + ".binary.filter", trueNodes);
+            printf("%d TAD candidates filtered into %d true TADs", _nodeList->size(), _trueNodeList.size());
+            Writer::writeTree(_OUTPUT_ + ".binary.filter", _trueNodeList);
         }
 
     }
@@ -419,10 +432,15 @@ namespace binary {
 
     void Detector::calculateD (binary::TreeNode &node)
     {
-        int s = node._val[0];
+        int s = node._val[0];   //  start from index 0
         int e = node._val[1];
 //        node._D = (double) _edgeCount->coeff(start, end) / ((end - start + 1) * (end - start) * .5);
         node._D = (double) _data->_edgeCountArray[s][e] / ((e - s + 1) * (e - s) * .5);
+        if (node._parent != NULL)   //  calculate se
+        {
+            node._se = _data->getSE(s, e, _data->getVol(node._parent->_val[0], node._parent->_val[1]), _data->getVol(s, e));
+        }
+
         if (node._left != NULL)
             calculateD (*node._left);
         if (node._right != NULL)
@@ -469,11 +487,9 @@ namespace binary {
     }
 
 
-    void Detector::filterNodes()
+    int * Detector::filterNodes()
     {
-        _scoreTable = new float *[_nodeList->size()];
-        for (int i=0; i<_nodeList->size(); i++)
-            _scoreTable[i] = new float[_nodeList->size()]{};
+        _scoreTable = new float [_nodeList->size()];
 
         std::vector<std::pair<int, binary::TreeNode *>> nodeList1, nodeList2, trueNodeList;
         nodeList1.reserve(_nodeList->size() / 2);
@@ -484,7 +500,6 @@ namespace binary {
         double ab2[2]{};
 
         int totalItr = 1000;
-        int threshold = 900;
         int time = 0;
         while (time < totalItr) {
             _trueNodeList.clear();
@@ -498,7 +513,7 @@ namespace binary {
                 nodeList2.clear();
                 for (int i = 0; i < _nodeList->size(); i++) {
                     if (utils::randInt(0, 2) == 0)
-                        nodeList1.emplace_back(i, (*_nodeList)[i]);
+                        nodeList1.emplace_back(i, (*_nodeList)[i]); //  index & Treenode
                     else
                         nodeList2.emplace_back(i, (*_nodeList)[i]);
                 }
@@ -510,8 +525,7 @@ namespace binary {
 
             int countTmp = 0;
             while (!converged and countTmp < totalItr) {
-                countTmp++;
-
+//                countTmp++;
                 utils::copyDoubleArray(ab1, oldAB1, 2);
                 utils::copyDoubleArray(ab2, oldAB2, 2);
 
@@ -543,25 +557,29 @@ namespace binary {
             else
                 trueNodeList = nodeList2;
 
-            if (abs (ab1[0] - ab2[0]) > .5) {
+            if (ab1[0] < 0 and ab2[0] < 0) {
                 time++;
-                for (int m = 0; m < trueNodeList.size() - 1; m++) {
-                    for (int n = m + 1; n < trueNodeList.size(); n++) {
-                        _scoreTable[trueNodeList[m].first][trueNodeList[n].first]++;
-                    }
+                for (int m = 0; m < trueNodeList.size(); m++) {
+                    _scoreTable[trueNodeList[m].first] ++;
                 }
             }
         }
 
-        for (int i = 0; i < _nodeList->size(); i++) {
-            for (int j = i + 1; j < _nodeList->size(); j++) {
-                if (_scoreTable[i][j] > threshold) {
-                    _trueNodeList.emplace((*_nodeList)[i]);
-                    _trueNodeList.emplace((*_nodeList)[j]);
-                }
-            }
+        double sum = 0;
+        for (int i = 0; i < _nodeList->size(); i++)
+        {
+            sum += _scoreTable[i];
         }
-        return;
+        double  mean = sum / _nodeList->size();
+
+        for (int i = 0; i < _nodeList->size(); i++)
+        {
+            if (_scoreTable[i] > mean)
+                _scoreTable[i] = 1;
+            else
+                _scoreTable[i] = 0;
+        }
+        return reinterpret_cast<int *>(_scoreTable);
     }
 
 
@@ -580,22 +598,27 @@ namespace binary {
 
     bool Detector::simpleLinearRegression(std::vector<std::pair<int, binary::TreeNode *>> &nodeList, double ab[])
     {
-        double sumX = 0;
-        double sumY = 0;
+        double sumX = 0;    //  sum(Xi)
+        double sumY = 0;    //  sum(Yi)
+        double sumXsquare = 0;  //  sum(Xi*Xi)
+        double sumXY = 0;   //  sum(Xi*Yi)
         for (int i = 0; i < nodeList.size(); i++) {
             sumX += getX(*nodeList[i].second);
             sumY += getY(*nodeList[i].second);
+            sumXsquare += pow(getX(*nodeList[i].second), 2);
+            sumXY += getX(*nodeList[i].second) * getY(*nodeList[i].second);
         }
-        double meanX = sumX / nodeList.size();
-        double meanY = sumY / nodeList.size();
-        double covXY = 0;
-        double varX = 0;
-        for (int i = 0; i < nodeList.size(); i++) {
-            covXY += (getX(*nodeList[i].second) - meanX) * (getY(*nodeList[i].second) - meanY);
-            varX += pow (getX(*nodeList[i].second) - meanX, 2);
+        double temp = (nodeList.size()*sumXsquare - sumX*sumX);
+        if ( temp )
+        {
+            ab[0] = (nodeList.size() * sumXY - sumX * sumY)/temp;
+            ab[1] = (sumXsquare * sumY - sumX * sumXY) / temp;
+        } else
+        {
+            ab[0] = 1;
+            ab[1] = 0;
         }
-        ab[0] = covXY / varX;
-        ab[1] = meanY - ab[0] * meanX;
+        printf("%f, %f \n", ab[0], ab[1]);
         if (std::isnan (ab[0]) || std::isnan (ab[1]))
             return false;
 

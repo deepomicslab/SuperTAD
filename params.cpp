@@ -8,10 +8,12 @@
 std::string _WORK_DIR_ = "";
 std::string _INPUT_;
 std::string _OUTPUT_;
+std::string _RESULT_;
 
 bool _BINARY_ = true;
 bool _MULTI_ = false;
 bool _MULTI_H_ = false;
+bool _FILTER_ = false;
 
 int _K_ = -999;
 int _optimalK_ = -999;
@@ -30,8 +32,8 @@ int _PENALTY_ = -1;
 bool _VERBOSE_ = false;
 
 // for matrix input
-std::string _CHROM1_ = "1";
-std::string _CHROM2_ = "1";
+std::string _CHROM1_ = "chr1";
+std::string _CHROM2_ = "chr1";
 int64_t _CHROM1_START_ = 0;
 int64_t _CHROM2_START_ = 0;
 int _RESOLUTION_ = 1;

@@ -12,7 +12,7 @@ bool pathExist(const std::string &s)
 }
 
 
-void Reader::parseMatrix2Array(double **&table, std::string path)
+void Reader::parseMatrix2Table(double **&table, std::string path)
 {
     if (path == "") {
         fprintf(stderr, "input must be provided\n");

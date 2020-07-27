@@ -216,8 +216,6 @@ double Data::getSEwithLogPV(int s, int e, double logPV)
 
 double Data::getSE(int s, int e, double parentVol, double currentVol) {
     // g / edge_sum * log2(V_p / V)
-//    if(currentVol > 0 && parentVol >= currentVol)
-//        return _edgeCountMat(e, s) / _doubleEdgeSum * log2(parentVol / currentVol);
     if(currentVol > 0 && parentVol >= currentVol)
         return _edgeCountArray[e][s] / _doubleEdgeSum * log2(parentVol / currentVol);
     return 0;

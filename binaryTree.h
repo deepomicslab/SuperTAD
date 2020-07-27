@@ -14,9 +14,10 @@
 namespace binary {
   
   struct TreeNode {
-    int _val[2];
+    int _val[1];
     TreeNode *_left;
     TreeNode *_right;
+    double _se;
     double _info;
     TreeNode *_parent;
     double _D;
@@ -26,6 +27,7 @@ namespace binary {
     {
       _val[0] = start;
       _val[1] = end;
+      _se = 0;
       _left = NULL;
       _right = NULL;
       _info = 0;
@@ -37,6 +39,7 @@ namespace binary {
     {
       _val[0] = copy._val[0];
       _val[1] = copy._val[1];
+      _se = copy._se;
       _left = copy._left;
       _right = copy._right;
       _info = copy._info;

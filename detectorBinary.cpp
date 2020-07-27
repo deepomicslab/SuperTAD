@@ -190,14 +190,14 @@ namespace binary {
                 double size_diff = abs( sqrt(size*(parent_size-size)) - size);
                 if ( size_diff <= 2 )
                 {
-                    printf("size_diff <= 2, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+//                    printf("size_diff <= 2, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
                     if (label1[i] > 0 and (*_nodeList)[i]->_se > (*_nodeList)[i]->_parent->_se){
                         _trueNodeList.emplace_back((*_nodeList)[i]);
-                        printf("both labels are 1, %d, %d, \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+//                        printf("both labels are 1, %d, %d, \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
                     }
                 } else{
                     _trueNodeList.emplace_back((*_nodeList)[i]);
-                    printf("size_diff > 2, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+//                    printf("size_diff > 2, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
                 }
             }
             if (_VERBOSE_)
@@ -618,7 +618,6 @@ namespace binary {
             ab[0] = 1;
             ab[1] = 0;
         }
-        printf("%f, %f \n", ab[0], ab[1]);
         if (std::isnan (ab[0]) || std::isnan (ab[1]))
             return false;
 

@@ -490,6 +490,9 @@ namespace binary {
     int * Detector::filterNodes()
     {
         _scoreTable = new float [_nodeList->size()];
+        for (int i = 0; i<_nodeList->size(); i++){
+            _scoreTable[i] = 0;
+        }
 
         std::vector<std::pair<int, binary::TreeNode *>> nodeList1, nodeList2, trueNodeList;
         nodeList1.reserve(_nodeList->size() / 2);
@@ -516,6 +519,7 @@ namespace binary {
                         nodeList1.emplace_back(i, (*_nodeList)[i]); //  index & Treenode
                     else
                         nodeList2.emplace_back(i, (*_nodeList)[i]);
+
                 }
 
                 if (nodeList1.size() > 1 && nodeList2.size() > 1) {
@@ -528,13 +532,11 @@ namespace binary {
 //                countTmp++;
                 utils::copyDoubleArray(ab1, oldAB1, 2);
                 utils::copyDoubleArray(ab2, oldAB2, 2);
-
                 if (!simpleLinearRegression(nodeList1, ab1))
                     break;
 
                 if (!simpleLinearRegression(nodeList2, ab2))
                     break;
-
                 if (utils::equalDoubleArrays(ab1, oldAB1, 2) && utils::equalDoubleArrays(ab2, oldAB2, 2))
                     converged = true;
                 else {
@@ -551,7 +553,7 @@ namespace binary {
                     }
                 }
             }
-
+//            printf("finish convergence, %f, %f, %f, %f\n", ab1[0], ab1[1], ab2[0], ab2[1]);
             if (ab1[0] < ab2[0])
                 trueNodeList = nodeList1;
             else
@@ -568,12 +570,14 @@ namespace binary {
         double sum = 0;
         for (int i = 0; i < _nodeList->size(); i++)
         {
+            _scoreTable[i] = _scoreTable[i] / 1000.0;
             sum += _scoreTable[i];
         }
         double  mean = sum / _nodeList->size();
 
         for (int i = 0; i < _nodeList->size(); i++)
         {
+//            printf("%d, %f, %d \n", i, _scoreTable[i], _scoreTable[i] > mean);
             if (_scoreTable[i] > mean)
                 _scoreTable[i] = 1;
             else

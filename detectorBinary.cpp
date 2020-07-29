@@ -188,16 +188,17 @@ namespace binary {
                 int size = (*_nodeList)[i]->_val[1] - (*_nodeList)[i]->_val[0] + 1;
                 int parent_size = (*_nodeList)[i]->_parent->_val[1] - (*_nodeList)[i]->_parent->_val[0] + 1;
                 double size_diff = abs( sqrt(size*(parent_size-size)) - size);
-                if ( size_diff <= 2 )
+                parent_size = parent_size * 0.04;
+                if ( size_diff <= parent_size)
                 {
-//                    printf("size_diff <= 2, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+//                    printf("size_diff <= threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
                     if (label1[i] > 0 and (*_nodeList)[i]->_se > (*_nodeList)[i]->_parent->_se){
                         _trueNodeList.emplace_back((*_nodeList)[i]);
 //                        printf("both labels are 1, %d, %d, \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
                     }
                 } else{
                     _trueNodeList.emplace_back((*_nodeList)[i]);
-//                    printf("size_diff > 2, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+//                    printf("size_diff > threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
                 }
             }
             if (_VERBOSE_)

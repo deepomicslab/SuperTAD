@@ -30,33 +30,35 @@ int printUsage(char *argv[], int err)
              "* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING              *\n"
              "* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER                  *\n"
              "* DEALINGS IN THE SOFTWARE.                                                            *\n"
-             "****************************************************************************************\n"
-             "USAGE: " + std::string(argv[0]) + " <input Hi-C matrix> [command] [-option value]\n";
+             "****************************************************************************************\n";
+//             "USAGE: " + std::string(argv[0]) + " <input Hi-C matrix> [command] [-option value]\n";
     info += "COMMANDS:\n"
 
             "\tbinary\tThe first mode requires no user-defined parameters, run the nodes filtering by default\n"
-            "\tOPTIONS:\n"
-            "\t--no-filter: If given, do not filter TADs after TAD detection\n"
+            "\t\t./SuperTAD <input Hi-C matrix> binary [-option values]\n"
+            "\t\tOPTIONS:\n"
+            "\t\t\t--no-filter: If given, do not filter TADs after TAD detection\n"
 
             "\tmulti\tThe second mode requires a parameter h to determine the number of layers\n"
-            "\tOPTIONS:\n"
-            "\t-h <int>: The height of coding tree, default: 2\n"
+            "\t\t./SuperTAD <input Hi-C matrix> multi -h <height> [-option values]\n"
+            "\t\tOPTIONS:\n"
+            "\t\t\t-h <int>: The height of coding tree, default: 2\n"
 
-            "\tSHARED OPTIONS for binary and multi:\n"
-            "\t-K <int>: The number of leaves in the coding tree, default: nan (determined by the algorithm)\n"
-            "\t--chrom1 <string>: Label of chromosome 1, default: chr1\n"
-            "\t--chrom2 <string>: Label of chromosome 2, default: the same as chromosome 1\n"
-            "\t--chrom1-start <int>: start pos on chromosome 1, default: 0\n"
-            "\t--chrom2-start <int>: start pos on chromosome 2, default: the same as chromosome 1\n"
-            "\t-r/--resolution <int>: bin resolution, default: 10000\n"
+            "\t    SHARED OPTIONS for binary and multi COMMAND:\n"
+            "\t\t-K <int>: The number of leaves in the coding tree, default: nan (determined by the algorithm)\n"
+            "\t\t--chrom1 <string>: chrom1 label, default: chr1\n"
+            "\t\t--chrom2 <string>: chrom2 label, default: the same as chrom1\n"
+            "\t\t--chrom1-start <int>: start pos on chrom1, default: 0\n"
+            "\t\t--chrom2-start <int>: start pos on chrom2, default: the same as --chrom1-start\n"
+            "\t\t-r/--resolution <int>: bin resolution, default: 10000\n"
 
             "\tfilter\tThe nodes filter for optimal coding tree:\n"
-            "\t./SuperTAD <input Hi-C matrix> filter -i <original result> [-option values]\n"
-            "\tOPTIONS:\n"
-            "\t-i <string>: The list of TAD candidates\n"
+            "\t\t./SuperTAD <input Hi-C matrix> filter -i <original result> [-option values]\n"
+            "\t\tOPTIONS:\n"
+            "\t\t\t-i <string>: The list of TAD candidates\n"
 
             "\tcompare\tThe symmetric metric overlapping ratio to assess the agreement between two results\n"
-            "\t./SuperTAD compare <result1_path> <result2_path>\n"
+            "\t\t./SuperTAD compare <result1_path> <result2_path>\n"
 
             "GLOBAL OPTIONS:\n"
             "\t-w <string>: Working directory path, default: the directory where the input file is located\n"
@@ -73,7 +75,7 @@ int printUsage(char *argv[], int err)
 
 int parseArg(int argc, char *argv[], int i)
 {
-    if (_BINARY_ || _MULTI_) {
+    if (_BINARY_ || _MULTI_ || _FILTER_) {
         _INPUT_ = std::string(*(argv + i));
         printf("input file is %s\n", _INPUT_.c_str());
     }
@@ -128,6 +130,11 @@ int parseArg(int argc, char *argv[], int i)
         if (std::string(*(argv + i)) == std::string("--no-filter")) {
             _FILTERING_ = false;
             printf("disable filtering\n");
+        }
+
+        if (std::string(*(argv + i)) == std::string("-i")) {
+            _RESULT_ = std::string(*(argv + ++i));
+            printf("the input result for nodes filtering: %s\n", _RESULT_.c_str());
         }
 
         if (std::string(*(argv+i))==std::string("--no-fast")) {
@@ -200,9 +207,7 @@ int parseCommands(int argc, char *argv[])
         printUsage(argv, 1);
         return 1;
     }
-
     int i;
-
     if (std::string(*(argv + 1)) == std::string("compare")) {
         _COMPARE_ = true;
         _BINARY_ = false;
@@ -212,29 +217,31 @@ int parseCommands(int argc, char *argv[])
         _RESULT_1_ = std::string(*(argv + 2));
         _RESULT_2_ = std::string(*(argv + 3));
         printf("result 1 is %s\nresult 2 is %s\n", _RESULT_1_.c_str(), _RESULT_2_.c_str());
-        i = 3;
+        i = 2;
     }
 
-    if (std::string(*(argv + 1)) == std::string("binary")) {
+    else if (std::string(*(argv + 2)) == std::string("binary")) {
         _BINARY_ = true;
         _MULTI_ = false;
-        _FILTER_ = true;
+        _FILTER_ = false;
         printf("do binary\n");
-        i = 2;
+        i = 1;
     }
 
-    if (std::string(*(argv + 1)) == std::string("multi")) {
+    else if (std::string(*(argv + 2)) == std::string("multi")) {
         _MULTI_ = true;
         _BINARY_ = false;
+        _FILTER_ = false;
         printf("do multi\n");
-        i = 2;
+        i = 1;
     }
 
-    if (std::string(*(argv + 1)) == std::string("filter")) {
+    else if (std::string(*(argv + 2)) == std::string("filter")) {
         _MULTI_ = false;
         _BINARY_ = false;
         _FILTER_ = true;
         printf("do filtering\n");
+        i = 1;
     }
 
     return parseArg(argc, argv, i);
@@ -251,7 +258,7 @@ int main (int argc, char *argv[])
     if (_VERBOSE_)
         t = std::clock();
 
-    if (_BINARY_ || _MULTI_) {
+    if (_BINARY_ || _MULTI_ || _FILTER_) {
         Data data(_INPUT_);
         data.init();
 
@@ -268,10 +275,12 @@ int main (int argc, char *argv[])
                 dm.execute();
             }
         }
+        else if (_FILTER_){
+            binary::Detector db(data);
+            db.executeFILTER(_RESULT_);
+        }
     }
-    else if (_FILTER_) {
-        //????????
-    }
+
     else if (_COMPARE_) {
         Comparator comparator(_RESULT_1_, _RESULT_2_);
         comparator.execute();

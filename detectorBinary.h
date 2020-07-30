@@ -52,9 +52,15 @@ namespace binary {
 
         void execute();
 
+        void executeFILTER(std::string result);
+
         void init();
 
+        void filter();
+
         void fillTable();
+
+        static bool sortStart (Boundary a, Boundary b);
 
         void indexKtmp(int k) { *_kTmpIdx = k - 1; }
 

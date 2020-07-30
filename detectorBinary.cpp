@@ -33,7 +33,7 @@ namespace binary {
                 }
             }
         }
-        printf("db table size=%d\n", size);
+//        printf("db table size=%d\n", size);
         _boundaries.reserve(_K_);
         _binaryTree = new binary::Tree();
         _numBins = new int(0);
@@ -171,47 +171,70 @@ namespace binary {
 
         Writer::writeTree(_OUTPUT_ + ".binary.original", *_nodeList);
 
-        if (_FILTERING_) {
-            if (_VERBOSE_) {
-                printf("start filtering\n");
-                tTmp = std::clock();
-            }
-            else
-                printf("filter\n");
-
-            calculateD (_binaryTree->root());
-            calculateDensity(_binaryTree->root());
-            int *label1;    //  label from 1000 times random experiments
-            label1 = filterNodes();
-
-            for (int i = 0; i < _nodeList->size(); i++){
-                int size = (*_nodeList)[i]->_val[1] - (*_nodeList)[i]->_val[0] + 1;
-                int parent_size = (*_nodeList)[i]->_parent->_val[1] - (*_nodeList)[i]->_parent->_val[0] + 1;
-                double size_diff = abs( sqrt(size*(parent_size-size)) - size);
-                parent_size = parent_size * 0.04;
-                if ( size_diff <= parent_size)
-                {
-//                    printf("size_diff <= threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
-                    if (label1[i] > 0 and (*_nodeList)[i]->_se > (*_nodeList)[i]->_parent->_se){
-                        _trueNodeList.emplace_back((*_nodeList)[i]);
-//                        printf("both labels are 1, %d, %d, \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
-                    }
-                } else{
-                    _trueNodeList.emplace_back((*_nodeList)[i]);
-//                    printf("size_diff > threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
-                }
-            }
-            if (_VERBOSE_)
-                printf("finish filtering\n");
-
-            if (_DEBUG_)
-                printf("filtering consumes %fs\n", (float)(std::clock() - tTmp) / CLOCKS_PER_SEC);
-            printf("%d TAD candidates filtered into %d true TADs", _nodeList->size(), _trueNodeList.size());
-            Writer::writeTree(_OUTPUT_ + ".binary.filter", _trueNodeList);
-        }
-
+        if (_FILTERING_)
+            filter();
     }
 
+    bool Detector::sortStart (Boundary a, Boundary b){
+        if (a.first == b.first)
+            return a.size > b.size;
+        else
+            return a.first < b.first;
+    }
+
+    void Detector::executeFILTER (std::string result){
+        Reader::parseBoundariesIn8ColsFormat(_boundaries, result);
+        sort(_boundaries.begin(), _boundaries.end(), Detector::sortStart);    //sort boundaries in the increasing of start pos
+        binary::TreeNode *newNode;
+        int s, e, k;
+        s = 0;
+        e = _N_ - 1;
+        k = 1;
+        _binaryTree->add(s, e, k);  //add root
+        for (int i =0; i<_boundaries.size(); i++){
+            newNode = new binary::TreeNode(_boundaries[i].first-1, _boundaries[i].second-1);
+            _binaryTree->insert(newNode, &_binaryTree->root());
+        }   //construct coding tree
+        _nodeList = &_binaryTree->nodeList();
+        filter();
+    }
+
+    void Detector::filter()
+    {
+        std::clock_t tTmp;
+        if (_VERBOSE_) {
+            printf("start filtering\n");
+            tTmp = std::clock();
+        }
+        else
+            printf("filtering nodes.\n");
+
+        calculateD (_binaryTree->root());
+        calculateDensity(_binaryTree->root());
+        int *label1;    //  label from 1000 times random experiments
+        label1 = filterNodes();
+        for (int i = 0; i < _nodeList->size(); i++){
+            int size = (*_nodeList)[i]->_val[1] - (*_nodeList)[i]->_val[0] + 1;
+            int parent_size = (*_nodeList)[i]->_parent->_val[1] - (*_nodeList)[i]->_parent->_val[0] + 1;
+            double size_diff = abs( sqrt(size*(parent_size-size)) - size);
+            parent_size = parent_size * 0.04;
+            if ( size_diff <= parent_size)
+            {
+//                    printf("size_diff <= threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+                if (label1[i] > 0 and (*_nodeList)[i]->_se > (*_nodeList)[i]->_parent->_se){
+                    _trueNodeList.emplace_back((*_nodeList)[i]);
+//                        printf("both labels are 1, %d, %d, \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+                }
+            } else{
+                _trueNodeList.emplace_back((*_nodeList)[i]);
+//                    printf("size_diff > threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+            }
+        }
+        if (_VERBOSE_)
+            printf("filtering consumes %fs\n", (float)(std::clock() - tTmp) / CLOCKS_PER_SEC);
+        printf("%d TAD candidates filtered into %d true TADs\n", _nodeList->size(), _trueNodeList.size());
+        Writer::writeTree(_OUTPUT_ + ".binary.filter", _trueNodeList);
+    }
 
     void Detector::fillTable()
     {

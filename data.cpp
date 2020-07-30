@@ -13,7 +13,7 @@ Data::Data(std::string fileName)
 
     if (_N_ < _K_) {
         _K_ = _N_;
-        printf("reset max K to %d\n", _N_);
+//        printf("reset max K to %d\n", _N_);
     }
 
     _logVolTable = new double *[_N_];
@@ -61,43 +61,6 @@ void Data::init()
         std::cout << "start initialization\n";
         tTmp = std::clock();
     }
-    else
-        printf("initialize\n");
-
-//    // calculate edge count(sum)
-//    _edgeCountMat.resize(_N_, _N_);
-//    // intra
-//    for (int k=1; k < _N_; k++) {
-//        for (int i=0; i < _N_ - k; i++) {
-//            int j = i+k;
-//            double intra = _contactMat.coeff(i, j);
-//            if (j-1 > 0)
-//                intra += _edgeCountMat.coeff(i, j - 1);
-//            if (i+1 < _N_)
-//                intra += _edgeCountMat.coeff(i + 1, j);
-//            if (j-1>0 && i+1 < _N_)
-//                intra -= _edgeCountMat.coeff(i + 1, j - 1);
-//            if (abs(intra) < _THRESHOLD_ || intra < 0)
-//                _edgeCountMat(i, j) = 0;
-//            else
-//                _edgeCountMat(i, j) = intra;
-//        }
-//    }
-//    // inter
-//    for (int i=0; i < _N_; i++) {
-//        for (int j=i; j < _N_; j++) {
-//            double inter = _edgeCountMat.coeff(0, j) + _edgeCountMat.coeff(i, _N_ - 1) - 2 * _edgeCountMat.coeff(i, j);
-//            if (i-1 > 0)
-//                inter -= _edgeCountMat.coeff(0, i - 1);
-//            if (j+1 < _N_)
-//                inter -= _edgeCountMat.coeff(j + 1, _N_ - 1);
-//            if (abs(inter) < _THRESHOLD_ || inter < 0) {
-//                _edgeCountMat(j, i) = 0;
-//            } else
-//                _edgeCountMat(j, i) = inter;
-//        }
-//    }
-//    setEdgeSum();
 
     // edge sum
     int i, j, k;

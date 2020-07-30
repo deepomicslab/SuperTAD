@@ -75,4 +75,21 @@ namespace binary {
         if (treeNode != _root)
             _nodeList.emplace_back(treeNode);
     }
+
+    void Tree::insert(TreeNode *treeNode, TreeNode *parentNode){
+        if (parentNode->_left==NULL){
+            parentNode->_left = treeNode;
+            treeNode->_parent = parentNode;
+            _nodeList.emplace_back(treeNode);
+        }
+        else if (treeNode->_val[1] <= parentNode->_left->_val[1])
+            insert(treeNode, parentNode->_left);
+        else if (parentNode->_right == NULL){
+            parentNode->_right = treeNode;
+            treeNode->_parent = parentNode;
+            _nodeList.emplace_back(treeNode);
+        } else
+            insert(treeNode, parentNode->_right);
+
+    }
 }

@@ -68,6 +68,8 @@ namespace binary {
     ~Tree ();
     
     void add (int &start, int &end, int &k);
+
+    void insert (TreeNode *treeNode, TreeNode *parentNode);
     
     std::vector<TreeNode *> &nodeList () { return _nodeList; }
     

@@ -134,28 +134,57 @@ void Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std
         if (file.is_open()) {
             if (_VERBOSE_)
                 printf("start parsing input from %s\n", path.c_str());
-            else
-                printf("parse input\n");
+//            else
+//                printf("parse input\n");
             std::string line, token;
             std::istringstream iss;
             Boundary boundary;
+            bool determine_chrom = false;
             while (getline(file, line)) {
                 iss.str(line);
                 int c = 0;
                 while (getline(iss, token, '\t')) {
                     if (c==1)
                         boundary.first = atoi(token.c_str());
-                    if (c==4) {
+                    if (c==5) {
                         boundary.second = atoi(token.c_str());
                         boundary.size = boundary.second - boundary.first+1;
                         break;
                     }
                     c++;
                 }
+                if (determine_chrom == false){
+                    iss.str(line);
+                    int c = 0;
+                    int pos = 0;
+                    while (getline(iss, token, '\t')) {
+                        if (c==0)
+                            _CHROM1_ = token.c_str();
+                        else if (c==1)
+                            pos = atoi(token.c_str());
+                        else if (c==2)
+                            _CHROM1_START_ = atoi(token.c_str());
+                        else if (c==3) {
+                            _RESOLUTION_ = atoi(token.c_str()) - _CHROM1_START_;
+                            _CHROM1_START_ = atoi(token.c_str()) - _RESOLUTION_ * pos;
+                        }
+                        else if (c==4)
+                            _CHROM2_ = token.c_str();
+                        else if (c==5)
+                            pos = atoi(token.c_str());
+                        else if (c==7) {
+                            _CHROM2_START_ = atoi(token.c_str()) - _RESOLUTION_ * pos;
+                        }
+                        c++;
+                    }
+                    determine_chrom = true;
+//                    printf("%s, %d, %s, %d, %d\n", _CHROM1_.c_str(), _CHROM1_START_, _CHROM2_.c_str(), _CHROM2_START_, _RESOLUTION_);
+                }
 //                printf("s=%d, e=%d, size=%d\n", boundary.first, boundary.second, boundary.size);
                 boundaries.push_back(boundary);
                 iss.clear();
             }
+
             if (_VERBOSE_)
                 printf("finish parsing input\n");
         }

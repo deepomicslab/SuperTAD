@@ -17,6 +17,7 @@
 #include <vector>
 #include <limits>
 #include <algorithm>
+#include "params.h"
 
 
 bool pathExist(const std::string &s);
@@ -32,6 +33,8 @@ public:
 
     static void readBoundariesIntoGraph(std::string path1, std::string path2, std::vector<Boundary> &boundaries1,
                             std::vector<Boundary> &boundaries2, int **&graph);
+
+
 
     static void parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std::string path);
 };

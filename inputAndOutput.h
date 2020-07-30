@@ -14,6 +14,9 @@
 #include "utils.h"
 #include <map>
 #include "data.h"
+#include <vector>
+#include <limits>
+#include <algorithm>
 
 
 bool pathExist(const std::string &s);
@@ -26,6 +29,11 @@ public:
     ~Reader() {};
 
     static void parseMatrix2Table(double **&table, std::string path);
+
+    static void readBoundariesIntoGraph(std::string path1, std::string path2, std::vector<Boundary> &boundaries1,
+                            std::vector<Boundary> &boundaries2, int **&graph);
+
+    static void parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std::string path);
 };
 
 
@@ -193,13 +201,13 @@ public:
         }
     }
 
-    static void writeBoundaries(std::string path, std::vector<boundary> &boundaryList);
+    static void writeBoundaries(std::string path, std::vector<Boundary> &boundaryList);
 
-    static void dumpCoordinates(i2dMap &map, std::string path, std::ofstream *f=NULL);
+    static void dumpCoordinates(Int2DoubleMap &map, std::string path, std::ofstream *f=NULL);
 
-    static void writeListOfCoordinates(str_2_i2dMap &map, std::string outPath);
+    static void writeListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPath);
 
-    static void dumpListOfCoordinates(str_2_i2dMap &map, std::string outPath);
+    static void dumpListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPath);
 };
 
 #endif //PROGRAM_INPUTANDOUTPUT_H

@@ -69,9 +69,9 @@ namespace multi {
 
         fillTable();
 
-        std::vector<intDoublePair> sumOfEntropy;
+        std::vector<IntDoublePair> sumOfEntropy;
         std::vector<double> sumOfLeaves;
-        std::vector<intDoublePair> normLeaves;
+        std::vector<IntDoublePair> normLeaves;
 
         int kOpt = -1;
         double entropy;

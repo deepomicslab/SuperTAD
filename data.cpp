@@ -8,7 +8,7 @@
 Data::Data(std::string fileName)
 {
 //    Reader::parseMatrix(_contactMat, _INPUT_);
-    Reader::parseMatrix2Array(_contactArray, _INPUT_);
+    Reader::parseMatrix2Table(_contactArray, _INPUT_);
     printf("number of bins is %d\n", _N_);
 
     if (_N_ < _K_) {

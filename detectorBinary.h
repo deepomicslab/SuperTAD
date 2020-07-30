@@ -33,7 +33,7 @@ namespace binary {
 
         int ***_leftKArray;
 
-        std::vector<std::pair<int, int>> _boundaries;
+        std::vector<Boundary> _boundaries;
 
         std::vector<binary::TreeNode *> _trueNodeList;
 
@@ -44,6 +44,7 @@ namespace binary {
         int *_kMinusKtmpIdx;
 
         float *_scoreTable;
+
     public:
         Detector(Data &data);
 

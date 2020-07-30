@@ -12,4 +12,5 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_executable(SuperTAD main.cpp data.cpp data.h params.cpp params.h detectorBinary.cpp detectorBinary.h
         binaryTree.cpp binaryTree.h inputAndOutput.cpp inputAndOutput.h utils.cpp utils.h
-        detectorMulti.cpp detectorMulti.h multiTree.cpp multiTree.h detectorH.cpp detectorH.h)
+        detectorMulti.cpp detectorMulti.h multiTree.cpp multiTree.h detectorH.cpp detectorH.h
+        compare.cpp compare.h Hungarian.cpp Hungarian.h)

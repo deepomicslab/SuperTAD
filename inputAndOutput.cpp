@@ -75,7 +75,99 @@ void Reader::parseMatrix2Table(double **&table, std::string path)
 }
 
 
-void Writer::writeBoundaries(std::string path, std::vector<boundary> &boundaryList)
+void Reader::readBoundariesIntoGraph(std::string path1, std::string path2, std::vector<Boundary> &boundaries1,
+                                std::vector<Boundary> &boundaries2, int **&graph)
+{
+    if (path1=="" || path2=="") {
+        fprintf(stderr, "input must be provided\n");
+        exit(1);
+    }
+
+    if (!pathExist(path1)) {
+        fprintf(stderr, "input file %s not exist\n", path1.c_str());
+        exit(1);
+    }
+    if (!pathExist(path2)) {
+        fprintf(stderr, "input file %s not exist\n", path2.c_str());
+        exit(1);
+    }
+
+    Reader::parseBoundariesIn8ColsFormat(boundaries1, path1);
+    Reader::parseBoundariesIn8ColsFormat(boundaries2, path2);
+    int n1 = boundaries1.size();
+    int n2 = boundaries2.size();
+    int n = n1 + n2 + 2;
+    graph = new int *[n];
+
+    for (int i=0; i<n; i++)
+        graph[i] = new int [n]{0};
+
+    for (int i=1; i<n1+1; i++) {
+        graph[0][i] = std::numeric_limits<int>::max();
+
+    }
+
+    for (int i=n1+1; i<n-1; i++) {
+        graph[i][n-1] = std::numeric_limits<int>::max();
+    }
+
+    for (int i=0; i<boundaries1.size(); i++) {
+        for (int j=0; j<boundaries2.size(); j++) {
+            int d = utils::boundariesIntersection(boundaries1[i], boundaries2[j]);
+            graph[i+1][n1+1+j] = d;
+//            if (d > 0) {
+//                printf("graph[%d][%d]=%d\n", i+1, n1+1+j, d); fflush(stdout);
+//            }
+        }
+    }
+
+//    utils::print2Darray(graph, n, n);
+}
+
+
+void Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std::string path)
+{
+    std::ifstream file;
+    file.exceptions(std::ifstream::badbit);
+    try {
+        file.open(path);
+        if (file.is_open()) {
+            if (_VERBOSE_)
+                printf("start parsing input from %s\n", path.c_str());
+            else
+                printf("parse input\n");
+            std::string line, token;
+            std::istringstream iss;
+            Boundary boundary;
+            while (getline(file, line)) {
+                iss.str(line);
+                int c = 0;
+                while (getline(iss, token, '\t')) {
+                    if (c==1)
+                        boundary.first = atoi(token.c_str());
+                    if (c==4) {
+                        boundary.second = atoi(token.c_str());
+                        boundary.size = boundary.second - boundary.first+1;
+                        break;
+                    }
+                    c++;
+                }
+//                printf("s=%d, e=%d, size=%d\n", boundary.first, boundary.second, boundary.size);
+                boundaries.push_back(boundary);
+                iss.clear();
+            }
+            if (_VERBOSE_)
+                printf("finish parsing input\n");
+        }
+    }
+    catch (const std::ifstream::failure& e) {
+        printf("exception reading file\n");
+        exit(1);
+    }
+}
+
+
+void Writer::writeBoundaries(std::string path, std::vector<Boundary> &boundaryList)
 {
     std::ofstream file;
     file.open(path);
@@ -86,7 +178,7 @@ void Writer::writeBoundaries(std::string path, std::vector<boundary> &boundaryLi
         else
             printf("write boundaries into: %s\n", path.c_str());
 
-        for (std::vector<boundary>::iterator it=boundaryList.begin(); it!=boundaryList.end(); it++) {
+        for (std::vector<Boundary>::iterator it=boundaryList.begin(); it != boundaryList.end(); it++) {
             for (int i=it->first; i<=it->second; i++)
                 file << i << " ";
             file << "\n";
@@ -101,7 +193,7 @@ void Writer::writeBoundaries(std::string path, std::vector<boundary> &boundaryLi
 }
 
 
-void Writer::dumpCoordinates(i2dMap &map, std::string path, std::ofstream *f)
+void Writer::dumpCoordinates(Int2DoubleMap &map, std::string path, std::ofstream *f)
 {
     bool append = false;
     if (f) {
@@ -130,7 +222,7 @@ void Writer::dumpCoordinates(i2dMap &map, std::string path, std::ofstream *f)
 }
 
 
-void Writer::writeListOfCoordinates(str_2_i2dMap &map, std::string outPath)
+void Writer::writeListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPath)
 {
     std::ofstream file(outPath);
     if (file.is_open()) {
@@ -162,7 +254,7 @@ void Writer::writeListOfCoordinates(str_2_i2dMap &map, std::string outPath)
 }
 
 
-void Writer::dumpListOfCoordinates(str_2_i2dMap &map, std::string outPath)
+void Writer::dumpListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPath)
 {
     std::ofstream file(outPath);
     if (file.is_open()) {

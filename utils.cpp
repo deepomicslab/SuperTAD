@@ -6,8 +6,22 @@
 
 namespace utils {
 
+    int boundariesIntersection(Boundary &b1, Boundary &b2)
+    {
+        if (b1.first > b2.second || b2.first > b1.second)
+            return 0;
+        else {
+            int s = std::max(b1.first, b2.first);
+            int e = std::min(b1.second, b2.second);
+//            printf("b1=(%d, %d), b2=(%d, %d)\n", b1.first, b1.second, b2.first, b2.second);
+            return e-s+1;
+        }
+    }
+
+
     // including low but excluding high
-    int randInt (int low, int high) {
+    int randInt (int low, int high)
+    {
         double d = (double)rand() / (double)RAND_MAX * (high - low);
         double intpart;
         if (modf(d, &intpart) > 0.5) {
@@ -21,7 +35,8 @@ namespace utils {
     }
 
 
-    double randDouble(double low, double high) {
+    double randDouble(double low, double high)
+    {
         return (double)rand() / (double)RAND_MAX * (high - low);
     }
 

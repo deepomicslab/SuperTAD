@@ -12,11 +12,14 @@ extern std::string _WORK_DIR_;
 extern std::string _INPUT_;
 extern std::string _OUTPUT_;
 extern std::string _RESULT_;
+extern std::string _RESULT_1_;
+extern std::string _RESULT_2_;
 
 extern bool _BINARY_;
 extern bool _MULTI_;
 extern bool _MULTI_H_;
 extern bool _FILTER_;
+extern bool _COMPARE_;
 
 extern int _K_;
 extern int _optimalK_;

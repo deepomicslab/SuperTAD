@@ -9,11 +9,14 @@ std::string _WORK_DIR_ = "";
 std::string _INPUT_;
 std::string _OUTPUT_;
 std::string _RESULT_;
+std::string _RESULT_1_;
+std::string _RESULT_2_;
 
-bool _BINARY_ = true;
+bool _BINARY_ = false;
 bool _MULTI_ = false;
 bool _MULTI_H_ = false;
 bool _FILTER_ = false;
+bool _COMPARE_ = false;
 
 int _K_ = -999;
 int _optimalK_ = -999;

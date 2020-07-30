@@ -77,7 +77,7 @@ namespace binary {
 
         std::vector<double> sumOfEntropy;
         std::vector<double> sumOfLeaves;
-        std::vector<intDoublePair> normLeaves;
+        std::vector<IntDoublePair> normLeaves;
 
         double entropy, leafSum, parentVol, currentVol, divisor, logPV;
 

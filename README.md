@@ -1,6 +1,5 @@
 # SuperTAD
 
-#
 You may find more detailed introduction to SuperTAD [here](https://supertad.deepomics.org)
 
 ## Install  

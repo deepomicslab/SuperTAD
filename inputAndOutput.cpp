@@ -145,68 +145,63 @@ int Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std:
                 iss.str(line);
                 c = 0;
                 while (getline(iss, token, '\t')) {
-                    if (c==2)
-                        boundary.first = atoll(token.c_str());
-                    if (c==7) {
-                        boundary.second = atoll(token.c_str())-1;
-                        boundary.size = boundary.second - boundary.first+1;
-                        break;
+                    if (_COMPARE_) {
+                        if (c == 2)
+                            boundary.first = atoll(token.c_str());
+                        if (c == 7) {
+                            boundary.second = atoll(token.c_str()) - 1;
+                            boundary.size = boundary.second - boundary.first + 1;
+                            break;
+                        }
+                        c++;
+                    } else if (_FILTER_) {
+                        if (c == 1)
+                            boundary.first = atoll(token.c_str());
+                        if (c == 5) {
+                            boundary.second = atoll(token.c_str());
+                            boundary.size = boundary.second - boundary.first + 1;
+                            break;
+                        }
+                        c++;
                     }
-                    c++;
                 }
 //                printf("s=%d, e=%d, size=%d\n", boundary.first, boundary.second, boundary.size);
                 boundaries.push_back(boundary);
 
-                if (determine_chrom == false){
+                if (determine_chrom == false) {
                     iss.str(line);
                     int c = 0;
                     int pos = 0;
                     while (getline(iss, token, '\t')) {
-                        if (c==0)
+                        if (c == 0)
                             _CHROM1_ = token.c_str();
-                        else if (c==1)
+                        else if (c == 1)
                             pos = atoi(token.c_str());
-                        else if (c==2)
+                        else if (c == 2)
                             _CHROM1_START_ = atoi(token.c_str());
-                        else if (c==3) {
+                        else if (c == 3) {
                             _RESOLUTION_ = atoi(token.c_str()) - _CHROM1_START_;
                             _CHROM1_START_ = atoi(token.c_str()) - _RESOLUTION_ * pos;
-                        }
-                        else if (c==4)
+                        } else if (c == 4)
                             _CHROM2_ = token.c_str();
-                        else if (c==5)
+                        else if (c == 5)
                             pos = atoi(token.c_str());
-                        else if (c==7) {
+                        else if (c == 7) {
                             _CHROM2_START_ = atoi(token.c_str()) - _RESOLUTION_ * pos;
                         }
                         c++;
                     }
                     determine_chrom = true;
-//                    printf("%s, %d, %s, %d, %d\n", _CHROM1_.c_str(), _CHROM1_START_, _CHROM2_.c_str(), _CHROM2_START_, _RESOLUTION_);
+//                    printf("%s, %d, %s, %d, %d\n", _CHROM1_.c_str(), _CHROM1_START_, _CHROM2_.c_str(), _CHROM2_START_,_RESOLUTION_);
                 }
 
                 iss.clear();
             }
-
-            iss.str(line);
-            c = 0;
-            int s, e, res;
-            while (getline(iss, token, '\t')) {
-                if (c==2)
-                    s = atoi(token.c_str());
-                if (c==3) {
-                    e = atoi(token.c_str());
-                    break;
-                }
-                c++;
-            }
-            res = e-s;
-
             if (_VERBOSE_)
                 printf("finish parsing input\n");
 
-            return res;
-        }
+            return _RESOLUTION_;
+            }
         return 0;
     }
     catch (const std::ifstream::failure& e) {

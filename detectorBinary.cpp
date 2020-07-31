@@ -196,6 +196,9 @@ namespace binary {
             _binaryTree->insert(newNode, &_binaryTree->root());
         }   //construct coding tree
         _nodeList = &_binaryTree->nodeList();
+//        for (int i=0;i<_nodeList->size();i++){
+//            printf("%d, %d, %d, %d, %d\n", i, (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1], (*_nodeList)[i]->_parent->_val[0], (*_nodeList)[i]->_parent->_val[1]);
+//        }
         filter();
     }
 
@@ -220,7 +223,7 @@ namespace binary {
             parent_size = parent_size * 0.04;
             if ( size_diff <= parent_size)
             {
-//                    printf("size_diff <= threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+//                printf("size_diff <= threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
                 if (label1[i] > 0 and (*_nodeList)[i]->_se > (*_nodeList)[i]->_parent->_se){
                     _trueNodeList.emplace_back((*_nodeList)[i]);
 //                        printf("both labels are 1, %d, %d, \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);

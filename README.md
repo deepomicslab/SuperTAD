@@ -28,11 +28,11 @@ make
 ```
 COMMANDS:
     binary  The first mode requires no user-defined parameters, run the nodes filtering by default
-            ./SuperTAD <input Hi-C matrix> binary [-option values]
+            ./SuperTAD binary <input Hi-C matrix> [-option values]
         OPTIONS:
             --no-filter: If given, do not filter TADs after TAD detection
     multi   The second mode requires a parameter h to determine the number of layers
-            ./SuperTAD <input Hi-C matrix> multi -h <height> [-option values]
+            ./SuperTAD multi <input Hi-C matrix> -h <height> [-option values]
         OPTIONS:
             -h <int>: The height of coding tree, default: 2
         SHARED OPTIONS for binary and multi COMMAND:
@@ -43,7 +43,7 @@ COMMANDS:
             --chrom2-start <int>: start pos on chrom2, default: the same as --chrom1-start
             -r/--resolution <int>: bin resolution, default: 10000
     filter  The nodes filter for optimal coding tree:
-            ./SuperTAD <input Hi-C matrix> filter -i <original result> 
+            ./SuperTAD filter <input Hi-C matrix> -i <original result> 
         OPTIONS:
             -i <string>: The list of TAD candidates
     compare The symmetric metric overlapping ratio to assess the agreement between two results

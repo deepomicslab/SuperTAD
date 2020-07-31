@@ -125,7 +125,7 @@ void Reader::readBoundariesIntoGraph(std::string path1, std::string path2, std::
 }
 
 
-void Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std::string path)
+int Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std::string path)
 {
     std::ifstream file;
     file.exceptions(std::ifstream::badbit);
@@ -140,19 +140,23 @@ void Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std
             std::istringstream iss;
             Boundary boundary;
             bool determine_chrom = false;
+            long long int c;
             while (getline(file, line)) {
                 iss.str(line);
-                int c = 0;
+                c = 0;
                 while (getline(iss, token, '\t')) {
-                    if (c==1)
-                        boundary.first = atoi(token.c_str());
-                    if (c==5) {
-                        boundary.second = atoi(token.c_str());
+                    if (c==2)
+                        boundary.first = atoll(token.c_str());
+                    if (c==7) {
+                        boundary.second = atoll(token.c_str());
                         boundary.size = boundary.second - boundary.first+1;
                         break;
                     }
                     c++;
                 }
+//                printf("s=%d, e=%d, size=%d\n", boundary.first, boundary.second, boundary.size);
+                boundaries.push_back(boundary);
+
                 if (determine_chrom == false){
                     iss.str(line);
                     int c = 0;
@@ -180,14 +184,30 @@ void Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std
                     determine_chrom = true;
 //                    printf("%s, %d, %s, %d, %d\n", _CHROM1_.c_str(), _CHROM1_START_, _CHROM2_.c_str(), _CHROM2_START_, _RESOLUTION_);
                 }
-//                printf("s=%d, e=%d, size=%d\n", boundary.first, boundary.second, boundary.size);
-                boundaries.push_back(boundary);
+
                 iss.clear();
             }
 
+            iss.str(line);
+            c = 0;
+            int s, e, res;
+            while (getline(iss, token, '\t')) {
+                if (c==2)
+                    s = atoi(token.c_str());
+                if (c==3) {
+                    e = atoi(token.c_str());
+                    break;
+                }
+                c++;
+            }
+            res = e-s;
+
             if (_VERBOSE_)
                 printf("finish parsing input\n");
+
+            return res;
         }
+        return 0;
     }
     catch (const std::ifstream::failure& e) {
         printf("exception reading file\n");

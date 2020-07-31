@@ -59,6 +59,32 @@ namespace utils {
     }
 
 
+    int LCM(int num1, int num2)
+    {
+        int min, max, temp;
+        if (num1 < num2)
+        {
+            max = num2;
+            min = num1;
+        }
+        else
+        {
+            max = num1;
+            min = num2;
+        }
+        while (max%min != 0)
+        {
+            temp = max%min;
+            max = min;
+            min = temp;
+        }
+
+        temp = num1*num2 / temp;
+
+        return temp;
+    }
+
+
     std::string version()
     {
         return "SuperTAD v1.1";

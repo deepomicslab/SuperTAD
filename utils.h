@@ -21,9 +21,9 @@ typedef std::pair<int, double> IntDoublePair;
 
 
 struct Boundary{
-    int first, second, size;
+    long long int first, second, size;
     Boundary() {};
-    Boundary(int s, int e) {
+    Boundary(long long int s, long long int e) {
         first = s;
         second = e;
         size = e - s + 1;
@@ -45,6 +45,8 @@ namespace utils {
     bool equalDoubleArrays(double *a1, double *a2, int n);
 
     void copyDoubleArray(double from[], double to[], int n);
+
+    int LCM(int num1, int num2);
 
     template<typename T>
     void print3Darray(T ***array, int n, int m, int w)

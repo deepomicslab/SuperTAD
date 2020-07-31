@@ -63,7 +63,7 @@ All of the TAD results use the eight-column format, which records the bin indexe
 
 An example output is shown below (resolution=1kb):
 ```
-chr1	1	0	    1000	chr1	44	43000	44000
+chr1	1	0   1000	chr1	44	43000	44000
 chr1	9	8000	9000	chr1	16	15000	16000
 chr1	17	16000	17000	chr1	44	43000	44000
 ...

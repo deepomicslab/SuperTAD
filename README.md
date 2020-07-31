@@ -80,12 +80,12 @@ Each column is represented as:
 
 ## Examples
 ```
-./build/SuperTAD binary ./data/example_sub_GM12878_chr19_KR25kb_matrix.txt --chrom1 chr19 -r 25000
+./build/SuperTAD binary ./data/example_sub_GM12878_chr19_KR25kb_matrix.txt --chrom1 chr19 -r 25000 --chrom1-start 30000000
 ```
 This command will run binary mode (SuperTAD) on the chr19 of GM12878 at 25kb resolution and save all TADs to the example_sub_GM12878_chr19_KR25kb_matrix.txt.binary.original.tsv. 
 As --no-filter is not given, the nodes filtering runs by default and save the selected TADs to the example_sub_GM12878_chr19_KR25kb_matrix.txt.binary.filter.tsv.
 ```
-./build/SuperTAD multi ./data/example_sub_GM12878_chr19_KR25kb_matrix.txt -h 2 --chrom1 chr19 -r 25000
+./build/SuperTAD multi ./data/example_sub_GM12878_chr19_KR25kb_matrix.txt -h 2 --chrom1 chr19 -r 25000 --chrom1-start 30000000
 ```
 This command will run multinary mode (SuperTAD(h)) on the chr19 of GM12878 at 25kb resolution and save all TADs to the example_sub_GM12878_chr19_KR25kb_matrix.txt.multi.tsv
 ```

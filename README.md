@@ -50,9 +50,11 @@ GLOBAL OPTIONS:
     -w <string>: Working directory path, default: the directory where the input file is located
     -v/--verbose: Print verbose
 ```
+
 The binary mode's result before filtering is stored in *.binary.original.tsv
-The binary mode's result after filtering or the filter mode's result are stored in *.binary.filter.tsv
+The binary mode's result after filtering or the filter mode's result is stored in *.binary.filter.tsv
 The multi mode's result is stored in *.multi.tsv
+If -w is not indicated, SuperTAD will save the result to the directory where the input Hi-C matrix is located.
 
 ## Sample data
 We only supports dense matrix as input for now.

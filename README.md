@@ -5,7 +5,7 @@ You may find a more detailed introduction to SuperTAD [here](https://supertad.de
 ## Install  
 use git:  
 ```
-git clone git@gitlab.deepomics.org:mengbo/SuperTAD.git SuperTAD
+git clone https://github.com/deepomicslab/SuperTAD SuperTAD
 ```
 or download from source
 ```

@@ -148,7 +148,7 @@ int Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std:
                     if (c==2)
                         boundary.first = atoll(token.c_str());
                     if (c==7) {
-                        boundary.second = atoll(token.c_str());
+                        boundary.second = atoll(token.c_str())-1;
                         boundary.size = boundary.second - boundary.first+1;
                         break;
                     }

@@ -53,12 +53,12 @@ int printUsage(char *argv[], int err)
             "\t\t-r/--resolution <int>: bin resolution, default: 10000\n"
 
             "\tfilter\tThe nodes filter for optimal coding tree:\n"
-            "\t\t./SuperTAD <input Hi-C matrix> filter -i <original result> [-option values]\n"
+            "\t\t./SuperTAD <input Hi-C matrix> filter -i <original result> \n"
             "\t\tOPTIONS:\n"
             "\t\t\t-i <string>: The list of TAD candidates\n"
 
             "\tcompare\tThe symmetric metric overlapping ratio to assess the agreement between two results\n"
-            "\t\t./SuperTAD compare <result1_path> <result2_path>\n"
+            "\t\t./SuperTAD compare <result1> <result2>\n"
 
             "GLOBAL OPTIONS:\n"
             "\t-w <string>: Working directory path, default: the directory where the input file is located\n"

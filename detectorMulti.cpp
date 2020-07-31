@@ -184,7 +184,7 @@ namespace multi {
             printf("\n");
         }
 
-        _writer.writeTree(_OUTPUT_ + ".multi.original", *_nodeList);
+        _writer.writeTree(_OUTPUT_ + ".multi", *_nodeList);
     }
 
 

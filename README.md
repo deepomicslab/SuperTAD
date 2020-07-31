@@ -54,8 +54,7 @@ GLOBAL OPTIONS:
 ```
 
 ## Input and Output
-SuperTAD only supports dense matrix as input Hi-C matrix for now. We upload two examples of Hi-C matrix from 
-[*Rao et al., Cell 2014*](https://www.cell.com/fulltext/S0092-8674(14)01497-4) as well as the results into `./data`.
+SuperTAD only supports dense matrix as input Hi-C matrix for now. We upload two examples of Hi-C matrix from [*Rao et al., Cell 2014*](https://www.cell.com/fulltext/S0092-8674(14)01497-4) as well as the results into `./data`.
 
 The binary mode's result before filtering is stored in *.binary.original.tsv;
 The binary mode's result after filtering or the filter mode's result is stored in *.binary.filter.tsv;

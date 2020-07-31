@@ -13,7 +13,8 @@ tar -xzvf SuperTAD.tar.gz
 then
 ```
 cd ./SuperTAD
-mkdir build; cd build
+mkdir build
+cd build
 cmake ..
 make
 ```
@@ -23,25 +24,35 @@ make
 
 ## Usage  
 ```
-usage: SuperTAD <input hic matrix> [options (values)]
-OPTIONS:
-    -w <string>: working directory; If not given, use current input directory);
-    -b: binary tree version;
-    -m: multiple tree version;
-    -H: multiple version (h1 fast mode);
-    -K <int>: number of clusters in candidate coding tree;
-              if given, SuperTAD won't determine K for global optimal but only provides optimal result under given K;
-    -h <int>: hierarchy number (default 2);
-    --no-filter: do not filter TADs; only works for binary mode;
-    --chrom1 <string>: chrom1 label;
-    --chrom2 <string>: chrom2 label (if only chrom1 is given, assume chrom1 and 2 are identical);
-    --chrom1-start <int>: start pos on chrom1;
-    --chrom2-start <int>: start pos on chrom2;
-    -r/--resolution <int>: resolution;
-    -v/--verbose: print verbose;
+COMMANDS:
+    binary  The first mode requires no user-defined parameters, run the nodes filtering by default
+            ./SuperTAD <input Hi-C matrix> binary [-option values]
+        OPTIONS:
+            --no-filter: If given, do not filter TADs after TAD detection
+    multi   The second mode requires a parameter h to determine the number of layers
+            ./SuperTAD <input Hi-C matrix> multi -h <height> [-option values]
+        OPTIONS:
+            -h <int>: The height of coding tree, default: 2
+        SHARED OPTIONS for binary and multi COMMAND:
+            -K <int>: The number of leaves in the coding tree, default: nan (determined by the algorithm)
+            --chrom1 <string>: chrom1 label, default: chr1
+            --chrom2 <string>: chrom2 label, default: the same as chrom1
+            --chrom1-start <int>: start pos on chrom1, default: 0
+            --chrom2-start <int>: start pos on chrom2, default: the same as --chrom1-start
+            -r/--resolution <int>: bin resolution, default: 10000
+    filter  The nodes filter for optimal coding tree:
+            ./SuperTAD <input Hi-C matrix> filter -i <original result> 
+        OPTIONS:
+            -i <string>: The list of TAD candidates
+    compare The symmetric metric overlapping ratio to assess the agreement between two results
+            ./SuperTAD compare <result1> <result2>
+GLOBAL OPTIONS:
+    -w <string>: Working directory path, default: the directory where the input file is located
+    -v/--verbose: Print verbose
 ```
-Note that filtering option is only provided in binary mode. It is by default SuperTAD will generate two coding trees 
-before and after filtering in binary mode. 
+The binary mode's result before filtering is stored in *.binary.original.tsv
+The binary mode's result after filtering or the filter mode's result are stored in *.binary.filter.tsv
+The multi mode's result is stored in *.multi.tsv
 
 ## Sample data
 We only supports dense matrix as input for now.

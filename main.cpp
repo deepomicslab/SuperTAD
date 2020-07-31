@@ -35,12 +35,12 @@ int printUsage(char *argv[], int err)
     info += "COMMANDS:\n"
 
             "\tbinary\tThe first mode requires no user-defined parameters, run the nodes filtering by default\n"
-            "\t\t./SuperTAD <input Hi-C matrix> binary [-option values]\n"
+            "\t\t./SuperTAD binary <input Hi-C matrix> [-option values]\n"
             "\t\tOPTIONS:\n"
             "\t\t\t--no-filter: If given, do not filter TADs after TAD detection\n"
 
             "\tmulti\tThe second mode requires a parameter h to determine the number of layers\n"
-            "\t\t./SuperTAD <input Hi-C matrix> multi -h <height> [-option values]\n"
+            "\t\t./SuperTAD multi <input Hi-C matrix> -h <height> [-option values]\n"
             "\t\tOPTIONS:\n"
             "\t\t\t-h <int>: The height of coding tree, default: 2\n"
 
@@ -53,7 +53,7 @@ int printUsage(char *argv[], int err)
             "\t\t-r/--resolution <int>: bin resolution, default: 10000\n"
 
             "\tfilter\tThe nodes filter for optimal coding tree:\n"
-            "\t\t./SuperTAD <input Hi-C matrix> filter -i <original result> \n"
+            "\t\t./SuperTAD filter <input Hi-C matrix> -i <original result> \n"
             "\t\tOPTIONS:\n"
             "\t\t\t-i <string>: The list of TAD candidates\n"
 
@@ -220,28 +220,28 @@ int parseCommands(int argc, char *argv[])
         i = 2;
     }
 
-    else if (std::string(*(argv + 2)) == std::string("binary")) {
+    else if (std::string(*(argv + 1)) == std::string("binary")) {
         _BINARY_ = true;
         _MULTI_ = false;
         _FILTER_ = false;
         printf("do binary\n");
-        i = 1;
+        i = 2;
     }
 
-    else if (std::string(*(argv + 2)) == std::string("multi")) {
+    else if (std::string(*(argv + 1)) == std::string("multi")) {
         _MULTI_ = true;
         _BINARY_ = false;
         _FILTER_ = false;
         printf("do multi\n");
-        i = 1;
+        i = 2;
     }
 
-    else if (std::string(*(argv + 2)) == std::string("filter")) {
+    else if (std::string(*(argv + 1)) == std::string("filter")) {
         _MULTI_ = false;
         _BINARY_ = false;
         _FILTER_ = true;
         printf("do filtering\n");
-        i = 1;
+        i = 2;
     }
 
     return parseArg(argc, argv, i);

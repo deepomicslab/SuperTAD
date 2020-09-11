@@ -157,20 +157,6 @@ namespace multi {
             sumOfEntropy.emplace_back(_K_, _table[0][_N_ - 1][_K_ - 1][_H_ - 1][_N_ - 1]);
 
             backTrace(_K_, _H_, true);
-
-            double leafSum = 0;
-            int curS, curE;
-            for (int leaf = 0; leaf < _boundaries.size(); leaf++) {
-                curS = _boundaries[leaf].first;
-                curE = _boundaries[leaf].second;
-//                leafSum += _data->getSE(currentStart, currentEnd, 2 * _data->_edgeSum);
-                leafSum += _data->getSE(curS, curE, _data->_doubleEdgeSum);
-                leafSum += _table[curS][curE][0][0][curE];
-            }
-            sumOfLeaves.emplace_back(leafSum);
-            double divisor =
-                log2(_N_ / (double) _K_) + (_N_ * (_K_ - 1) / (double) (_K_ * (_N_ - 1))) * log2((double) _K_);
-            normLeaves.emplace_back(_K_, leafSum / divisor);
         }
 
         _nodeList = &_multiTree.nodeList();

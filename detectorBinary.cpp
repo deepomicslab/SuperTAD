@@ -80,7 +80,6 @@ namespace binary {
         std::vector<IntDoublePair> normLeaves;
 
         double entropy, leafSum, parentVol, currentVol, divisor, logPV;
-
         if (_DETERMINE_K_) {
             if (_VERBOSE_) {
                 printf("start determine optimal K\n");
@@ -89,42 +88,14 @@ namespace binary {
             else
                 printf("determine K\n");
 
-            for (int k = 2; k <= _K_; k++) {
+            if (_optimalK_ < _K_)
+                _K_ = _optimalK_;
 
-                if (_VERBOSE_)
-                    printf("--------\nK=%d\n", k);
-
-                indexKtmp(k);
-
-                entropy = _table[0][_N_ - 1][*_kTmpIdx];
-                if (_VERBOSE_)
-                    printf("min structure entropy=%f\n", entropy);
-
-                sumOfEntropy.emplace_back(entropy);
-
-                backTrace(k);
-
-                leafSum = 0;
-//                parentVol = 2.*_data->_edgeSum;
-//                for (int leaf = 0; leaf < _boundary.size(); leaf++) {
-//                    leafSum += _data->getSE(_boundary[leaf].first, _boundary[leaf].second, parentVol);
-//                    leafSum += _table[_boundary[leaf].first][_boundary[leaf].second][0];
-//                }
-                logPV = log2(_data->_doubleEdgeSum);
-                for (int leaf = 0; leaf < _boundaries.size(); leaf++) {
-                    leafSum += _data->getSEwithLogPV(_boundaries[leaf].first, _boundaries[leaf].second, logPV);
-                    leafSum += _table[_boundaries[leaf].first][_boundaries[leaf].second][0];
-                }
-                sumOfLeaves.emplace_back(leafSum);
-                divisor = log2(_N_ / (double) k) + (_N_ * (k - 1) / (double) (k * (_N_ - 1))) * log2(k);
-                normLeaves.emplace_back(k, leafSum / divisor);
-
-            }
             if (_VERBOSE_)
                 printf("--------\n");
 
-            sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
-            printf("optimal K is %d\n", normLeaves[0].first);
+//            sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
+            printf("optimal K is %d\n", _K_);
 
             if (_VERBOSE_)
                 printf("finish determine optimal K\n");
@@ -132,10 +103,11 @@ namespace binary {
             if (_DEBUG_)
                 printf("determining optimal K consumes %fs\n", (float)(std::clock()-tTmp)/CLOCKS_PER_SEC);
 
-            backTrace(normLeaves[0].first, true);
+            backTrace(_K_, true);
 
         }
         else {
+            printf("K=%d\n", _K_);
             indexKtmp(_K_);
 
             entropy = _table[0][_N_ - 1][*_kTmpIdx];
@@ -269,6 +241,7 @@ namespace binary {
         int kIdx, k, s, e, leftI, leftK, leftI2, endTmp;
         double minSE, tmpSE, parentVol, logPV, currentVol, minSE2, logPdC;
         bool breakFlag = false;
+        double normOfLeavesTmp = std::numeric_limits<double>::infinity();
 
         for (k = 2; k <= _K_; k++) {
 
@@ -384,6 +357,32 @@ namespace binary {
                 printf("finishing filling upper case where k=%d, _table[0][%d][%d]=%f\n",
                        k, _N_ - 1, kIdx, _table[0][_N_ - 1][kIdx]);
             }
+
+            if (_DETERMINE_K_) {
+                backTrace(k);
+                double leafSum = 0;
+                logPV = log2(_data->_doubleEdgeSum);
+                for (int leaf = 0; leaf < _boundaries.size(); leaf++) {
+                    leafSum += _data->getSEwithLogPV(_boundaries[leaf].first, _boundaries[leaf].second, logPV);
+                    leafSum += _table[_boundaries[leaf].first][_boundaries[leaf].second][0];
+                }
+                double divisor = log2(_N_ / (double) k) + (_N_ * (k - 1) / (double) (k * (_N_ - 1))) * log2(k);
+                double Tmp = leafSum/divisor;
+                if (Tmp < normOfLeavesTmp){
+                    _optimalK_ = k;
+                    normOfLeavesTmp = Tmp;
+                    printf("--------\noptimalK=%d, normLeaves=%f\n", _optimalK_, Tmp);
+                }
+                else{
+                    if (_VERBOSE_)
+                        printf("finish filling db table\n");
+
+                    if (_DEBUG_)
+                        printf("filling db table consumes %fs\n", (float)(std::clock() - t) / CLOCKS_PER_SEC);
+                    return;
+                }
+            }
+
         }
 
         if (_VERBOSE_) {

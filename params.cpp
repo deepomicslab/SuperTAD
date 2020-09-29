@@ -24,6 +24,11 @@ bool _DETERMINE_K_ = true;
 int _N_ = -999;
 int _H_ = 2;
 
+// for multi_2d mode
+int _HU_ = 1;
+int _HD_ = 2;
+std::string _PRE_ = "";
+
 float _THRESHOLD_ = 1e-6;
 bool _PRE_LOG_ = true;
 

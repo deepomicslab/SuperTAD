@@ -27,6 +27,11 @@ extern bool _DETERMINE_K_;
 extern int _N_;
 extern int _H_;
 
+// for multi_2d mode
+extern int _HU_;
+extern int _HD_;
+extern std::string _PRE_;
+
 extern float _THRESHOLD_;  //avoid the precision issue
 extern bool _PRE_LOG_;
 

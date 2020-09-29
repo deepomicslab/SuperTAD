@@ -44,6 +44,13 @@ int printUsage(char *argv[], int err)
             "\t\tOPTIONS:\n"
             "\t\t\t-h <int>: The height of coding tree, default: 2\n"
 
+            "\tmulti_2d\tThe third mode requires two parameter h1 and h2 to determine the iteractions for dividing and merging\n"
+            "\t\t./SuperTAD multi_2d <input Hi-C matrix> [-option values]\n"
+            "\t\tOPTIONS:\n"
+            "\t\t\t--hd <int>: The height of layers for dividing (go down), default: 2\n"
+            "\t\t\t--hu <int>: The height of layers for merging (go up), default: 1\n"
+            "\t\t\t--pre <string>: The pre-detected result file\n"
+
             "\t    SHARED OPTIONS for binary and multi COMMAND:\n"
             "\t\t-K <int>: The number of leaves in the coding tree, default: nan (determined by the algorithm)\n"
             "\t\t--chrom1 <string>: chrom1 label, default: chr1\n"
@@ -75,7 +82,7 @@ int printUsage(char *argv[], int err)
 
 int parseArg(int argc, char *argv[], int i)
 {
-    if (_BINARY_ || _MULTI_ || _FILTER_) {
+    if (_BINARY_ || _MULTI_ || _FILTER_ || _MULTI_H_) {
         _INPUT_ = std::string(*(argv + i));
         printf("input file is %s\n", _INPUT_.c_str());
     }
@@ -130,6 +137,21 @@ int parseArg(int argc, char *argv[], int i)
         if (std::string(*(argv + i)) == std::string("--no-filter")) {
             _FILTERING_ = false;
             printf("disable filtering\n");
+        }
+
+        if (std::string(*(argv + i)) == std::string("--hd")) {
+            _HD_ = atoi(*(argv + ++i));
+            printf("set the height for going down to %d\n", _HD_);
+        }
+
+        if (std::string(*(argv + i)) == std::string("--hu")) {
+            _HU_ = atoi(*(argv + ++i));
+            printf("set the height for going up to %d\n", _HU_);
+        }
+
+        if (std::string(*(argv + i)) == std::string("--pre")) {
+            _PRE_ = std::string(*(argv + ++i));
+            printf("the pre-detected result: %s\n", _PRE_.c_str());
         }
 
         if (std::string(*(argv + i)) == std::string("-i")) {
@@ -244,6 +266,12 @@ int parseCommands(int argc, char *argv[])
         i = 2;
     }
 
+    else if (std::string(*(argv + 1)) == std::string("multi_2d")){
+        _MULTI_H_ = true;
+        printf("do multi_2d\n");
+        i = 2;
+    }
+
     return parseArg(argc, argv, i);
 }
 
@@ -258,7 +286,7 @@ int main (int argc, char *argv[])
     if (_VERBOSE_)
         t = std::clock();
 
-    if (_BINARY_ || _MULTI_ || _FILTER_) {
+    if (_BINARY_ || _MULTI_ || _FILTER_ || _MULTI_H_) {
         Data data(_INPUT_);
         data.init();
 
@@ -278,6 +306,10 @@ int main (int argc, char *argv[])
         else if (_FILTER_){
             binary::Detector db(data);
             db.executeFILTER(_RESULT_);
+        }
+        else if (_MULTI_H_){
+            multi::Detector dh(data);
+            dh.pipeline(_PRE_);
         }
     }
 

@@ -52,6 +52,8 @@ public:
 
     void init();
 
+    static void parsesubMatrix(double **&subMatrix, double **&Matrix, int start, int end);
+
     double getVol(int s, int e);
 
     double getSE(int s, int e, double parentVol);

@@ -26,7 +26,6 @@ namespace multi {
         std::vector<multi::TreeNode *> * _nodeList;
         double **_table;
         int **_minIndexArray;
-        int **_leftKArray;
         std::map<int, int> _kToIdx;
         std::vector<Boundary> _boundaries;
         int _k;
@@ -36,6 +35,33 @@ namespace multi {
         ~DetectorH1();
         void execute();
         void backTrace();
+    };
+
+    class Merge {
+    private:
+        Data * _data;
+        std::vector<Boundary> _preBoundaries;
+        std::vector<double> _prenodeSE;
+        double **table;
+        int **minIndexArray;
+        int _k;
+        std::vector<Boundary> _boundaries;
+
+    public:
+        Merge(Data &data, std::vector<Boundary> &_preBoundaries);
+        ~Merge();
+        void execute();
+        void backTrace();
+    };
+
+    class detectorH {
+    private:
+        Data * _data;
+        std::vector<Boundary> _boundary;
+    public:
+        detectorH(Data &data);
+        ~detectorH();
+        void pipeline(std::string preResult);
     };
 
 };

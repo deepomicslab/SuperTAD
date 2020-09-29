@@ -120,11 +120,16 @@ void Data::init()
 }
 
 
-//void Data::setEdgeSum() {
-//    _edgeSum = _edgeCountMat.coeff(0, _N_ - 1);
-//    _doubleEdgeSum = 2. * _edgeSum;
-//}
-
+void Data::parsesubMatrix(double **&subMatrix, double **&Matrix, int start, int end) {
+    N = end - start + 1;
+    subMatrix = new double *[N];
+    for (int i=0; i<N; i++) {
+        subMatrix[i] = new double [N]{};
+        for (int j=0; j<N; j++) {
+            subMatrix[i][j] = Matrix[i+start-1][j+start-1];
+        }
+    }
+}
 
 double Data::getVol(int s, int e)
 {

@@ -100,7 +100,7 @@ namespace multi {
         if (_DETERMINE_K_) {
             if (_optimalK_ < _K_)
                 _k = _optimalK_ + 1;
-            std::cout << "determine k to be %d\n", _k;
+            printf("determine k to be %d\n", _k);
         }
 
         DetectorH1::backTrace();
@@ -129,7 +129,7 @@ namespace multi {
             else
                 _boundaries.emplace_back(boundaries[i - 1] + 2, boundaries[i]+1);
         }
-        delete &boundaries;
+//        delete &boundaries;
 //        for (int i = 0; i < _boundaries.size(); i++) {
 //            std::cout << "boundary[" << i << "]=(" << _boundaries[i].first << ", " << _boundaries[i].second << ")\n";
 //        }
@@ -168,7 +168,7 @@ namespace multi {
             binSum = _data->getGtimesLogG(currentVol) - (_data->_sumOfGtimesLogG[end] - _data->_sumOfGtimesLogG[start-1]);
             _prenodeSE.emplace_back(binSum/_data->_doubleEdgeSum);
         }
-
+        if (_VERBOSE_) printf("Start calculating base case.\n");
         // base case
         int nodeStart, nodeEnd;
         double nodeVol;
@@ -186,6 +186,7 @@ namespace multi {
             _table[i][0] += _data->getSE(0, end, _data->_doubleEdgeSum, currentVol);
         }
         // upper case
+        if (_VERBOSE_) printf("finish k = 0, se=%f\nStart caluclating upper case.\n", _table[_k-1][0]);
         double minSE, tmpSE;
         int minIdx;
         double sumOfLeavesTmp = std::numeric_limits<double>::infinity();
@@ -238,7 +239,7 @@ namespace multi {
         if (_DETERMINE_K_) {
             if (_optimalK_ < _K_)
                 _k = _optimalK_ + 1;
-            std::cout << "determine k to be %d\n", _k;
+            printf("determine k to be %d\n", _k);
         }
 
         Merge::backTrace();
@@ -274,11 +275,12 @@ namespace multi {
         // acquire the first layer of TAD from pre-detected file or detectorH1
         std::vector<Boundary> _preBoundaries;
         if (preResult=="") {
-            fprintf(stderr, "No pre-detected TAD result input.\n");
+            printf("No pre-detected TAD result input.\n");
             multi::DetectorH1 dm(*_data);
             dm.execute();
             preResult = _OUTPUT_ + ".multi2D.txt";
         }
+        if (_VERBOSE_) printf("Obtain the preResult as %s \n", preResult.c_str());
         Reader::parseBoundariesIn8ColsFormat(_preBoundaries, preResult);
         _boundary.insert(_boundary.end(), _preBoundaries.begin(), _preBoundaries.end()); // record the first layer of TAD
 

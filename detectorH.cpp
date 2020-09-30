@@ -45,6 +45,7 @@ namespace multi {
             currentVol = _data->getVol(0, i);
             binSum = _data->getGtimesLogG(currentVol) - _data->_sumOfGtimesLogG[i];
             _table[i][0] = _data->getSE(0, i, parentVol, currentVol) + binSum/_data->_doubleEdgeSum;
+//            printf("base case: i=%d, parentVol=%f, currentVol=%f,table=%f\n", i, parentVol, currentVol, _table[i][0]);
         }
 
         if (_VERBOSE_)
@@ -128,6 +129,7 @@ namespace multi {
             else
                 _boundaries.emplace_back(boundaries[i - 1] + 2, boundaries[i]+1);
         }
+        delete &boundaries;
 //        for (int i = 0; i < _boundaries.size(); i++) {
 //            std::cout << "boundary[" << i << "]=(" << _boundaries[i].first << ", " << _boundaries[i].second << ")\n";
 //        }
@@ -135,7 +137,7 @@ namespace multi {
 
     Merge::Merge(Data &data, std::vector<Boundary> &_preBoundaries) {
         _data = &data;
-        _N_ = static_cast<int>(_preBoundaries.size())
+        _N_ = static_cast<int>(_preBoundaries.size());
         _table = new double *[_N_];
         _minIndexArray = new int *[_N_];
         for (int i=0; i < _N_; i++) {
@@ -155,6 +157,7 @@ namespace multi {
     }
 
     void Merge::execute() {
+
         double currentVol, binSum;
         int start, end;
         // record se of each Pre-node
@@ -192,9 +195,11 @@ namespace multi {
                 minIdx = 0;
                 for (int i=a-1; i<b; i++) {
                     tmpSE = _table[i][a - 1];
-                    if (i+1==b)
+                    if (i+1==b) {
                         tmpSE += _prenodeSE[b];
-                        tmpSE += _data->getSE(_preBoundaries[b].first-1, _preBoundaries[b].second-1, _data->_doubleEdgeSum);
+                        tmpSE += _data->getSE(_preBoundaries[b].first - 1, _preBoundaries[b].second - 1,
+                                              _data->_doubleEdgeSum);
+                    }
                     else {
                         start = _preBoundaries[i+1].first-1;
                         end = _preBoundaries[b].second-1;
@@ -256,43 +261,39 @@ namespace multi {
             else
                 _boundaries.emplace_back(_preBoundaries[boundaries[i-1]].first , _preBoundaries[boundaries[i]].second);
         }
+        delete &boundaries;
     }
 
-    detectorH::detectorH(Data &data) {
+    detectorH::detectorH(Data &data)
+    {
         _data = &data;
         std::vector<Boundary> _boundary;
     }
 
-
-    detectorH::~detectorH() {
-        //
-    }
-
     void detectorH::pipeline(std::string preResult) {
         // acquire the first layer of TAD from pre-detected file or detectorH1
-        if (preResult="") {
+        std::vector<Boundary> _preBoundaries;
+        if (preResult=="") {
             fprintf(stderr, "No pre-detected TAD result input.\n");
-            multi::DetectorH1 dm(_data);
+            multi::DetectorH1 dm(*_data);
             dm.execute();
             preResult = _OUTPUT_ + ".multi2D.txt";
         }
         Reader::parseBoundariesIn8ColsFormat(_preBoundaries, preResult);
-        _boundary.insert(_boundary.end(), _preBoundaries.begin(), _preBoundaries.end()) // record the first layer of TAD
+        _boundary.insert(_boundary.end(), _preBoundaries.begin(), _preBoundaries.end()); // record the first layer of TAD
 
         // merge up
-        std::vector<Boundary> _preboundForMerge;
-        _preboundForMerge = std::vector<Boundary> tem(_preBoundaries);
+        std::vector<Boundary> _preboundForMerge = _preBoundaries;
         for (int i = _HU_; i>0; i--) {
-            multi::Merge dM(_data, _preboundForMerge);
+            multi::Merge dM(*_data, _preboundForMerge);
             dM.execute();
             preResult = _OUTPUT_ + ".multi2D_Merge.txt";
             Reader::parseBoundariesIn8ColsFormat(_preboundForMerge, preResult);
-            _boundary.insert(_boundary.end(), _preboundForMerge.begin(), _preboundForMerge.end())   // record the layers during merging
+            _boundary.insert(_boundary.end(), _preboundForMerge.begin(), _preboundForMerge.end());   // record the layers during merging
         }
 
         // go down
-        std::vector<Boundary> _preboundForDivi;
-        _preboundForDivi = std::vector<Boundary> tem(_preBoundaries);
+        std::vector<Boundary> _preboundForDivi = _preBoundaries;
         int start, end;
         double **_subMatrix;
         std::vector<Boundary> bounTmp;
@@ -301,16 +302,19 @@ namespace multi {
             for (int node=0; node<_preboundForDivi.size(); node++) {
                 start = _preboundForDivi[node].first;
                 end = _preboundForDivi[node].second;
-                Data::parsesubMatrix(_subMatrix, _data, start, end);
-                multi::DetectorH1 dD(_subMatrix);
-                dD.execute()
+
+                Data::parsesubMatrix(_subMatrix, *_data, start, end);
+                Data subdata(_subMatrix);
+                subdata.init();
+                multi::DetectorH1 dD(subdata);
+                dD.execute();
                 Reader::parseBoundariesIn8ColsFormat(bounTmp, _OUTPUT_ + ".multi2D.txt");
-                for (int b = 0; b<bounTmp.size(), b++) {
+                for (int b = 0; b<bounTmp.size(); b++) {
                     _bounDiviResult.emplace_back(bounTmp[b].first+start-1, bounTmp[b].second+start-1);
                 }
             }
-            _boundary.insert(_boundary.end(), _bounDiviResult.begin(), _bounDiviResult.end())   // record the layers during dividing
-            _preboundForDivi = std::vector<Boundary> tem(_bounDiviResult);
+            _boundary.insert(_boundary.end(), _bounDiviResult.begin(), _bounDiviResult.end());   // record the layers during dividing
+            _preboundForDivi = _bounDiviResult;
         }
 
         _writer.writeBoundaries(_OUTPUT_ + ".multi2D_All.txt", _boundary);

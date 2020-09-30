@@ -47,12 +47,13 @@ public:
     std::vector<double> _sumOfGtimesLogG;
 
     Data(std::string fileName);
+    Data(double **&_contactArray);
 
     ~Data();
 
     void init();
 
-    static void parsesubMatrix(double **&subMatrix, double **&Matrix, int start, int end);
+    static void parsesubMatrix(double **&subMatrix, Data &Matrix, int start, int end);
 
     double getVol(int s, int e);
 
@@ -67,6 +68,7 @@ public:
     double getSEwithLogDiff(int s, int e, double logDiff);
 
     double getGtimesLogG(double binG);
+
 };
 
 #endif //PROGRAM_DATA_H

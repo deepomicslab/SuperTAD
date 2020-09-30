@@ -22,8 +22,6 @@ namespace multi {
         Data * _data;
 //        Eigen::MatrixXd * _edgeCount;
         Writer _writer;
-        multi::Tree _multiTree;
-        std::vector<multi::TreeNode *> * _nodeList;
         double **_table;
         int **_minIndexArray;
         std::map<int, int> _kToIdx;
@@ -40,10 +38,11 @@ namespace multi {
     class Merge {
     private:
         Data * _data;
+        Writer _writer;
         std::vector<Boundary> _preBoundaries;
         std::vector<double> _prenodeSE;
-        double **table;
-        int **minIndexArray;
+        double **_table;
+        int **_minIndexArray;
         int _k;
         std::vector<Boundary> _boundaries;
 
@@ -57,10 +56,10 @@ namespace multi {
     class detectorH {
     private:
         Data * _data;
+        Writer _writer;
         std::vector<Boundary> _boundary;
     public:
         detectorH(Data &data);
-        ~detectorH();
         void pipeline(std::string preResult);
     };
 

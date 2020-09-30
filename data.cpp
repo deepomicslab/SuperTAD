@@ -38,6 +38,39 @@ Data::Data(std::string fileName)
     }
 }
 
+Data::Data(double **&_contactArray)
+{
+    _N_ = sizeof(_contactArray)/ sizeof(*_contactArray);
+    printf("initing the data class though the contact map!!!!!!");
+    printf("number of bins is %d\n", _N_);
+
+    if (_N_ < _K_) {
+        _K_ = _N_;
+//        printf("reset max K to %d\n", _N_);
+    }
+
+    _logVolTable = new double *[_N_];
+    _volTable = new double *[_N_];
+    _edgeCountArray = new double *[_N_];
+    for (int s=0; s<_N_; s++) {
+        _logVolTable[s] = new double [_N_-s];
+        _volTable[s] = new double [_N_-s];
+        _edgeCountArray[s] = new double [_N_];
+    }
+
+    if (_BINARY_ && _FAST_) {
+        if (_PENALTY_<0) {
+            _PENALTY_ = ceil(_N_/10);
+        }
+        printf("set fast mode penalty to %d\n", _PENALTY_);
+    }
+
+    if (_DETERMINE_K_ && _K_ < 0) {
+        _K_ = _N_ / 3 ;
+        printf("set max K to %d\n", _K_);
+    }
+}
+
 
 Data::~Data()
 {
@@ -58,7 +91,6 @@ void Data::init()
         std::cout << "start initialization\n";
         tTmp = std::clock();
     }
-
     // edge sum
     int i, j, k;
     for (k=1; k<_N_; k++) {
@@ -92,6 +124,7 @@ void Data::init()
     }
     _edgeSum = _edgeCountArray[0][_N_-1];
     _doubleEdgeSum = 2. * _edgeSum;
+    printf("edgesum=%f, doubleEdgesum=%f\n", _edgeSum, _doubleEdgeSum);
 
     // calculate volTble and logTable
     for (int s=0; s<_N_; s++) {
@@ -120,13 +153,13 @@ void Data::init()
 }
 
 
-void Data::parsesubMatrix(double **&subMatrix, double **&Matrix, int start, int end) {
-    N = end - start + 1;
+void Data::parsesubMatrix(double **&subMatrix, Data &Matrix, int start, int end) {
+    int N = end - start + 1;
     subMatrix = new double *[N];
     for (int i=0; i<N; i++) {
         subMatrix[i] = new double [N]{};
         for (int j=0; j<N; j++) {
-            subMatrix[i][j] = Matrix[i+start-1][j+start-1];
+            subMatrix[i][j] = Matrix._contactArray[i+start-1][j+start-1];
         }
     }
 }

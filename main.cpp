@@ -308,7 +308,7 @@ int main (int argc, char *argv[])
             db.executeFILTER(_RESULT_);
         }
         else if (_MULTI_H_){
-            multi::Detector dh(data);
+            multi::detectorH dh(data);
             dh.pipeline(_PRE_);
         }
     }

@@ -47,7 +47,7 @@ public:
     std::vector<double> _sumOfGtimesLogG;
 
     Data(std::string fileName);
-    Data(double **&_contactArray);
+    Data(double **&_Array, int N);
 
     ~Data();
 

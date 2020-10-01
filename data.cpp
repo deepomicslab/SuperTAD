@@ -12,7 +12,7 @@ Data::Data(std::string fileName)
     printf("number of bins is %d\n", _N_);
 
     if (_N_ < _K_) {
-        _K_ = _N_;
+        _K_ = _N_/3;
 //        printf("reset max K to %d\n", _N_);
     }
 
@@ -38,14 +38,15 @@ Data::Data(std::string fileName)
     }
 }
 
-Data::Data(double **&_contactArray)
+Data::Data(double **&_Array, int N)
 {
-    _N_ = sizeof(_contactArray)/ sizeof(*_contactArray);
-    printf("initing the data class though the contact map!!!!!!");
+    _N_ = N;
+    printf("initing the data class though the contact map!!!!!!\n");
     printf("number of bins is %d\n", _N_);
+    _contactArray = _Array;
 
     if (_N_ < _K_) {
-        _K_ = _N_;
+        _K_ = _N_/3;
 //        printf("reset max K to %d\n", _N_);
     }
 
@@ -124,7 +125,7 @@ void Data::init()
     }
     _edgeSum = _edgeCountArray[0][_N_-1];
     _doubleEdgeSum = 2. * _edgeSum;
-    printf("edgesum=%f, doubleEdgesum=%f\n", _edgeSum, _doubleEdgeSum);
+//    printf("edgesum=%f, doubleEdgesum=%f\n", _edgeSum, _doubleEdgeSum);
 
     // calculate volTble and logTable
     for (int s=0; s<_N_; s++) {

@@ -154,7 +154,7 @@ int Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std:
                             break;
                         }
                         c++;
-                    } else if (_FILTER_) {
+                    } else if (_FILTER_ || _MULTI_H_) {
                         if (c == 1)
                             boundary.first = atoll(token.c_str());
                         if (c == 5) {
@@ -199,12 +199,12 @@ int Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std:
             }
             if (_VERBOSE_)
                 printf("finish parsing input\n");
-
             return _RESOLUTION_;
             }
-        return 0;
+        else throw "exception reading file";
     }
-    catch (const std::ifstream::failure& e) {
+//    catch (const std::ifstream::failure& e) {
+    catch (...) {
         printf("exception reading file\n");
         exit(1);
     }
@@ -236,6 +236,35 @@ void Writer::writeBoundaries(std::string path, std::vector<Boundary> &boundaryLi
         std::cerr << "cannot open file: " << path << "\n";
 }
 
+void Writer::writeBoundIn8Cols(std::string path, std::vector<Boundary> &boundaryList) {
+    path += ".tsv";
+    FILE *outFile = NULL;
+    outFile = std::fopen(path.c_str(), "w");
+    if (outFile)
+    {
+        if (_VERBOSE_)
+            printf("start writing boundaries into: %s\n", path.c_str());
+        else
+            printf("write boundaries into: %s\n", path.c_str());
+        int bin1Idx, bin1Start, bin1End, bin2Idx, bin2Start, bin2End;
+        for (std::vector<Boundary>::iterator it=boundaryList.begin(); it != boundaryList.end(); it++) {
+            bin1Idx = it->first;
+            bin1Start = _CHROM1_START_ + (bin1Idx-1) * _RESOLUTION_;
+            bin1End = _CHROM1_START_ + bin1Idx * _RESOLUTION_;
+            bin2Idx = it->second;
+            bin2Start = _CHROM1_START_ + (bin2Idx-1) * _RESOLUTION_;
+            bin2End = _CHROM1_START_ + bin2Idx * _RESOLUTION_;
+            fprintf(outFile, "%s\t%d\t%d\t%d\t%s\t%d\t%d\t%d\n",
+                    _CHROM1_.c_str(), bin1Idx, bin1Start, bin1End, _CHROM2_.c_str(), bin2Idx, bin2Start, bin2End);
+        }
+        fclose(outFile);
+
+        if (_VERBOSE_)
+            printf("finish writing boundaries\n");
+    }
+    else
+        std::cerr << "cannot open file: " << path << "\n";
+}
 
 void Writer::dumpCoordinates(Int2DoubleMap &map, std::string path, std::ofstream *f)
 {

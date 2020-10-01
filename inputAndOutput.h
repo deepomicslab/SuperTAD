@@ -204,6 +204,8 @@ public:
 
     static void writeBoundaries(std::string path, std::vector<Boundary> &boundaryList);
 
+    static void writeBoundIn8Cols(std::string path, std::vector<Boundary> &boundaryList);
+
     static void dumpCoordinates(Int2DoubleMap &map, std::string path, std::ofstream *f=NULL);
 
     static void writeListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPath);

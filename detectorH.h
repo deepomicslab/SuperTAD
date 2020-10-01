@@ -31,7 +31,7 @@ namespace multi {
     public:
         DetectorH1(Data &data);
         ~DetectorH1();
-        void execute();
+        std::vector<Boundary> execute(int h=-1);
         void backTrace();
     };
 
@@ -43,13 +43,14 @@ namespace multi {
         std::vector<double> _prenodeSE;
         double **_table;
         int **_minIndexArray;
-        int _k;
+        int N;
         std::vector<Boundary> _boundaries;
+        int _k;
 
     public:
-        Merge(Data &data, std::vector<Boundary> &_preBoundaries);
+        Merge(Data &data, std::vector<Boundary> &_preBoundList);
         ~Merge();
-        void execute();
+        std::vector<Boundary> execute(int h=-1);
         void backTrace();
     };
 

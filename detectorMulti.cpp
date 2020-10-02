@@ -84,7 +84,7 @@ namespace multi {
             else
                 printf("determine optimal K\n");
 
-            for (int k=2; k<=_K_; k++) {
+            for (int k=2; k<=_optimalK_+1; k++) {
 
                 if (_VERBOSE_)
                     printf("--------\nK=%d\n", k);
@@ -125,21 +125,21 @@ namespace multi {
                     printf("(%d, %f)\n", normLeaves[i].first, normLeaves[i].second);
             }
 
-            if (_H_ == 1 || _H_ == 2) {
-                if (_optimalK_ < _K_)
-                    kOpt = _optimalK_;
-                else {
+//            if (_H_ == 1 || _H_ == 2) {
+//                if (_optimalK_ < _K_)
+//                    kOpt = _optimalK_;
+//                else {
 //                    sort(sumOfEntropy.begin(), sumOfEntropy.end(), utils::cmpIntDoublePairBySecond);
 //                    kOpt = sumOfEntropy[0].first;
-                    sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
-                    kOpt = normLeaves[0].first;
-                }
-            }
-            else {
-                sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
-                kOpt = normLeaves[0].first;
-            }
-
+//                    sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
+//                    kOpt = normLeaves[0].first;
+//                }
+//            }
+//            else {
+//                sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
+//                kOpt = normLeaves[0].first;
+//            }
+            kOpt = _optimalK_;
             printf("optimal K is %d\n", kOpt);
 
             if (_VERBOSE_)
@@ -301,7 +301,7 @@ namespace multi {
                 }
 //                printf("h=%d, k=%d, table=%f\n", h, k, _table[0][_N_-1][k-1][h][_N_-1]);
 
-                if (h ==_H_ - 1 and _DETERMINE_K_) {
+                if (h ==_H_ - 1 and _DETERMINE_K_ ) {
                     if (_table[0][_N_ - 1][k-1][h][_N_ - 1] <  _table[0][_N_ - 1][k-2][h][_N_ - 1]) {
                         _optimalK_ = k;
                         printf("--------\noptimalK=%d, table=%f\n", _optimalK_, _table[0][_N_ - 1][k-1][_H_ - 1][_N_ - 1]);

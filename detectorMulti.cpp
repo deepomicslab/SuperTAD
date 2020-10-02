@@ -195,9 +195,10 @@ namespace multi {
                 } else {
                     binSum = _data->getGtimesLogG(currentVolume) - (_data->_sumOfGtimesLogG[e] - _data->_sumOfGtimesLogG[s - 1]);
                 }
-                _table[s][e][0][0][e] = binSum / (2. * _data->_edgeSum);
+                _table[s][e][0][0][e] = binSum / _data->_doubleEdgeSum;
             }
         }
+
 
         for (int k = 1; k < _K_; k++) {
             for (int s = 0; s < _N_; s++) {
@@ -292,26 +293,27 @@ namespace multi {
                                 minIdx = 0;
                                 leftK = 0;
                             }
-//                            _minIndexArray[start][end][indexK(cluster)][height][parentEnd] = minIdx;
-//                            _table[start][end][indexK(cluster)][height][parentEnd] = minTmp;
-//                            _leftKArray[start][end][indexK(cluster)][height][parentEnd] = leftK;
                             _minIndexArray[s][e][k - 1][h][parentEnd] = minIdx;
                             _table[s][e][k - 1][h][parentEnd] = minTmp;
                             _leftKArray[s][e][k - 1][h][parentEnd] = leftK;
                         }
                     }
                 }
-                if ( _table[0][_N_ - 1][k-1][_H_ - 1][_N_ - 1] <  _table[0][_N_ - 1][k-2][_H_ - 1][_N_ - 1]){
-                    _optimalK_ = k;
-                    printf("--------\noptimalK=%d, table=%f\n", _optimalK_, _table[0][_N_ - 1][k-1][_H_ - 1][_N_ - 1]);
-                }
-                else{
-                    if (_VERBOSE_)
-                        printf("finish filling db table\n");
+//                printf("h=%d, k=%d, table=%f\n", h, k, _table[0][_N_-1][k-1][h][_N_-1]);
 
-                    if (_DEBUG_)
-                        printf("filling db table consumes %fs\n", (float)(std::clock() - t)/CLOCKS_PER_SEC);
-                    return;
+                if (h ==_H_ - 1 and _DETERMINE_K_) {
+                    if (_table[0][_N_ - 1][k-1][h][_N_ - 1] <  _table[0][_N_ - 1][k-2][h][_N_ - 1]) {
+                        _optimalK_ = k;
+                        printf("--------\noptimalK=%d, table=%f\n", _optimalK_, _table[0][_N_ - 1][k-1][_H_ - 1][_N_ - 1]);
+                    } else {
+                        printf("--------\nno more optimalK=%d, table=%f\n", _optimalK_, _table[0][_N_ - 1][k-1][_H_ - 1][_N_ - 1]);
+                        if (_VERBOSE_)
+                            printf("finish filling db table\n");
+
+                        if (_DEBUG_)
+                            printf("filling db table consumes %fs\n", (float)(std::clock() - t)/CLOCKS_PER_SEC);
+                        return;
+                    }
                 }
             }
         }

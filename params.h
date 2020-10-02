@@ -22,6 +22,7 @@ extern bool _FILTER_;
 extern bool _COMPARE_;
 
 extern int _K_;
+extern int _MinSize_;
 extern int _optimalK_;
 extern bool _DETERMINE_K_;
 extern int _N_;

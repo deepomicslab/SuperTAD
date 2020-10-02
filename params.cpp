@@ -19,6 +19,7 @@ bool _FILTER_ = false;
 bool _COMPARE_ = false;
 
 int _K_ = -999;
+int _MinSize_ = 2;
 int _optimalK_ = -999;
 bool _DETERMINE_K_ = true;
 int _N_ = -999;

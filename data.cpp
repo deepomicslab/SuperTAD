@@ -11,20 +11,15 @@ Data::Data(std::string fileName)
     Reader::parseMatrix2Table(_contactArray, _INPUT_);
     printf("number of bins is %d\n", _N_);
 
-    if (_N_ < _K_) {
-        _K_ = _N_/3;
-//        printf("reset max K to %d\n", _N_);
-    }
-
+    _K_ = _N_/_MinSize_;
     _logVolTable = new double *[_N_];
     _volTable = new double *[_N_];
     _edgeCountArray = new double *[_N_];
     for (int s=0; s<_N_; s++) {
         _logVolTable[s] = new double [_N_-s];
         _volTable[s] = new double [_N_-s];
-        _edgeCountArray[s] = new double [_N_];
+        _edgeCountArray[s] = new double [_N_]{};
     }
-
     if (_BINARY_ && _FAST_) {
         if (_PENALTY_<0) {
             _PENALTY_ = ceil(_N_/10);
@@ -33,7 +28,7 @@ Data::Data(std::string fileName)
     }
 
     if (_DETERMINE_K_ && _K_ < 0) {
-        _K_ = _N_ / 3 ;
+        _K_ = _N_ / _MinSize_ ;
         printf("set max K to %d\n", _K_);
     }
 }
@@ -46,17 +41,18 @@ Data::Data(double **&_Array, int N)
     _contactArray = _Array;
 
     if (_N_ < _K_) {
-        _K_ = _N_/3;
+        _K_ = _N_/_MinSize_;
 //        printf("reset max K to %d\n", _N_);
     }
 
     _logVolTable = new double *[_N_];
     _volTable = new double *[_N_];
     _edgeCountArray = new double *[_N_];
-    for (int s=0; s<_N_; s++) {
-        _logVolTable[s] = new double [_N_-s];
-        _volTable[s] = new double [_N_-s];
-        _edgeCountArray[s] = new double [_N_];
+    for (int s=0; s<_N_; s++)
+    {
+        _logVolTable[s] = new double[_N_ - s];
+        _volTable[s] = new double[_N_ - s];
+        _edgeCountArray[s] = new double[_N_]{};
     }
 
     if (_BINARY_ && _FAST_) {
@@ -67,7 +63,7 @@ Data::Data(double **&_Array, int N)
     }
 
     if (_DETERMINE_K_ && _K_ < 0) {
-        _K_ = _N_ / 3 ;
+        _K_ = _N_ / _MinSize_ ;
         printf("set max K to %d\n", _K_);
     }
 }
@@ -123,6 +119,7 @@ void Data::init()
                 _edgeCountArray[j][i] = inter;
         }
     }
+//    utils::print2Darray(_edgeCountArray, _N_, _N_);
     _edgeSum = _edgeCountArray[0][_N_-1];
     _doubleEdgeSum = 2. * _edgeSum;
 //    printf("edgesum=%f, doubleEdgesum=%f\n", _edgeSum, _doubleEdgeSum);

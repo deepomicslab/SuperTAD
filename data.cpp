@@ -3,9 +3,10 @@
 //
 
 #include "data.h"
+#include "params.h"
 
 
-Data::Data(std::string fileName)
+SuperTAD::Data::Data(std::string fileName)
 {
 //    Reader::parseMatrix(_contactMat, _INPUT_);
     Reader::parseMatrix2Table(_contactArray, _INPUT_);
@@ -33,7 +34,7 @@ Data::Data(std::string fileName)
     }
 }
 
-Data::Data(double **&_Array, int N)
+SuperTAD::Data::Data(double **&_Array, int N)
 {
     _N_ = N;
     printf("initing the data class though the contact map!!!!!!\n");
@@ -69,7 +70,7 @@ Data::Data(double **&_Array, int N)
 }
 
 
-Data::~Data()
+SuperTAD::Data::~Data()
 {
     for (int s=0; s<_N_; s++) {
         delete _logVolTable[s];
@@ -80,7 +81,7 @@ Data::~Data()
 }
 
 
-void Data::init()
+void SuperTAD::Data::init()
 {
     std::clock_t tTmp;
 
@@ -151,7 +152,7 @@ void Data::init()
 }
 
 
-void Data::parsesubMatrix(double **&subMatrix, Data &Matrix, int start, int end) {
+void SuperTAD::Data::parsesubMatrix(double **&subMatrix, SuperTAD::Data &Matrix, int start, int end) {
     int N = end - start + 1;
     subMatrix = new double *[N];
     for (int i=0; i<N; i++) {
@@ -162,7 +163,7 @@ void Data::parsesubMatrix(double **&subMatrix, Data &Matrix, int start, int end)
     }
 }
 
-double Data::getVol(int s, int e)
+double SuperTAD::Data::getVol(int s, int e)
 {
     if (e<s)
         fprintf(stderr, "s=%d, e=%d, e<s\n", s, e);
@@ -178,7 +179,7 @@ double Data::getVol(int s, int e)
 }
 
 
-double Data::getSE(int s, int e, double parentVol)
+double SuperTAD::Data::getSE(int s, int e, double parentVol)
 {
     // g / edge_sum * log2(V_p / V)
     double currentVol = getVol(s, e);
@@ -190,7 +191,7 @@ double Data::getSE(int s, int e, double parentVol)
 }
 
 
-double Data::getSEwithLogPV(int s, int e, double logPV)
+double SuperTAD::Data::getSEwithLogPV(int s, int e, double logPV)
 {
 //    if (_LOG_VOL_TABLE_)
 //        return _logVolTable[s][e-s] > 0 ? _edgeCountMat(e, s) / _doubleEdgeSum * (logPV - _logVolTable[s][e-s]) : 0;
@@ -210,7 +211,7 @@ double Data::getSEwithLogPV(int s, int e, double logPV)
 }
 
 
-double Data::getSE(int s, int e, double parentVol, double currentVol) {
+double SuperTAD::Data::getSE(int s, int e, double parentVol, double currentVol) {
     // g / edge_sum * log2(V_p / V)
     if(currentVol > 0 && parentVol >= currentVol)
         return _edgeCountArray[e][s] / _doubleEdgeSum * log2(parentVol / currentVol);
@@ -218,14 +219,14 @@ double Data::getSE(int s, int e, double parentVol, double currentVol) {
 }
 
 
-double Data::getSEwithLogs(int s, int e, double logPV, double logCV)
+double SuperTAD::Data::getSEwithLogs(int s, int e, double logPV, double logCV)
 {
 //    return logPV>=logCV ? _edgeCountMat(e, s) / _doubleEdgeSum * (logPV - logCV) : 0;
     return logPV>=logCV ? _edgeCountArray[e][s] / _doubleEdgeSum * (logPV - logCV) : 0;
 }
 
 
-double Data::getSEwithLogDiff(int s, int e, double logDiff)
+double SuperTAD::Data::getSEwithLogDiff(int s, int e, double logDiff)
 {
     // g / edge_sum * log2(V_p / V)
 //    return logDiff > 0 ? _edgeCountMat(e, s) / _doubleEdgeSum * logDiff : 0;
@@ -233,7 +234,7 @@ double Data::getSEwithLogDiff(int s, int e, double logDiff)
 }
 
 
-double Data::getGtimesLogG(double binG) {
+double SuperTAD::Data::getGtimesLogG(double binG) {
     if (binG==0)
         return 0;
     else

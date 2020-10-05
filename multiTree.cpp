@@ -3,6 +3,7 @@
 //
 
 #include "multiTree.h"
+#include "params.h"
 
 
 namespace multi {
@@ -24,7 +25,7 @@ namespace multi {
   
   Tree::Tree ()
   {
-    _root = new TreeNode (0, _N_);
+    _root = new TreeNode (0, SuperTAD::_N_);
 //    _nodeList.emplace_back (_root);
   }
   

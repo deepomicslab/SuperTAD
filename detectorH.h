@@ -19,7 +19,7 @@ namespace multi {
 
     class DetectorH1 {
     private:
-        Data * _data;
+        SuperTAD::Data * _data;
 //        Eigen::MatrixXd * _edgeCount;
         Writer _writer;
         double **_table;
@@ -29,7 +29,7 @@ namespace multi {
         int _k;
 
     public:
-        DetectorH1(Data &data);
+        DetectorH1(SuperTAD::Data &data);
         ~DetectorH1();
         std::vector<Boundary> execute(int h=-1);
         void backTrace();
@@ -37,7 +37,7 @@ namespace multi {
 
     class Merge {
     private:
-        Data * _data;
+        SuperTAD::Data * _data;
         Writer _writer;
         std::vector<Boundary> _preBoundaries;
         std::vector<double> _prenodeSE;
@@ -48,7 +48,7 @@ namespace multi {
         int _k;
 
     public:
-        Merge(Data &data, std::vector<Boundary> &_preBoundList);
+        Merge(SuperTAD::Data &data, std::vector<Boundary> &_preBoundList);
         ~Merge();
         std::vector<Boundary> execute(int h=-1);
         void backTrace();
@@ -56,11 +56,11 @@ namespace multi {
 
     class detectorH {
     private:
-        Data * _data;
+        SuperTAD::Data * _data;
         Writer _writer;
         std::vector<Boundary> _boundary;
     public:
-        detectorH(Data &data);
+        detectorH(SuperTAD::Data &data);
         void pipeline(std::string preResult);
     };
 

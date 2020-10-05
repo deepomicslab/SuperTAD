@@ -19,7 +19,7 @@ namespace binary {
 
     class Detector {
     private:
-        Data *_data;
+        SuperTAD::Data *_data;
 
         binary::Tree *_binaryTree;
 
@@ -46,7 +46,7 @@ namespace binary {
         float *_scoreTable;
 
     public:
-        Detector(Data &data);
+        Detector(SuperTAD::Data &data);
 
         ~Detector();
 

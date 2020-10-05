@@ -19,56 +19,59 @@
 #include "utils.h"
 
 
-class Data {
-private:
-    std::string _chrom1;
+namespace SuperTAD
+{
+    class Data {
+    private:
+        std::string _chrom1;
 
-    std::string _chrom2;
+        std::string _chrom2;
 
-    std::map<int, std::pair<int64_t, int64_t>> _chrom1Idx2Interval;
+        std::map<int, std::pair<int64_t, int64_t>> _chrom1Idx2Interval;
 
-    std::map<int, std::pair<int64_t, int64_t>> _chrom2Idx2Interval;
+        std::map<int, std::pair<int64_t, int64_t>> _chrom2Idx2Interval;
 
-    double **_contactArray;
+        double **_contactArray;
 
-public:
+    public:
 
-    // upper tri is intra; lower tri is inter
-    double **_edgeCountArray;
+        // upper tri is intra; lower tri is inter
+        double **_edgeCountArray;
 
-    double _edgeSum;
+        double _edgeSum;
 
-    double _doubleEdgeSum;
+        double _doubleEdgeSum;
 
-    double **_logVolTable;
+        double **_logVolTable;
 
-    double **_volTable;
+        double **_volTable;
 
-    std::vector<double> _sumOfGtimesLogG;
+        std::vector<double> _sumOfGtimesLogG;
 
-    Data(std::string fileName);
-    Data(double **&_Array, int N);
+        Data(std::string fileName);
+        Data(double **&_Array, int N);
 
-    ~Data();
+        ~Data();
 
-    void init();
+        void init();
 
-    static void parsesubMatrix(double **&subMatrix, Data &Matrix, int start, int end);
+        static void parsesubMatrix(double **&subMatrix, Data &Matrix, int start, int end);
 
-    double getVol(int s, int e);
+        double getVol(int s, int e);
 
-    double getSE(int s, int e, double parentVol);
+        double getSE(int s, int e, double parentVol);
 
-    double getSEwithLogPV(int s, int e, double logPV);
+        double getSEwithLogPV(int s, int e, double logPV);
 
-    double getSE(int s, int e, double parentVol, double currentVol);
+        double getSE(int s, int e, double parentVol, double currentVol);
 
-    double getSEwithLogs(int s, int e, double logPV, double logCV);
+        double getSEwithLogs(int s, int e, double logPV, double logCV);
 
-    double getSEwithLogDiff(int s, int e, double logDiff);
+        double getSEwithLogDiff(int s, int e, double logDiff);
 
-    double getGtimesLogG(double binG);
+        double getGtimesLogG(double binG);
 
-};
+    };
+}
 
 #endif //PROGRAM_DATA_H

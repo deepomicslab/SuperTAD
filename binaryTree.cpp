@@ -3,6 +3,7 @@
 //
 
 #include "binaryTree.h"
+#include "params.h"
 
 
 namespace binary {
@@ -38,7 +39,7 @@ namespace binary {
         TreeNode *treeNode = new TreeNode(start, end);
 
         if (k == 0) {
-            if (_DEBUG_)
+            if (SuperTAD::_DEBUG_)
                 printf("leaf node: (%d, %d)\n", start, end);
 
             TreeNode *treeExistNode = _t.top ();

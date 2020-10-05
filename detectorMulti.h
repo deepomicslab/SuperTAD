@@ -20,7 +20,7 @@ namespace multi {
 
     class Detector {
     private:
-        Data * _data;
+        SuperTAD::Data * _data;
 //        Eigen::MatrixXd * _edgeCount;
         Writer _writer;
         multi::Tree _multiTree;
@@ -32,7 +32,7 @@ namespace multi {
         std::vector<Boundary> _boundaries;
 
     public:
-        Detector(Data &data);
+        Detector(SuperTAD::Data &data);
         ~Detector ();
 //        int indexK(int k) { return _kToIdx.find(k)->second; }
         void execute();

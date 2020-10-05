@@ -3,27 +3,29 @@
 //
 
 #include "detectorH.h"
+#include "data.h"
+#include "params.h"
 
 namespace multi {
 
-    DetectorH1::DetectorH1(Data &data) {
+    DetectorH1::DetectorH1(SuperTAD::Data &data) {
         _data = &data;
 //        _edgeCount = &data.edgeCount();
         int k=1;
-        for (int i=0; i < _K_; i++) {
+        for (int i=0; i < SuperTAD::_K_; i++) {
             _kToIdx.emplace(k++, i);
         }
-        _table = new double *[_N_];
-        _minIndexArray = new int *[_N_];
-        for (int i=0; i < _N_; i++) {
-            _table[i] = new double [_N_]{};
-            _minIndexArray[i] = new int [_N_]{};
+        _table = new double *[SuperTAD::_N_];
+        _minIndexArray = new int *[SuperTAD::_N_];
+        for (int i=0; i < SuperTAD::_N_; i++) {
+            _table[i] = new double [SuperTAD::_N_]{};
+            _minIndexArray[i] = new int [SuperTAD::_N_]{};
         }
     }
 
 
     DetectorH1::~DetectorH1() {
-        for (int i=0; i < _N_; i++) {
+        for (int i=0; i < SuperTAD::_N_; i++) {
             delete _table[i];
             delete _minIndexArray[i];
         }
@@ -37,10 +39,10 @@ namespace multi {
 
         double currentVol, parentVol, binSum;
 
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             printf("start k=0\n");
 
-        for (int i=1; i < _N_; i++) {
+        for (int i=1; i < SuperTAD::_N_; i++) {
             parentVol = _data->_doubleEdgeSum;
             currentVol = _data->getVol(0, i);
             binSum = _data->getGtimesLogG(currentVol) - _data->_sumOfGtimesLogG[i];
@@ -48,19 +50,19 @@ namespace multi {
 //            printf("base case: i=%d, parentVol=%f, currentVol=%f,table=%f\n", i, parentVol, currentVol, _table[i][0]);
         }
 
-        if (_VERBOSE_)
-            printf("finish k=0, se=%f\n", _table[_N_ - 1][0]);
+        if (SuperTAD::_VERBOSE_)
+            printf("finish k=0, se=%f\n", _table[SuperTAD::_N_ - 1][0]);
 
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             printf("start calculating h=1\n");
 
         double minSE, tmpSE;
         int minIdx;
-        double sumOfLeavesTmp = _table[_N_ - 1][0];
-        for (int a=1; a < _K_; a++) {
-            if (_VERBOSE_)
+        double sumOfLeavesTmp = _table[SuperTAD::_N_ - 1][0];
+        for (int a=1; a < SuperTAD::_K_; a++) {
+            if (SuperTAD::_VERBOSE_)
                 printf("start k=%d\n", a);
-            for (int b=a; b < _N_; b++) {
+            for (int b=a; b < SuperTAD::_N_; b++) {
                 minSE = std::numeric_limits<double>::infinity();
                 minIdx = 0;
                 for (int i=a-1; i<b; i++) {
@@ -82,11 +84,11 @@ namespace multi {
                 _minIndexArray[b][a] = minIdx;
                 _table[b][a] = minSE;
             }
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 printf("finish k=%d, structure entropy=%f\n", a, minSE);
-            if (_DETERMINE_K_) {
-                if (_table[_N_-1][a] < sumOfLeavesTmp){
-                    _optimalK_ = a;
+            if (SuperTAD::_DETERMINE_K_) {
+                if (_table[SuperTAD::_N_ - 1][a] < sumOfLeavesTmp){
+                    SuperTAD::_optimalK_ = a;
                     sumOfLeavesTmp = minSE;
                 }
                 else
@@ -94,18 +96,18 @@ namespace multi {
             }
         }
 
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             printf("finish calculating h=1\n");
 
-        if (_DETERMINE_K_) {
-            if (_optimalK_ < _K_)
-                _k = _optimalK_ + 1;
+        if (SuperTAD::_DETERMINE_K_) {
+            if (SuperTAD::_optimalK_ < SuperTAD::_K_)
+                _k = SuperTAD::_optimalK_ + 1;
             printf("determine k to be %d\n", _k);
         }
 
         DetectorH1::backTrace();
         if (h==-1)
-            _writer.writeBoundIn8Cols(_OUTPUT_ + ".multi2D", _boundaries);
+            _writer.writeBoundIn8Cols(SuperTAD::_OUTPUT_ + ".multi2D", _boundaries);
         return _boundaries;
     }
 
@@ -116,9 +118,9 @@ namespace multi {
         return the positions in the optimal route.
      */
     void DetectorH1::backTrace() {
-        printf("#data points: %d \n", _N_);
+        printf("#data points: %d \n", SuperTAD::_N_);
         int *boundaries = new int [_k];
-        boundaries[_k - 1] = _N_ - 1;
+        boundaries[_k - 1] = SuperTAD::_N_ - 1;
         for (int i=_k-2; i>-1; i--) {
             int t1 = boundaries[i + 1];
             boundaries[i] = _minIndexArray[t1][i + 1];
@@ -136,7 +138,7 @@ namespace multi {
 //        }
     }
 
-    Merge::Merge(Data &data, std::vector<Boundary> &_preBoundList) {
+    Merge::Merge(SuperTAD::Data &data, std::vector<Boundary> &_preBoundList) {
         _data = &data;
         _preBoundaries = _preBoundList;
         N = (int) _preBoundaries.size();
@@ -169,7 +171,7 @@ namespace multi {
             _prenodeSE.emplace_back(binSum/_data->_doubleEdgeSum);
 //            printf("start=%d, end=%d, currentVol=%f, prenodeSE=%f\n", start, end, currentVol, binSum/_data->_doubleEdgeSum);
         }
-        if (_VERBOSE_) printf("Start calculating base case. #node=%d\n", N);
+        if (SuperTAD::_VERBOSE_) printf("Start calculating base case. #node=%d\n", N);
         // base case
         int nodeStart, nodeEnd;
         double nodeVol;
@@ -189,7 +191,7 @@ namespace multi {
             _table[i][0] += _data->getSE(0, end, _data->_doubleEdgeSum, currentVol);
         }
         // upper case
-        if (_VERBOSE_) printf("finish k = 0, se=%f\nStart caluclating upper case.\n", _table[N-1][0]);
+        if (SuperTAD::_VERBOSE_) printf("finish k = 0, se=%f\nStart caluclating upper case.\n", _table[N - 1][0]);
         double minSE, tmpSE;
         int minIdx;
         double sumOfLeavesTmp = _table[N-1][0];
@@ -225,11 +227,11 @@ namespace multi {
                 _minIndexArray[b][a] = minIdx;
                 _table[b][a] = minSE;
             }
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 printf("finish k = %d, structure entropy=%f\n", a, minSE);
-            if (_DETERMINE_K_) {
+            if (SuperTAD::_DETERMINE_K_) {
                 if (_table[N-1][a] < sumOfLeavesTmp){
-                    _optimalK_ = a;
+                    SuperTAD::_optimalK_ = a;
                     sumOfLeavesTmp = minSE;
                 }
                 else
@@ -237,18 +239,18 @@ namespace multi {
             }
         }
 
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             printf("finish calculating h=1\n");
 
-        if (_DETERMINE_K_) {
-            if (_optimalK_ < _K_)
-                _k = _optimalK_ + 1;
+        if (SuperTAD::_DETERMINE_K_) {
+            if (SuperTAD::_optimalK_ < SuperTAD::_K_)
+                _k = SuperTAD::_optimalK_ + 1;
             printf("determine k to be %d\n", _k);
         }
 
         Merge::backTrace();
         if (h==-1)
-            _writer.writeBoundIn8Cols(_OUTPUT_ + ".multi2D_Merge", _boundaries);
+            _writer.writeBoundIn8Cols(SuperTAD::_OUTPUT_ + ".multi2D_Merge", _boundaries);
         return _boundaries;
     }
 
@@ -269,7 +271,7 @@ namespace multi {
         }
     }
 
-    detectorH::detectorH(Data &data)
+    detectorH::detectorH(SuperTAD::Data &data)
     {
         _data = &data;
         std::vector<Boundary> _boundary;
@@ -279,7 +281,7 @@ namespace multi {
         // acquire the first layer of TAD from pre-detected file or detectorH1
         std::vector<Boundary> _preBoundaries;
         if (preResult=="") {
-            _HD_ -= 1;
+            SuperTAD::_HD_ -= 1;
             printf("No pre-detected TAD result input, so applying for the first-time dividing.\n");
             multi::DetectorH1 dm(*_data);
             _preBoundaries = dm.execute(-1);
@@ -289,10 +291,10 @@ namespace multi {
 
         // merge up
         std::vector<Boundary> _preboundForMerge = _preBoundaries;
-        for (int i = _HU_; i>0; i--) {
-            printf("Start to merge for the time: %d\n", _HU_-i+1);
+        for (int i = SuperTAD::_HU_; i > 0; i--) {
+            printf("Start to merge for the time: %d\n", SuperTAD::_HU_ - i + 1);
             multi::Merge dM(*_data, _preboundForMerge);
-            _preboundForMerge = dM.execute(_HU_-i+1);
+            _preboundForMerge = dM.execute(SuperTAD::_HU_ - i + 1);
             _boundary.insert(_boundary.end(), _preboundForMerge.begin(), _preboundForMerge.end()); // record the first layer of TAD
         }
 
@@ -301,18 +303,18 @@ namespace multi {
         int start, end;
         double **_subMatrix;
         std::vector<Boundary> bounTmp;
-        for (int i = _HD_; i>0; i--) {
-            printf("Start to divide for the time: %d\n", _HD_-i+1);
+        for (int i = SuperTAD::_HD_; i > 0; i--) {
+            printf("Start to divide for the time: %d\n", SuperTAD::_HD_ - i + 1);
             std::vector<Boundary> _bounDiviResult;
             for (int node=0; node<_preboundForDivi.size(); node++) {
                 start = _preboundForDivi[node].first;
                 end = _preboundForDivi[node].second;
                 printf("start=%d, end=%d, node=%d\n", start, end, node);
-                Data::parsesubMatrix(_subMatrix, *_data, start, end);
-                Data subdata(_subMatrix, end-start+1);
+                SuperTAD::Data::parsesubMatrix(_subMatrix, *_data, start, end);
+                SuperTAD::Data subdata(_subMatrix, end - start + 1);
                 subdata.init();
                 multi::DetectorH1 dD(subdata);
-                bounTmp = dD.execute(_HD_-i+1);
+                bounTmp = dD.execute(SuperTAD::_HD_ - i + 1);
                 for (int b = 0; b<bounTmp.size(); b++) {
                     _bounDiviResult.emplace_back(bounTmp[b].first+start-1, bounTmp[b].second+start-1);
                 }
@@ -321,7 +323,7 @@ namespace multi {
             _preboundForDivi = _bounDiviResult;
         }
 
-        _writer.writeBoundIn8Cols(_OUTPUT_ + ".multi2D_All", _boundary);
+        _writer.writeBoundIn8Cols(SuperTAD::_OUTPUT_ + ".multi2D_All", _boundary);
     }
 
 }

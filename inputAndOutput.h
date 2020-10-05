@@ -51,7 +51,7 @@ public:
         std::ofstream outFile;
         outFile.open(filePath);
         if (outFile.is_open()) {
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 printf("start writing tree into %s\n", filePath.c_str());
             else
                 printf("write tree into %s\n", filePath.c_str());
@@ -63,7 +63,7 @@ public:
             }
             outFile.close();
 
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 std::cout << "finish writing tree\n";
 
         }
@@ -79,7 +79,7 @@ public:
         FILE *outFile = NULL;
         outFile = std::fopen(filePath.c_str(), "w");
         if (outFile) {
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 printf("start writing tree into %s\n", filePath.c_str());
             else
                 printf("write tree into %s\n", filePath.c_str());
@@ -87,17 +87,17 @@ public:
             int bin1Idx, bin1Start, bin1End, bin2Idx, bin2Start, bin2End;
             for (int i = 0; i < nodeList.size(); i++) {
                 bin1Idx = nodeList[i]->_val[0];
-                bin1Start = _CHROM1_START_ + bin1Idx * _RESOLUTION_;
-                bin1End = _CHROM1_START_ + (bin1Idx+1) * _RESOLUTION_;
+                bin1Start = SuperTAD::_CHROM1_START_ + bin1Idx * SuperTAD::_RESOLUTION_;
+                bin1End = SuperTAD::_CHROM1_START_ + (bin1Idx + 1) * SuperTAD::_RESOLUTION_;
                 bin2Idx = nodeList[i]->_val[1];
-                bin2Start = _CHROM1_START_ + bin2Idx * _RESOLUTION_;
-                bin2End = _CHROM1_START_ + (bin2Idx+1) * _RESOLUTION_;
+                bin2Start = SuperTAD::_CHROM1_START_ + bin2Idx * SuperTAD::_RESOLUTION_;
+                bin2End = SuperTAD::_CHROM1_START_ + (bin2Idx + 1) * SuperTAD::_RESOLUTION_;
                 fprintf(outFile, "%s\t%d\t%d\t%d\t%s\t%d\t%d\t%d\n",
-                        _CHROM1_.c_str(), bin1Idx+1, bin1Start, bin1End, _CHROM2_.c_str(), bin2Idx+1, bin2Start, bin2End);
+                        SuperTAD::_CHROM1_.c_str(), bin1Idx + 1, bin1Start, bin1End, SuperTAD::_CHROM2_.c_str(), bin2Idx + 1, bin2Start, bin2End);
             }
             fclose(outFile);
 
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 printf("finish writing tree\n");
 
         }
@@ -112,7 +112,7 @@ public:
         FILE *outFile = NULL;
         outFile = std::fopen(filePath.c_str(), "w");
         if (outFile) {
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 printf("start writing tree into %s\n", filePath.c_str());
             else
                 printf("write tree into %s\n", filePath.c_str());
@@ -131,18 +131,18 @@ public:
                 bin1ChrIdx = nodeList[i]->_val[0];
                 bin2ChrIdx = nodeList[i]->_val[1];
 
-                bin1Start = _CHROM1_START_ + bin1ChrIdx * _RESOLUTION_;
-                bin1End = _CHROM1_START_ + bin2ChrIdx * _RESOLUTION_;
+                bin1Start = SuperTAD::_CHROM1_START_ + bin1ChrIdx * SuperTAD::_RESOLUTION_;
+                bin1End = SuperTAD::_CHROM1_START_ + bin2ChrIdx * SuperTAD::_RESOLUTION_;
 
-                bin2Start = _CHROM2_START_ + bin1ChrIdx * _RESOLUTION_;
-                bin2End = _CHROM2_START_ + bin2ChrIdx * _RESOLUTION_;
+                bin2Start = SuperTAD::_CHROM2_START_ + bin1ChrIdx * SuperTAD::_RESOLUTION_;
+                bin2End = SuperTAD::_CHROM2_START_ + bin2ChrIdx * SuperTAD::_RESOLUTION_;
 
                 fprintf(outFile, "%s\t%d\t%d\t%s\t%d\t%d\tnode%d\n",
-                        _CHROM1_.c_str(), bin1Start, bin1End, _CHROM2_.c_str(), bin2Start, bin2End, i + 1);
+                        SuperTAD::_CHROM1_.c_str(), bin1Start, bin1End, SuperTAD::_CHROM2_.c_str(), bin2Start, bin2End, i + 1);
             }
             fclose(outFile);
 
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 printf("finish writing tree\n");
 
         }
@@ -157,7 +157,7 @@ public:
         FILE *outFile = NULL;
         outFile = std::fopen(filePath.c_str(), "w");
         if (outFile) {
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 printf("start writing tree into %s\n", filePath.c_str());
             else
                 printf("write tree into %s\n", filePath.c_str());
@@ -168,15 +168,15 @@ public:
             int bin1ChrIdx, bin1Start, bin1End, bin2ChrIdx, bin2Start, bin2End;
 
             for (int i = 0; i < nodeList.size(); i++) {
-                bin1Start = _CHROM1_START_ + nodeList[i]->_val[0] * _RESOLUTION_;
-                bin2Start = _CHROM2_START_ + nodeList[i]->_val[1] * _RESOLUTION_;
+                bin1Start = SuperTAD::_CHROM1_START_ + nodeList[i]->_val[0] * SuperTAD::_RESOLUTION_;
+                bin2Start = SuperTAD::_CHROM2_START_ + nodeList[i]->_val[1] * SuperTAD::_RESOLUTION_;
 
                 fprintf(outFile, "0\t%s\t%d\t0\t0\t%s\t%d\t1\t%f\n",
-                        _CHROM1_.c_str(), bin1Start, _CHROM2_.c_str(), bin2Start);
+                        SuperTAD::_CHROM1_.c_str(), bin1Start, SuperTAD::_CHROM2_.c_str(), bin2Start);
             }
             fclose(outFile);
 
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 printf("finish writing tree\n");
 
         }
@@ -187,11 +187,11 @@ public:
     template<class T>
     static void writeTree(std::string filePath, std::vector<T *> &nodeList)
     {
-        if (_BEDPE_)
+        if (SuperTAD::_BEDPE_)
             writeTreeAsBedpe(filePath, nodeList);
-        else if (_SHORT_)
+        else if (SuperTAD::_SHORT_)
             writeTreeInShort(filePath, nodeList);
-        else if (_BIN_LIST_)
+        else if (SuperTAD::_BIN_LIST_)
             writeTreeAsBinList(filePath, nodeList);
         else {
 //            if (_CHROM1_ != _CHROM2_) {

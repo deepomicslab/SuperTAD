@@ -3,6 +3,7 @@
 //
 
 #include "inputAndOutput.h"
+#include "params.h"
 
 
 bool pathExist(const std::string &s)
@@ -29,25 +30,25 @@ void Reader::parseMatrix2Table(double **&table, std::string path)
     try {
         file.open(path);
         if (file.is_open()) {
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 printf("start parsing input from %s\n", path.c_str());
             else
                 printf("parse input\n");
 
-            _N_ = 0;
+            SuperTAD::_N_ = 0;
             std::string line;
             double c;
             getline(file, line);
             std::istringstream iss(line);
             while (iss >> c)
-                _N_++;
+                SuperTAD::_N_++;
             iss.clear();
-            table = new double *[_N_];
+            table = new double *[SuperTAD::_N_];
 
             iss.str(line);
             int i=0, j=0;
-            table[i] = new double [_N_]{};
-            for (;j<_N_;j++) {
+            table[i] = new double [SuperTAD::_N_]{};
+            for (; j < SuperTAD::_N_; j++) {
                 iss >> c;
                 table[i][j] = c;
             }
@@ -55,15 +56,15 @@ void Reader::parseMatrix2Table(double **&table, std::string path)
 
             while (getline(file, line)) {
                 iss.str(line);
-                table[++i] = new double [_N_]{};
-                for (j=0; j<_N_; j++) {
+                table[++i] = new double [SuperTAD::_N_]{};
+                for (j=0; j < SuperTAD::_N_; j++) {
                     iss >> c;
                     table[i][j] = c;
                 }
                 iss.clear();
             }
 
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 printf("finish parsing input\n");
 
         }
@@ -132,7 +133,7 @@ int Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std:
     try {
         file.open(path);
         if (file.is_open()) {
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 printf("start parsing input from %s\n", path.c_str());
 //            else
 //                printf("parse input\n");
@@ -145,7 +146,7 @@ int Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std:
                 iss.str(line);
                 c = 0;
                 while (getline(iss, token, '\t')) {
-                    if (_COMPARE_) {
+                    if (SuperTAD::_COMPARE_) {
                         if (c == 2)
                             boundary.first = atoll(token.c_str());
                         if (c == 7) {
@@ -154,7 +155,7 @@ int Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std:
                             break;
                         }
                         c++;
-                    } else if (_FILTER_ || _MULTI_H_) {
+                    } else if (SuperTAD::_FILTER_ || SuperTAD::_MULTI_H_) {
                         if (c == 1)
                             boundary.first = atoll(token.c_str());
                         if (c == 5) {
@@ -174,20 +175,20 @@ int Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std:
                     int pos = 0;
                     while (getline(iss, token, '\t')) {
                         if (c == 0)
-                            _CHROM1_ = token.c_str();
+                            SuperTAD::_CHROM1_ = token.c_str();
                         else if (c == 1)
                             pos = atoi(token.c_str());
                         else if (c == 2)
-                            _CHROM1_START_ = atoi(token.c_str());
+                            SuperTAD::_CHROM1_START_ = atoi(token.c_str());
                         else if (c == 3) {
-                            _RESOLUTION_ = atoi(token.c_str()) - _CHROM1_START_;
-                            _CHROM1_START_ = atoi(token.c_str()) - _RESOLUTION_ * pos;
+                            SuperTAD::_RESOLUTION_ = atoi(token.c_str()) - SuperTAD::_CHROM1_START_;
+                            SuperTAD::_CHROM1_START_ = atoi(token.c_str()) - SuperTAD::_RESOLUTION_ * pos;
                         } else if (c == 4)
-                            _CHROM2_ = token.c_str();
+                            SuperTAD::_CHROM2_ = token.c_str();
                         else if (c == 5)
                             pos = atoi(token.c_str());
                         else if (c == 7) {
-                            _CHROM2_START_ = atoi(token.c_str()) - _RESOLUTION_ * pos;
+                            SuperTAD::_CHROM2_START_ = atoi(token.c_str()) - SuperTAD::_RESOLUTION_ * pos;
                         }
                         c++;
                     }
@@ -197,9 +198,9 @@ int Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std:
 
                 iss.clear();
             }
-            if (_VERBOSE_)
+            if (SuperTAD::_VERBOSE_)
                 printf("finish parsing input\n");
-            return _RESOLUTION_;
+            return SuperTAD::_RESOLUTION_;
             }
         else throw "exception reading file";
     }
@@ -217,7 +218,7 @@ void Writer::writeBoundaries(std::string path, std::vector<Boundary> &boundaryLi
     file.open(path);
     if (file.is_open())
     {
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             printf("start writing boundaries into: %s\n", path.c_str());
         else
             printf("write boundaries into: %s\n", path.c_str());
@@ -229,7 +230,7 @@ void Writer::writeBoundaries(std::string path, std::vector<Boundary> &boundaryLi
         }
         file.close();
 
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             printf("finish writing boundaries\n");
     }
     else
@@ -242,24 +243,24 @@ void Writer::writeBoundIn8Cols(std::string path, std::vector<Boundary> &boundary
     outFile = std::fopen(path.c_str(), "w");
     if (outFile)
     {
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             printf("start writing boundaries into: %s\n", path.c_str());
         else
             printf("write boundaries into: %s\n", path.c_str());
         int bin1Idx, bin1Start, bin1End, bin2Idx, bin2Start, bin2End;
         for (std::vector<Boundary>::iterator it=boundaryList.begin(); it != boundaryList.end(); it++) {
             bin1Idx = it->first;
-            bin1Start = _CHROM1_START_ + (bin1Idx-1) * _RESOLUTION_;
-            bin1End = _CHROM1_START_ + bin1Idx * _RESOLUTION_;
+            bin1Start = SuperTAD::_CHROM1_START_ + (bin1Idx - 1) * SuperTAD::_RESOLUTION_;
+            bin1End = SuperTAD::_CHROM1_START_ + bin1Idx * SuperTAD::_RESOLUTION_;
             bin2Idx = it->second;
-            bin2Start = _CHROM1_START_ + (bin2Idx-1) * _RESOLUTION_;
-            bin2End = _CHROM1_START_ + bin2Idx * _RESOLUTION_;
+            bin2Start = SuperTAD::_CHROM1_START_ + (bin2Idx - 1) * SuperTAD::_RESOLUTION_;
+            bin2End = SuperTAD::_CHROM1_START_ + bin2Idx * SuperTAD::_RESOLUTION_;
             fprintf(outFile, "%s\t%d\t%d\t%d\t%s\t%d\t%d\t%d\n",
-                    _CHROM1_.c_str(), bin1Idx, bin1Start, bin1End, _CHROM2_.c_str(), bin2Idx, bin2Start, bin2End);
+                    SuperTAD::_CHROM1_.c_str(), bin1Idx, bin1Start, bin1End, SuperTAD::_CHROM2_.c_str(), bin2Idx, bin2Start, bin2End);
         }
         fclose(outFile);
 
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             printf("finish writing boundaries\n");
     }
     else
@@ -276,7 +277,7 @@ void Writer::dumpCoordinates(Int2DoubleMap &map, std::string path, std::ofstream
         f = &file;
     }
     if (f->is_open()) {
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             printf("start dumping coordinates into: %s\n", path.c_str());
 
         for (auto it=map.begin(); it!=map.end(); it++) {
@@ -285,7 +286,7 @@ void Writer::dumpCoordinates(Int2DoubleMap &map, std::string path, std::ofstream
         if (!append)
             f->close();
 
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             printf("finish dumping coordinates\n");
         else
             printf("dump coordinates into: %s", path.c_str());
@@ -299,7 +300,7 @@ void Writer::writeListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPat
 {
     std::ofstream file(outPath);
     if (file.is_open()) {
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             std::cout << "start dumping list of coordinates into: " << outPath << "\n";
         file << "{";
         for (auto it=map.begin(); it!=map.end(); it++) {
@@ -317,7 +318,7 @@ void Writer::writeListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPat
         file << "}\n";
         file.close();
 
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             std::cout << "finish dumping list of coordinates\n";
         else
             std::cout << "dump list of coordinates into: " << outPath << "\n";
@@ -331,7 +332,7 @@ void Writer::dumpListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPath
 {
     std::ofstream file(outPath);
     if (file.is_open()) {
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             std::cout << "start dumping list of coordinates into: " << outPath << "\n";
 
         file << "{";
@@ -349,7 +350,7 @@ void Writer::dumpListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPath
         file << "}";
         file.close();
 
-        if (_VERBOSE_)
+        if (SuperTAD::_VERBOSE_)
             std::cout << "start dumping list of coordinates\n";
         else
             std::cout << "dump list of coordinates into: " << outPath << "\n";

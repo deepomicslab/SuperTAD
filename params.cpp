@@ -51,6 +51,7 @@ int SuperTAD::_RESOLUTION_ = 1;
 bool SuperTAD::_BEDPE_ = false;
 bool SuperTAD::_SHORT_ = false;
 bool SuperTAD::_BIN_LIST_ = false;
+bool SuperTAD::_NO_OUTPUT_ = false;
 
 // debug
 bool SuperTAD::_DEBUG_ = false;

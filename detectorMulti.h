@@ -14,6 +14,7 @@
 #include "utils.h"
 #include <ctime>
 #include <algorithm>
+#include <vector>
 
 
 namespace multi {
@@ -24,7 +25,7 @@ namespace multi {
 //        Eigen::MatrixXd * _edgeCount;
         SuperTAD::Writer _writer;
         multi::Tree _multiTree;
-        std::vector<multi::TreeNode *> * _nodeList;
+        std::vector<multi::TreeNode *> *_nodeList;
         double *****_table;
         int *****_minIndexArray;
         int *****_leftKArray;
@@ -35,7 +36,7 @@ namespace multi {
         Detector(SuperTAD::Data &data);
         ~Detector ();
 //        int indexK(int k) { return _kToIdx.find(k)->second; }
-        void execute();
+        std::vector<multi::TreeNode *>& execute();
         void initK();
         void fillTable();
         void initH(int h);

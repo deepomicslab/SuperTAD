@@ -47,6 +47,7 @@ namespace SuperTAD
     extern bool _BEDPE_;
     extern bool _SHORT_;
     extern bool _BIN_LIST_;
+    extern bool _NO_OUTPUT_;
     // debug
     extern bool _DEBUG_;
     extern std::string _TMP_PATH_;

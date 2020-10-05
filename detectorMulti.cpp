@@ -65,7 +65,7 @@ namespace multi {
         delete _leftKArray;
     }
 
-    void Detector::execute ()
+    std::vector<multi::TreeNode *>& Detector::execute()
     {
         std::clock_t tTmp;
 
@@ -173,7 +173,10 @@ namespace multi {
             printf("\n");
         }
 
-        _writer.writeTree(SuperTAD::_OUTPUT_ + ".multi", *_nodeList);
+        if (!SuperTAD::_NO_OUTPUT_)
+            _writer.writeTree(SuperTAD::_OUTPUT_ + ".multi", *_nodeList);
+
+        return *_nodeList;
     }
 
 

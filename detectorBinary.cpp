@@ -593,7 +593,7 @@ namespace binary {
             if (_VERBOSE_)
             {
                 printf("finish convergence, %f, %f, %f, %f\n", ab1[0], ab1[1], ab2[0], ab2[1]);
-                if (isnan(ab1[0])) { break;}
+                if (std::isnan(ab1[0])) { break;}
             }
             if (ab1[0] < ab2[0])
                 trueNodeList = nodeList1;

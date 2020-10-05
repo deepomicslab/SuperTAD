@@ -5,6 +5,7 @@
 #include "detectorH.h"
 #include "data.h"
 #include "params.h"
+#include "inputAndOutput.h"
 
 namespace multi {
 
@@ -286,7 +287,7 @@ namespace multi {
             multi::DetectorH1 dm(*_data);
             _preBoundaries = dm.execute(-1);
         } else
-            Reader::parseBoundariesIn8ColsFormat(_preBoundaries, preResult);
+            SuperTAD::Reader::parseBoundariesIn8ColsFormat(_preBoundaries, preResult);
         _boundary.insert(_boundary.end(), _preBoundaries.begin(), _preBoundaries.end()); // record the first layer of TAD
 
         // merge up

@@ -21,7 +21,7 @@ namespace multi {
     private:
         SuperTAD::Data * _data;
 //        Eigen::MatrixXd * _edgeCount;
-        Writer _writer;
+        SuperTAD::Writer _writer;
         double **_table;
         int **_minIndexArray;
         std::map<int, int> _kToIdx;
@@ -38,7 +38,7 @@ namespace multi {
     class Merge {
     private:
         SuperTAD::Data * _data;
-        Writer _writer;
+        SuperTAD::Writer _writer;
         std::vector<Boundary> _preBoundaries;
         std::vector<double> _prenodeSE;
         double **_table;
@@ -57,7 +57,7 @@ namespace multi {
     class detectorH {
     private:
         SuperTAD::Data * _data;
-        Writer _writer;
+        SuperTAD::Writer _writer;
         std::vector<Boundary> _boundary;
     public:
         detectorH(SuperTAD::Data &data);

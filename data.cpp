@@ -4,6 +4,7 @@
 
 #include "data.h"
 #include "params.h"
+#include "inputAndOutput.h"
 
 
 SuperTAD::Data::Data(std::string fileName)

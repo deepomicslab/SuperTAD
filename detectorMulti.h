@@ -22,7 +22,7 @@ namespace multi {
     private:
         SuperTAD::Data * _data;
 //        Eigen::MatrixXd * _edgeCount;
-        Writer _writer;
+        SuperTAD::Writer _writer;
         multi::Tree _multiTree;
         std::vector<multi::TreeNode *> * _nodeList;
         double *****_table;

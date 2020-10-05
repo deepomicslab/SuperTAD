@@ -3,6 +3,7 @@
 //
 
 #include "compare.h"
+#include "inputAndOutput.h"
 
 
 Comparator::Comparator(std::string path1, std::string path2)
@@ -25,7 +26,7 @@ Comparator::~Comparator()
 
 void Comparator::init(std::string path1, std::string path2)
 {
-    Reader::readBoundariesIntoGraph(path1, path2, _boundaries1,_boundaries2, _graph);
+    SuperTAD::Reader::readBoundariesIntoGraph(path1, path2, _boundaries1, _boundaries2, _graph);
     _n1 = _boundaries1.size();
     _n2 = _boundaries2.size();
     _n = _n1 + _n2 + 2;

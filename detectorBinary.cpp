@@ -5,6 +5,7 @@
 #include "detectorBinary.h"
 #include "data.h"
 #include "params.h"
+#include "inputAndOutput.h"
 
 
 namespace binary {
@@ -144,7 +145,7 @@ namespace binary {
         }
 
 
-        Writer::writeTree(SuperTAD::_OUTPUT_ + ".binary.original", *_nodeList);
+        SuperTAD::Writer::writeTree(SuperTAD::_OUTPUT_ + ".binary.original", *_nodeList);
 
         if (SuperTAD::_FILTERING_)
             filter();
@@ -158,7 +159,7 @@ namespace binary {
     }
 
     void Detector::executeFILTER (std::string result){
-        Reader::parseBoundariesIn8ColsFormat(_boundaries, result);
+        SuperTAD::Reader::parseBoundariesIn8ColsFormat(_boundaries, result);
         sort(_boundaries.begin(), _boundaries.end(), Detector::sortStart);    //sort boundaries in the increasing of start pos
         binary::TreeNode *newNode;
         int s, e, k;
@@ -526,7 +527,7 @@ namespace binary {
         if (SuperTAD::_VERBOSE_)
             printf("filtering consumes %fs\n", (float)(std::clock() - tTmp) / CLOCKS_PER_SEC);
         printf("%d TAD candidates filtered into %d true TADs\n", _nodeList->size(), _trueNodeList.size());
-        Writer::writeTree(SuperTAD::_OUTPUT_ + ".binary.filter", _trueNodeList);
+        SuperTAD::Writer::writeTree(SuperTAD::_OUTPUT_ + ".binary.filter", _trueNodeList);
     }
 
     int * Detector::filterNodes()

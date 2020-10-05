@@ -6,21 +6,14 @@
 #include "params.h"
 
 
-bool pathExist(const std::string &s)
-{
-    struct stat buffer;
-    return (stat(s.c_str(), &buffer) == 0);
-}
-
-
-void Reader::parseMatrix2Table(double **&table, std::string path)
+void SuperTAD::Reader::parseMatrix2Table(double **&table, std::string path)
 {
     if (path == "") {
         fprintf(stderr, "input must be provided\n");
         exit(1);
     }
 
-    if (!pathExist(path)) {
+    if (!SuperTAD::pathExist(path)) {
         fprintf(stderr, "input file not exist\n");
         exit(1);
     }
@@ -76,19 +69,19 @@ void Reader::parseMatrix2Table(double **&table, std::string path)
 }
 
 
-void Reader::readBoundariesIntoGraph(std::string path1, std::string path2, std::vector<Boundary> &boundaries1,
-                                std::vector<Boundary> &boundaries2, int **&graph)
+void SuperTAD::Reader::readBoundariesIntoGraph(std::string path1, std::string path2, std::vector<Boundary> &boundaries1,
+                                               std::vector<Boundary> &boundaries2, int **&graph)
 {
     if (path1=="" || path2=="") {
         fprintf(stderr, "input must be provided\n");
         exit(1);
     }
 
-    if (!pathExist(path1)) {
+    if (!SuperTAD::pathExist(path1)) {
         fprintf(stderr, "input file %s not exist\n", path1.c_str());
         exit(1);
     }
-    if (!pathExist(path2)) {
+    if (!SuperTAD::pathExist(path2)) {
         fprintf(stderr, "input file %s not exist\n", path2.c_str());
         exit(1);
     }
@@ -126,7 +119,7 @@ void Reader::readBoundariesIntoGraph(std::string path1, std::string path2, std::
 }
 
 
-int Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std::string path)
+int SuperTAD::Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std::string path)
 {
     std::ifstream file;
     file.exceptions(std::ifstream::badbit);
@@ -212,7 +205,7 @@ int Reader::parseBoundariesIn8ColsFormat(std::vector<Boundary> &boundaries, std:
 }
 
 
-void Writer::writeBoundaries(std::string path, std::vector<Boundary> &boundaryList)
+void SuperTAD::Writer::writeBoundaries(std::string path, std::vector<Boundary> &boundaryList)
 {
     std::ofstream file;
     file.open(path);
@@ -237,7 +230,7 @@ void Writer::writeBoundaries(std::string path, std::vector<Boundary> &boundaryLi
         std::cerr << "cannot open file: " << path << "\n";
 }
 
-void Writer::writeBoundIn8Cols(std::string path, std::vector<Boundary> &boundaryList) {
+void SuperTAD::Writer::writeBoundIn8Cols(std::string path, std::vector<Boundary> &boundaryList) {
     path += ".tsv";
     FILE *outFile = NULL;
     outFile = std::fopen(path.c_str(), "w");
@@ -267,7 +260,7 @@ void Writer::writeBoundIn8Cols(std::string path, std::vector<Boundary> &boundary
         std::cerr << "cannot open file: " << path << "\n";
 }
 
-void Writer::dumpCoordinates(Int2DoubleMap &map, std::string path, std::ofstream *f)
+void SuperTAD::Writer::dumpCoordinates(Int2DoubleMap &map, std::string path, std::ofstream *f)
 {
     bool append = false;
     if (f) {
@@ -296,7 +289,7 @@ void Writer::dumpCoordinates(Int2DoubleMap &map, std::string path, std::ofstream
 }
 
 
-void Writer::writeListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPath)
+void SuperTAD::Writer::writeListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPath)
 {
     std::ofstream file(outPath);
     if (file.is_open()) {
@@ -328,7 +321,7 @@ void Writer::writeListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPat
 }
 
 
-void Writer::dumpListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPath)
+void SuperTAD::Writer::dumpListOfCoordinates(Str_2_Int2DoubleMap &map, std::string outPath)
 {
     std::ofstream file(outPath);
     if (file.is_open()) {

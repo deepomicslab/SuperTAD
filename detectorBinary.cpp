@@ -174,43 +174,6 @@ namespace binary {
         filter();
     }
 
-    void Detector::filter()
-    {
-        std::clock_t tTmp;
-        if (_VERBOSE_) {
-            printf("start filtering\n");
-            tTmp = std::clock();
-        }
-        else
-            printf("filtering nodes.\n");
-
-        calculateD (_binaryTree->root());
-        calculateDensity(_binaryTree->root());
-        int *label1;    //  label from 1000 times random experiments
-        label1 = filterNodes();
-        for (int i = 0; i < _nodeList->size(); i++){
-            int size = (*_nodeList)[i]->_val[1] - (*_nodeList)[i]->_val[0] + 1;
-            int parent_size = (*_nodeList)[i]->_parent->_val[1] - (*_nodeList)[i]->_parent->_val[0] + 1;
-            double size_diff = abs( sqrt(size*(parent_size-size)) - size);
-            parent_size = parent_size * 0.04;
-            if ( size_diff <= parent_size)
-            {
-//                printf("size_diff <= threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
-                if (label1[i] > 0 and (*_nodeList)[i]->_se > (*_nodeList)[i]->_parent->_se){
-                    _trueNodeList.emplace_back((*_nodeList)[i]);
-//                        printf("both labels are 1, %d, %d, \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
-                }
-            } else{
-                _trueNodeList.emplace_back((*_nodeList)[i]);
-//                    printf("size_diff > threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
-            }
-        }
-        if (_VERBOSE_)
-            printf("filtering consumes %fs\n", (float)(std::clock() - tTmp) / CLOCKS_PER_SEC);
-        printf("%d TAD candidates filtered into %d true TADs\n", _nodeList->size(), _trueNodeList.size());
-        Writer::writeTree(_OUTPUT_ + ".binary.filter", _trueNodeList);
-    }
-
     void Detector::fillTable()
     {
         std::clock_t t, tVol, tSE, tTmp;
@@ -461,7 +424,12 @@ namespace binary {
         int s = node._val[0];   //  start from index 0
         int e = node._val[1];
 //        node._D = (double) _edgeCount->coeff(start, end) / ((end - start + 1) * (end - start) * .5);
-        node._D = (double) _data->_edgeCountArray[s][e] / ((e - s + 1) * (e - s) * .5);
+
+        if (s != e)
+            node._D = (double) _data->_edgeCountArray[s][e] / ((e - s + 1) * (e - s) * .5);
+        else
+            node._D = 0;
+
         if (node._parent != NULL)   //  calculate se
         {
             node._se = _data->getSE(s, e, _data->getVol(node._parent->_val[0], node._parent->_val[1]), _data->getVol(s, e));
@@ -513,6 +481,50 @@ namespace binary {
     }
 
 
+    void Detector::filter()
+    {
+        std::clock_t tTmp;
+        if (_VERBOSE_) {
+            printf("start filtering\n");
+            tTmp = std::clock();
+        }
+        else
+            printf("filtering nodes.\n");
+
+        calculateD (_binaryTree->root());
+        calculateDensity(_binaryTree->root());
+
+//        for (int i = 0; i < _nodeList->size(); i++)
+//        {
+//            printf("node_info=%f, node_D=%f\n", (*_nodeList)[i]->_info, (*_nodeList)[i]->_D);
+//        }
+
+        if (_VERBOSE_) {printf("finish calculating D and density for each node.\n");}
+        int *label1;    //  label from 1000 times random experiments
+        label1 = filterNodes();
+        for (int i = 0; i < _nodeList->size(); i++){
+            int size = (*_nodeList)[i]->_val[1] - (*_nodeList)[i]->_val[0] + 1;
+            int parent_size = (*_nodeList)[i]->_parent->_val[1] - (*_nodeList)[i]->_parent->_val[0] + 1;
+            double size_diff = abs( sqrt(size*(parent_size-size)) - size);
+            parent_size = parent_size * 0.04;
+            if ( size_diff <= parent_size)
+            {
+//                printf("size_diff <= threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+                if (label1[i] > 0 and (*_nodeList)[i]->_se > (*_nodeList)[i]->_parent->_se){
+                    _trueNodeList.emplace_back((*_nodeList)[i]);
+//                        printf("both labels are 1, %d, %d, \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+                }
+            } else{
+                _trueNodeList.emplace_back((*_nodeList)[i]);
+//                    printf("size_diff > threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+            }
+        }
+        if (_VERBOSE_)
+            printf("filtering consumes %fs\n", (float)(std::clock() - tTmp) / CLOCKS_PER_SEC);
+        printf("%d TAD candidates filtered into %d true TADs\n", _nodeList->size(), _trueNodeList.size());
+        Writer::writeTree(_OUTPUT_ + ".binary.filter", _trueNodeList);
+    }
+
     int * Detector::filterNodes()
     {
         _scoreTable = new float [_nodeList->size()];
@@ -545,7 +557,6 @@ namespace binary {
                         nodeList1.emplace_back(i, (*_nodeList)[i]); //  index & Treenode
                     else
                         nodeList2.emplace_back(i, (*_nodeList)[i]);
-
                 }
 
                 if (nodeList1.size() > 1 && nodeList2.size() > 1) {
@@ -558,9 +569,9 @@ namespace binary {
 //                countTmp++;
                 utils::copyDoubleArray(ab1, oldAB1, 2);
                 utils::copyDoubleArray(ab2, oldAB2, 2);
+//                printf("list1's size=%d, list2's size=%d\n", nodeList1.size(), nodeList2.size());
                 if (!simpleLinearRegression(nodeList1, ab1))
                     break;
-
                 if (!simpleLinearRegression(nodeList2, ab2))
                     break;
                 if (utils::equalDoubleArrays(ab1, oldAB1, 2) && utils::equalDoubleArrays(ab2, oldAB2, 2))
@@ -579,7 +590,11 @@ namespace binary {
                     }
                 }
             }
-//            printf("finish convergence, %f, %f, %f, %f\n", ab1[0], ab1[1], ab2[0], ab2[1]);
+            if (_VERBOSE_)
+            {
+                printf("finish convergence, %f, %f, %f, %f\n", ab1[0], ab1[1], ab2[0], ab2[1]);
+                if (isnan(ab1[0])) { break;}
+            }
             if (ab1[0] < ab2[0])
                 trueNodeList = nodeList1;
             else
@@ -633,12 +648,15 @@ namespace binary {
         double sumXsquare = 0;  //  sum(Xi*Xi)
         double sumXY = 0;   //  sum(Xi*Yi)
         for (int i = 0; i < nodeList.size(); i++) {
+//            printf("node_info=%f\n", getY(*nodeList[i].second));
             sumX += getX(*nodeList[i].second);
             sumY += getY(*nodeList[i].second);
             sumXsquare += pow(getX(*nodeList[i].second), 2);
             sumXY += getX(*nodeList[i].second) * getY(*nodeList[i].second);
         }
         double temp = (nodeList.size()*sumXsquare - sumX*sumX);
+//        printf("simplelinearrepression, sumX=%f,sumY=%f, sumXsquare=%f,sumXY=%f, temp=%f\n",
+//                sumX, sumY, sumXsquare, sumXY, temp);
         if ( temp )
         {
             ab[0] = (nodeList.size() * sumXY - sumX * sumY)/temp;

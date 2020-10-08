@@ -24,7 +24,7 @@ namespace multi {
         SuperTAD::Writer _writer;
         double **_table;
         int **_minIndexArray;
-        std::map<int, int> _kToIdx;
+//        std::map<int, int> _kToIdx;
         std::vector<Boundary> _boundaries;
         int _k;
 

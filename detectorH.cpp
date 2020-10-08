@@ -12,10 +12,10 @@ namespace multi {
     DetectorH1::DetectorH1(SuperTAD::Data &data) {
         _data = &data;
 //        _edgeCount = &data.edgeCount();
-        int k=1;
-        for (int i=0; i < SuperTAD::_K_; i++) {
-            _kToIdx.emplace(k++, i);
-        }
+        int _k=1;
+//        for (int i=0; i < SuperTAD::_K_; i++) {
+//            _kToIdx.emplace(k++, i);
+//        }
         _table = new double *[SuperTAD::_N_];
         _minIndexArray = new int *[SuperTAD::_N_];
         for (int i=0; i < SuperTAD::_N_; i++) {

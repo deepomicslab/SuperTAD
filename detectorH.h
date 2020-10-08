@@ -26,7 +26,7 @@ namespace multi {
         int **_minIndexArray;
 //        std::map<int, int> _kToIdx;
         std::vector<Boundary> _boundaries;
-        int _k;
+        int _k = 1;
 
     public:
         DetectorH1(SuperTAD::Data &data);

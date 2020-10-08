@@ -12,10 +12,11 @@ namespace multi {
     DetectorH1::DetectorH1(SuperTAD::Data &data) {
         _data = &data;
 //        _edgeCount = &data.edgeCount();
-        int _k=1;
 //        for (int i=0; i < SuperTAD::_K_; i++) {
 //            _kToIdx.emplace(k++, i);
 //        }
+        SuperTAD::_K_ = SuperTAD::_N_/SuperTAD::_MinSize_;
+        printf("set max K to be %d\n", SuperTAD::_K_);
         _table = new double *[SuperTAD::_N_];
         _minIndexArray = new int *[SuperTAD::_N_];
         for (int i=0; i < SuperTAD::_N_; i++) {
@@ -101,6 +102,7 @@ namespace multi {
             printf("finish calculating h=1\n");
 
         if (SuperTAD::_DETERMINE_K_) {
+//            printf("optimalK=%d, K=%d, _k=%d\n", SuperTAD::_optimalK_ , SuperTAD::_K_, _k);
             if (SuperTAD::_optimalK_ < SuperTAD::_K_)
                 _k = SuperTAD::_optimalK_ + 1;
             printf("determine k to be %d\n", _k);

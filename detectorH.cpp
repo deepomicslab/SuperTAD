@@ -313,13 +313,17 @@ namespace multi {
                 start = _preboundForDivi[node].first;
                 end = _preboundForDivi[node].second;
                 printf("start=%d, end=%d, node=%d\n", start, end, node);
-                SuperTAD::Data::parsesubMatrix(_subMatrix, *_data, start, end);
-                SuperTAD::Data subdata(_subMatrix, end - start + 1);
-                subdata.init();
-                multi::DetectorH1 dD(subdata);
-                bounTmp = dD.execute(SuperTAD::_HD_ - i + 1);
-                for (int b = 0; b<bounTmp.size(); b++) {
-                    _bounDiviResult.emplace_back(bounTmp[b].first+start-1, bounTmp[b].second+start-1);
+                if (end-start+1 <= SuperTAD::_MinSize_)
+                    continue;
+                else {
+                    SuperTAD::Data::parsesubMatrix(_subMatrix, *_data, start, end);
+                    SuperTAD::Data subdata(_subMatrix, end - start + 1);
+                    subdata.init();
+                    multi::DetectorH1 dD(subdata);
+                    bounTmp = dD.execute(SuperTAD::_HD_ - i + 1);
+                    for (int b = 0; b<bounTmp.size(); b++) {
+                        _bounDiviResult.emplace_back(bounTmp[b].first+start-1, bounTmp[b].second+start-1);
+                    }
                 }
             }
             _boundary.insert(_boundary.end(), _bounDiviResult.begin(), _bounDiviResult.end());   // record the layers during dividing

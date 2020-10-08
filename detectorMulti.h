@@ -21,11 +21,9 @@ namespace multi {
 
     class Detector {
     private:
-        SuperTAD::Data * _data;
+        SuperTAD::Data *_data;
 //        Eigen::MatrixXd * _edgeCount;
         SuperTAD::Writer _writer;
-        multi::Tree _multiTree;
-        std::vector<multi::TreeNode *> *_nodeList;
         double *****_table;
         int *****_minIndexArray;
         int *****_leftKArray;
@@ -33,10 +31,12 @@ namespace multi {
         std::vector<Boundary> _boundaries;
 
     public:
+        std::vector<multi::TreeNode*> _nodeList;
+        multi::Tree _multiTree;
         Detector(SuperTAD::Data &data);
         ~Detector ();
 //        int indexK(int k) { return _kToIdx.find(k)->second; }
-        std::vector<multi::TreeNode *>& execute();
+        void execute();
         void initK();
         void fillTable();
         void initH(int h);

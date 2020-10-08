@@ -65,7 +65,7 @@ namespace multi {
         delete _leftKArray;
     }
 
-    std::vector<multi::TreeNode *>& Detector::execute()
+    void Detector::execute()
     {
         std::clock_t tTmp;
 
@@ -162,21 +162,20 @@ namespace multi {
             backTrace(SuperTAD::_K_, SuperTAD::_H_, true);
         }
 
-        _nodeList = &_multiTree.nodeList();
+//        _nodeList = &_multiTree.nodeList();
+        _multiTree.getNodeList(_nodeList);
         if (SuperTAD::_VERBOSE_) {
             printf("nodes:");
-            for (int i = 0; i < _nodeList->size(); i++) {
-                printf("(%d, %d)", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
-                if (i < _nodeList->size()-1)
+            for (int i = 0; i < _nodeList.size(); i++) {
+                printf("(%d, %d)", _nodeList[i]->_val[0], _nodeList[i]->_val[1]);
+                if (i < _nodeList.size()-1)
                     printf(", ");
             }
             printf("\n");
         }
 
         if (!SuperTAD::_NO_OUTPUT_)
-            _writer.writeTree(SuperTAD::_OUTPUT_ + ".multi", *_nodeList);
-
-        return *_nodeList;
+            _writer.writeTree(SuperTAD::_OUTPUT_ + ".multi", _nodeList);
     }
 
 

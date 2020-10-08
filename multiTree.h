@@ -8,58 +8,112 @@
 #include <vector>
 #include <set>
 #include <iostream>
+#include <string>
+#include <sstream>
 #include "params.h"
 
 
 namespace multi {
-  
-  struct TreeNode {
-    int _val[2];
-    double _info=0;
-    std::set<TreeNode *> _children;
-    TreeNode * _parent=NULL;
-    
-    TreeNode (int start, int end) {
-      _val[0] = start;
-      _val[1] = end;
+
+    struct TreeNode {
+        int _val[2];
+        double _info=0;
+        std::set<TreeNode*> _children;
+        TreeNode *_parent=NULL;
+
+        TreeNode(int start, int end) {
+            _val[0] = start;
+            _val[1] = end;
+        }
+
+        TreeNode& operator=(const TreeNode &copy) {
+            _val[0] = copy._val[0];
+            _val[1] = copy._val[1];
+            _info = copy._info;
+            _children = copy._children;
+            _parent = copy._parent;
+            return *this;
+        }
+
+        bool operator==(const TreeNode &t) const {
+            return _val[0] == t._val[0] && _val[1] == t._val[1];
+        }
+
+        bool hasOverLapChild(const TreeNode &t) const {
+            for (auto it=_children.begin(); it!=_children.end(); it++) {
+                if ((_val[0]-t._val[1])*(_val[1]-t._val[0]) < 0)
+                    return true;
+            }
+            return false;
+        }
+
+        bool hasBiggerChild(const TreeNode &t) const {
+            for (auto it=_children.begin(); it!=_children.end(); it++) {
+                if ((*it)->_val[0] <= t._val[0] && (*it)->_val[1] >= t._val[1])
+                    return true;
+            }
+            return false;
+        }
+
+        std::string verbose(int numHeadingSpace=0) const {
+            std::stringstream iss;
+            iss << "self=(" << _val[0] << ", " << _val[1] << ")";
+            iss << ", info=" << _info << ", len(children)=" << _children.size ();
+            if (_parent) {
+                iss << ", parent=(" << _parent->_val[0] << ", " << _parent->_val[1] << ")";
+            }
+            else {
+                iss << ", no parent";
+            }
+            return iss.str();
+        }
+
+        void getChildren(std::vector<TreeNode*> &nl) const {
+            for (auto it=_children.begin(); it!=_children.end(); it++) {
+                nl.emplace_back(*it);
+                (*it)->getChildren(nl);
+            }
+        }
+    };
+
+    inline bool operator<(const TreeNode &t1, const TreeNode &t2)
+    {
+        return t1._val[1] < t2._val[0];
     }
-    
-    TreeNode& operator=(const TreeNode &copy) {
-      _val[0] = copy._val[0];
-      _val[1] = copy._val[1];
-      _info = copy._info;
-      _children = copy._children;
-      _parent = copy._parent;
-      return *this;
+
+    inline std::ostream& operator<<(std::ostream &os, const TreeNode &node)
+    {
+        os << node.verbose();
+        return os;
     }
-  
-    bool operator==(const TreeNode & t) const {
-      return _val[0] == t._val[0] && _val[1] == t._val[1];
+
+    inline void treeNodeVerbose(multi::TreeNode &node, int numHeadingSpace=0)
+    {
+        for (int i=0; i<numHeadingSpace; i++)
+            std::cout << " ";
+        std::cout << node << "\n";
+        for (auto it=node._children.begin(); it!=node._children.end(); it++)
+            treeNodeVerbose(**it, numHeadingSpace+2);
     }
-  };
-  
-  
-  bool operator<(const TreeNode & t1, const TreeNode & t2);
-  
-  std::ostream& operator<< (std::ostream & os, const TreeNode & node);
-  
-  
-  class Tree {
-  private:
-    TreeNode * _root;
-    std::vector<TreeNode *> _nodeList;
-    
-  public:
-    Tree ();
-    
-    ~Tree ();
-    
-    bool add (TreeNode & parentNode, TreeNode & newNode);
-  
-    std::vector<TreeNode *> & nodeList () { return _nodeList; }
-    
-    void insert (int start, int end);
-  };
+
+    class Tree {
+    private:
+//        std::vector<TreeNode*> _nodeList;
+    public:
+        TreeNode *_root;
+
+        Tree();
+
+        ~Tree();
+
+        void insert(int start, int end);
+
+        bool add(TreeNode &newNode, TreeNode &parentNode);
+
+//        std::vector<TreeNode*> &nodeList() { return _nodeList; }
+
+        void getNodeList(std::vector<TreeNode *> &nl);
+    };
 }
 
 

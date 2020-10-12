@@ -339,7 +339,7 @@ namespace binary {
                 if (Tmp < normOfLeavesTmp){
                     SuperTAD::_optimalK_ = k;
                     normOfLeavesTmp = Tmp;
-                    printf("--------\noptimalK=%d, normLeaves=%f\n", SuperTAD::_optimalK_, Tmp);
+                    printf("--------\noptimalK=%d, normLeaves=%f, se=%f\n", SuperTAD::_optimalK_, Tmp, _table[0][SuperTAD::_N_ -1][kIdx]);
                 }
                 else{
                     if (SuperTAD::_VERBOSE_)

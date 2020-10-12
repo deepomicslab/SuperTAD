@@ -78,7 +78,7 @@ namespace multi {
 
     void Tree::getNodeList(std::vector<TreeNode *> &nl)
     {
-        nl.emplace_back(_root);
+//        nl.emplace_back(_root);
         _root->getChildren(nl);
     }
 

@@ -58,8 +58,9 @@ namespace multi {
     private:
         SuperTAD::Data * _data;
         SuperTAD::Writer _writer;
-        std::vector<Boundary> _boundary;
     public:
+        std::vector<Boundary> _boundary;
+        std::vector<Boundary> _clusters;
         detectorH(SuperTAD::Data &data);
         void pipeline(std::string preResult);
     };

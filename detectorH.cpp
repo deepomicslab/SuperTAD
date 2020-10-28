@@ -291,6 +291,7 @@ namespace multi {
         } else
             SuperTAD::Reader::parseBoundariesIn8ColsFormat(_preBoundaries, preResult);
         _boundary.insert(_boundary.end(), _preBoundaries.begin(), _preBoundaries.end()); // record the first layer of TAD
+        _clusters.insert(_clusters.end(),  _preBoundaries.begin(), _preBoundaries.end());
 
         // merge up
         std::vector<Boundary> _preboundForMerge = _preBoundaries;
@@ -298,7 +299,8 @@ namespace multi {
             printf("Start to merge for the time: %d\n", SuperTAD::_HU_ - i + 1);
             multi::Merge dM(*_data, _preboundForMerge);
             _preboundForMerge = dM.execute(SuperTAD::_HU_ - i + 1);
-            _boundary.insert(_boundary.end(), _preboundForMerge.begin(), _preboundForMerge.end()); // record the first layer of TAD
+            _boundary.insert(_boundary.end(), _preboundForMerge.begin(), _preboundForMerge.end());
+//            _clusters.insert(_clusters.end(), _preboundForMerge.begin(), _preboundForMerge.end());// record the first layer of TAD
         }
 
         // go down
@@ -330,7 +332,8 @@ namespace multi {
             _preboundForDivi = _bounDiviResult;
         }
 
-        _writer.writeBoundIn8Cols(SuperTAD::_OUTPUT_ + ".multi2D_All", _boundary);
+        if (!SuperTAD::_NO_OUTPUT_)
+            _writer.writeBoundIn8Cols(SuperTAD::_OUTPUT_ + ".multi2D_All", _boundary);
     }
 
 }

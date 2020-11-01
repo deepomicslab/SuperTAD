@@ -13,10 +13,10 @@
 #include "detectorH.h"
 #include "compare.h"
 
+using namespace SuperTAD;
 
 int printUsage(char *argv[], int err)
 {
-
     std::string info;
     info +=  "****************************************************************************************\n"
              "* SuperTAD: [Super]-fast [T]opological [A]ssociating [D]omain package for Hi-C dataset *\n"

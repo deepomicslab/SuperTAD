@@ -15,29 +15,32 @@
 #include "Hungarian.h"
 
 
-class Comparator {
-private:
-    int _n, _n1, _n2;
-    int **_graph;
-//    int **_rGraph;
-    std::vector<Boundary> _boundaries1, _boundaries2;
+namespace SuperTAD
+{
+    class Comparator {
+    private:
+        int _n, _n1, _n2;
+        int **_graph;
+    //    int **_rGraph;
+        vector<Boundary> _boundaries1, _boundaries2;
 
-public:
-    Comparator(){}
+    public:
+        Comparator(){}
 
-    Comparator(std::string path1, std::string path2);
+        Comparator(string path1, string path2);
 
-    ~Comparator();
+        ~Comparator();
 
-    void init(std::string path1, std::string path2);
+        void init(string path1, string path2);
 
-//    void execute();
+    //    void execute();
 
-    void execute();
+        void execute();
 
-//    bool bfs(int **rGraph, int s, int t, int *parent);
-//
-//    int fordFulkerson(int **graph, int **rGraph, int s, int t);
+    //    bool bfs(int **rGraph, int s, int t, int *parent);
+    //
+    //    int fordFulkerson(int **graph, int **rGraph, int s, int t);
 
-};
+    };
+}
 #endif //PROGRAM_COMPARE_H

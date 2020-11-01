@@ -8,7 +8,7 @@
 #include "inputAndOutput.h"
 
 
-namespace binary {
+namespace SuperTAD::binary {
 
     Detector::Detector (SuperTAD::Data &data)
     {

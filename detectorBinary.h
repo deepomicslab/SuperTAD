@@ -15,7 +15,8 @@
 #include "utils.h"
 #include <string.h>
 
-namespace binary {
+
+namespace SuperTAD::binary {
 
     class Detector {
     private:

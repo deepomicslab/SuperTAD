@@ -4,7 +4,8 @@
 
 #include "utils.h"
 
-namespace utils {
+
+namespace SuperTAD::utils {
 
     int boundariesIntersection(Boundary &b1, Boundary &b2)
     {

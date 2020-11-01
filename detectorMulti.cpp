@@ -5,8 +5,9 @@
 #include "detectorMulti.h"
 #include "data.h"
 #include "params.h"
+#include "multiTree.h"
 
-namespace multi {
+namespace SuperTAD::multi {
 
     Detector::Detector(SuperTAD::Data &data)
     {

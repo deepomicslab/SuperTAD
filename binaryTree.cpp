@@ -6,7 +6,7 @@
 #include "params.h"
 
 
-namespace binary {
+namespace SuperTAD::binary {
 
     std::ostream& operator<< (std::ostream &os, const TreeNode &node)
     {

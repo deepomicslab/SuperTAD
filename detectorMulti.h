@@ -17,7 +17,7 @@
 #include <vector>
 
 
-namespace multi {
+namespace SuperTAD::multi {
 
     class Detector {
     private:

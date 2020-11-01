@@ -13,7 +13,7 @@
 #include "params.h"
 
 
-namespace multi {
+namespace SuperTAD::multi {
 
     struct TreeNode {
         int _val[2];

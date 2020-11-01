@@ -7,7 +7,8 @@
 #include "params.h"
 #include "inputAndOutput.h"
 
-namespace multi {
+
+namespace SuperTAD::multi {
 
     DetectorH1::DetectorH1(SuperTAD::Data &data) {
         _data = &data;
@@ -257,6 +258,7 @@ namespace multi {
         return _boundaries;
     }
 
+
     void Merge::backTrace() {
         printf("#data points: %d \n", N);
         int *boundaries = new int [_k];
@@ -274,11 +276,13 @@ namespace multi {
         }
     }
 
+
     detectorH::detectorH(SuperTAD::Data &data)
     {
         _data = &data;
         std::vector<Boundary> _boundary;
     }
+
 
     void detectorH::pipeline(std::string preResult) {
         // acquire the first layer of TAD from pre-detected file or detectorH1

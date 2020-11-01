@@ -11,7 +11,7 @@
 #include <iostream>
 #include "params.h"
 
-namespace binary {
+namespace SuperTAD::binary {
   
   struct TreeNode {
     int _val[1];

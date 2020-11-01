@@ -6,13 +6,13 @@
 #include "inputAndOutput.h"
 
 
-Comparator::Comparator(std::string path1, std::string path2)
+SuperTAD::Comparator::Comparator(std::string path1, std::string path2)
 {
     init(path1, path2);
 }
 
 
-Comparator::~Comparator()
+SuperTAD::Comparator::~Comparator()
 {
     for (int i=0; i<_n; i++) {
         delete _graph[i];
@@ -24,7 +24,7 @@ Comparator::~Comparator()
 
 
 
-void Comparator::init(std::string path1, std::string path2)
+void SuperTAD::Comparator::init(std::string path1, std::string path2)
 {
     SuperTAD::Reader::readBoundariesIntoGraph(path1, path2, _boundaries1, _boundaries2, _graph);
     _n1 = _boundaries1.size();
@@ -36,7 +36,7 @@ void Comparator::init(std::string path1, std::string path2)
 //        _rGraph[i] = new int [_n]{};
 }
 
-void Comparator::execute()
+void SuperTAD::Comparator::execute()
 {
     std::vector<std::vector<double>> costMatrix;
     for (int i=0; i<_n1; i++) {

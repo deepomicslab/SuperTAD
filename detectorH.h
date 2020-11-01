@@ -15,7 +15,7 @@
 #include <ctime>
 #include "inputAndOutput.h"
 
-namespace multi {
+namespace SuperTAD::multi {
 
     class DetectorH1 {
     private:

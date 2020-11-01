@@ -6,7 +6,7 @@
 #include "params.h"
 
 
-namespace multi {
+namespace SuperTAD::multi {
 
 //  bool operator<(const TreeNode &t1, const TreeNode &t2)
 //  {

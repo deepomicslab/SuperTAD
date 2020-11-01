@@ -13,7 +13,9 @@ SuperTAD::Data::Data(std::string input)
     Reader::parseMatrix2Table(_contactArray, input);
     printf("number of bins is %d\n", _N_);
 
-    _K_ = _N_/_MinSize_;
+    if (_K_<=0)
+        _K_ = _N_/_MinSize_;
+
     _logVolTable = new double *[_N_];
     _volTable = new double *[_N_];
     _edgeCountArray = new double *[_N_];

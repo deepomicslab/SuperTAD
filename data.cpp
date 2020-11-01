@@ -7,10 +7,10 @@
 #include "inputAndOutput.h"
 
 
-SuperTAD::Data::Data(std::string fileName)
+SuperTAD::Data::Data(std::string input)
 {
 //    Reader::parseMatrix(_contactMat, _INPUT_);
-    Reader::parseMatrix2Table(_contactArray, _INPUT_);
+    Reader::parseMatrix2Table(_contactArray, input);
     printf("number of bins is %d\n", _N_);
 
     _K_ = _N_/_MinSize_;
@@ -18,8 +18,8 @@ SuperTAD::Data::Data(std::string fileName)
     _volTable = new double *[_N_];
     _edgeCountArray = new double *[_N_];
     for (int s=0; s<_N_; s++) {
-        _logVolTable[s] = new double [_N_-s];
-        _volTable[s] = new double [_N_-s];
+        _logVolTable[s] = new double [_N_-s]{};
+        _volTable[s] = new double [_N_-s]{};
         _edgeCountArray[s] = new double [_N_]{};
     }
     if (_BINARY_ && _FAST_) {
@@ -35,12 +35,22 @@ SuperTAD::Data::Data(std::string fileName)
     }
 }
 
-SuperTAD::Data::Data(double **&_Array, int N)
+
+SuperTAD::Data::Data(double **array, int n)
 {
-    _N_ = N;
-    printf("initing the data class though the contact map!!!!!!\n");
+    _N_ = n;
+    printf("initing the data class via 2d array\n");
     printf("number of bins is %d\n", _N_);
-    _contactArray = _Array;
+//    _contactArray = new double *[_N_];
+//    for (int i=0; i<_N_; i++) {
+//        _contactArray[i] = new double [_N_]{};
+//        for (int j=0; j<_N_; j++) {
+//            _contactArray[i][j] = array[i][j];
+//        }
+//    }
+    _contactArray = array;
+//    printf("countactArray=\n");
+//    utils::print2Darray(_contactArray, _N_, _N_);
 
     if (_N_ < _K_) {
         _K_ = _N_/_MinSize_;
@@ -52,8 +62,8 @@ SuperTAD::Data::Data(double **&_Array, int N)
     _edgeCountArray = new double *[_N_];
     for (int s=0; s<_N_; s++)
     {
-        _logVolTable[s] = new double[_N_ - s];
-        _volTable[s] = new double[_N_ - s];
+        _logVolTable[s] = new double[_N_ - s]{};
+        _volTable[s] = new double[_N_ - s]{};
         _edgeCountArray[s] = new double[_N_]{};
     }
 
@@ -74,11 +84,15 @@ SuperTAD::Data::Data(double **&_Array, int N)
 SuperTAD::Data::~Data()
 {
     for (int s=0; s<_N_; s++) {
-        delete _logVolTable[s];
-        delete _volTable[s];
+        delete [] _logVolTable[s];
+        delete [] _volTable[s];
+        delete [] _edgeCountArray[s];
+        delete [] _contactArray[s];
     }
-    delete _logVolTable;
-    delete _volTable;
+    delete [] _logVolTable;
+    delete [] _volTable;
+    delete [] _edgeCountArray;
+    delete [] _contactArray;
 }
 
 
@@ -90,22 +104,46 @@ void SuperTAD::Data::init()
         std::cout << "start initialization\n";
         tTmp = std::clock();
     }
+
+//    printf("_N_=%d\n", _N_);
+//    printf("before init: contactArray=\n");
+//    utils::print2Darray(_contactArray, _N_, _N_);
+//    printf("before init: edgeCountArray=\n");
+//    utils::print2Darray(_edgeCountArray, _N_, _N_);
+
     // edge sum
     int i, j, k;
     for (k=1; k<_N_; k++) {
         for (i=0; i<_N_-k; i++) {
             j = i+k;
             double intra = _contactArray[i][j];
-            if (j-1 > 0)
-                intra += _edgeCountArray[i][j-1];
-            if (i+1 < _N_)
-                intra += _edgeCountArray[i+1][j];
-            if (j-1>0 && i+1 < _N_)
-                intra -= _edgeCountArray[i+1][j-1];
-            if (abs(intra) < _THRESHOLD_ || intra < 0)
+//            printf("intra=contactArray[%d][%d]=%f\n", i, j, intra);
+            if (j-1 > 0) {
+                intra += _edgeCountArray[i][j - 1];
+//                printf("intra+edgeCountArray[%d][%d]=%f\n", i, j-1, intra);
+            }
+            if (i+1 < _N_) {
+                intra += _edgeCountArray[i + 1][j];
+//                printf("intra+edgeCountArray[%d][%d]=%f\n", i+1, j, intra);
+            }
+            if (j-1>0 && i+1 < _N_) {
+                intra -= _edgeCountArray[i + 1][j - 1];
+//                printf("intra-dgeCountArray[%d][%d]=%f\n", i+1, j-1, intra);
+            }
+//            printf("intra=%f, abs(intra)=%f, _THRESHOLD_=%f\n", intra, std::abs(intra), _THRESHOLD_);
+
+            if (std::abs(intra) < _THRESHOLD_ || intra < 0) {
+//                fprintf(stderr, "[ERROR] intra=%f, abs(intra)=%f, _THRESHOLD_=%f\n", intra, std::abs(intra), _THRESHOLD_);
+//                if (std::abs(intra) < _THRESHOLD_)
+//                    printf("intra[%d][%d]<THRESHOLD(%f)\n", i, j, _THRESHOLD_);
+//                else if (intra < 0) {
+//                    printf("intra[%d][%d]<0\n", i, j);
+//                }
                 _edgeCountArray[i][j] = 0;
+            }
             else
                 _edgeCountArray[i][j] = intra;
+//            printf("edgeCountArray[%d][%d]=%f\n", i, j, _edgeCountArray[i][j]);
         }
     }
     for (int i=0; i < _N_; i++) {
@@ -115,13 +153,23 @@ void SuperTAD::Data::init()
                 inter -= _edgeCountArray[0][i-1];
             if (j+1 < _N_)
                 inter -= _edgeCountArray[j+1][_N_-1];
-            if (abs(inter) < _THRESHOLD_ || inter < 0) {
+
+            if (std::abs(inter) < _THRESHOLD_ || inter < 0) {
+//                if (std::abs(inter) < _THRESHOLD_)
+//                    printf("inter[%d][%d]<THRESHOLD(%f)\n", i, j, _THRESHOLD_);
+//                else if (inter < 0) {
+//                    printf("inter[%d][%d]<0\n", i, j);
+//                }
                 _edgeCountArray[j][i] = 0;
-            } else
+            }
+            else
                 _edgeCountArray[j][i] = inter;
+//            printf("edgeCountArray[%d][%d]=%f\n", i, j, _edgeCountArray[i][j]);
         }
     }
+//    printf("edgeCountArray=\n");
 //    utils::print2Darray(_edgeCountArray, _N_, _N_);
+
     _edgeSum = _edgeCountArray[0][_N_-1];
     _doubleEdgeSum = 2. * _edgeSum;
 //    printf("edgesum=%f, doubleEdgesum=%f\n", _edgeSum, _doubleEdgeSum);
@@ -153,7 +201,7 @@ void SuperTAD::Data::init()
 }
 
 
-void SuperTAD::Data::parsesubMatrix(double **&subMatrix, SuperTAD::Data &Matrix, int start, int end) {
+void SuperTAD::Data::parseSubMatrix(double **&subMatrix, SuperTAD::Data &Matrix, int start, int end) {
     int N = end - start + 1;
     subMatrix = new double *[N];
     for (int i=0; i<N; i++) {

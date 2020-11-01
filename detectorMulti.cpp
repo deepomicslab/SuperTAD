@@ -44,25 +44,25 @@ namespace multi {
             for (int e = s; e < SuperTAD::_N_; e++) {
                 for (int k = 0; k < SuperTAD::_K_; k++) {
                     for (int h = 0; h < SuperTAD::_H_; h++) {
-                        delete _table[s][e][k][h];
-                        delete _minIndexArray[s][e][k][h];
-                        delete _leftKArray[s][e][k][h];
+                        delete [] _table[s][e][k][h];
+                        delete [] _minIndexArray[s][e][k][h];
+                        delete [] _leftKArray[s][e][k][h];
                     }
-                    delete _table[s][e][k];
-                    delete _minIndexArray[s][e][k];
-                    delete _leftKArray[s][e][k];
+                    delete [] _table[s][e][k];
+                    delete [] _minIndexArray[s][e][k];
+                    delete [] _leftKArray[s][e][k];
                 }
-                delete _table[s][e];
-                delete _minIndexArray[s][e];
-                delete _leftKArray[s][e];
+                delete [] _table[s][e];
+                delete [] _minIndexArray[s][e];
+                delete [] _leftKArray[s][e];
             }
-            delete _table[s];
-            delete _minIndexArray[s];
-            delete _leftKArray[s];
+            delete [] _table[s];
+            delete [] _minIndexArray[s];
+            delete [] _leftKArray[s];
         }
-        delete _table;
-        delete _minIndexArray;
-        delete _leftKArray;
+        delete [] _table;
+        delete [] _minIndexArray;
+        delete [] _leftKArray;
     }
 
     void Detector::execute()
@@ -86,7 +86,7 @@ namespace multi {
             else
                 printf("determine optimal K\n");
 
-            for (int k=2; k <= SuperTAD::_optimalK_ + 1; k++) {
+            for (int k=2; k < SuperTAD::_optimalK_ + 1; k++) {
 
                 if (SuperTAD::_VERBOSE_)
                     printf("--------\nK=%d\n", k);
@@ -179,7 +179,7 @@ namespace multi {
     }
 
 
-    void Detector::fillTable ()
+    void Detector::fillTable()
     {
         std::clock_t t;
         if (SuperTAD::_VERBOSE_) {
@@ -307,6 +307,7 @@ namespace multi {
 //                printf("h=%d, k=%d, table=%f\n", h, k, _table[0][_N_-1][k-1][h][_N_-1]);
 
                 if (h == SuperTAD::_H_ - 1 and SuperTAD::_DETERMINE_K_ ) {
+//                    printf("h=%d, SuperTAD::_H_=%d\n", h, SuperTAD::_H_);
                     if (_table[0][SuperTAD::_N_ - 1][k - 1][h][SuperTAD::_N_ - 1] < _table[0][SuperTAD::_N_ - 1][k - 2][h][
                         SuperTAD::_N_ - 1]) {
                         SuperTAD::_optimalK_ = k;

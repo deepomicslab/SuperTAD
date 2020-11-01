@@ -318,7 +318,7 @@ namespace multi {
                 if (end-start+1 <= SuperTAD::_MinSize_)
                     continue;
                 else {
-                    SuperTAD::Data::parsesubMatrix(_subMatrix, *_data, start, end);
+                    SuperTAD::Data::parseSubMatrix(_subMatrix, *_data, start, end);
                     SuperTAD::Data subdata(_subMatrix, end - start + 1);
                     subdata.init();
                     multi::DetectorH1 dD(subdata);

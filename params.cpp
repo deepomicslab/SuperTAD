@@ -30,7 +30,7 @@ int SuperTAD::_HU_ = 1;
 int SuperTAD::_HD_ = 2;
 std::string SuperTAD::_PRE_ = "";
 
-float SuperTAD::_THRESHOLD_ = 1e-6;
+double SuperTAD::_THRESHOLD_ = 1e-6;
 bool SuperTAD::_PRE_LOG_ = true;
 
 bool SuperTAD::_FILTERING_ = true;

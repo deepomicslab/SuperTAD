@@ -10,10 +10,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <cmath>
 #include <string>
 #include <map>
 #include <ctime>
+#include <cmath>
 #include "params.h"
 #include "inputAndOutput.h"
 #include "utils.h"
@@ -31,32 +31,32 @@ namespace SuperTAD
 
         std::map<int, std::pair<int64_t, int64_t>> _chrom2Idx2Interval;
 
-        double **_contactArray;
+        double **_contactArray=NULL;
 
     public:
 
         // upper tri is intra; lower tri is inter
-        double **_edgeCountArray;
+        double **_edgeCountArray=NULL;
 
         double _edgeSum;
 
         double _doubleEdgeSum;
 
-        double **_logVolTable;
+        double **_logVolTable=NULL;
 
-        double **_volTable;
+        double **_volTable=NULL;
 
         std::vector<double> _sumOfGtimesLogG;
 
-        Data(std::string fileName);
+        Data(std::string input);
 
-        Data(double **&_Array, int N);
+        Data(double **array, int n);
 
         ~Data();
 
         void init();
 
-        static void parsesubMatrix(double **&subMatrix, Data &Matrix, int start, int end);
+        static void parseSubMatrix(double **&subMatrix, Data &Matrix, int start, int end);
 
         double getVol(int s, int e);
 

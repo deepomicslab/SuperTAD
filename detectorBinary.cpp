@@ -510,7 +510,7 @@ namespace binary {
         for (int i = 0; i < _nodeList->size(); i++){
             int size = (*_nodeList)[i]->_val[1] - (*_nodeList)[i]->_val[0] + 1;
             int parent_size = (*_nodeList)[i]->_parent->_val[1] - (*_nodeList)[i]->_parent->_val[0] + 1;
-            double size_diff = abs( sqrt(size*(parent_size-size)) - size);
+            double size_diff = std::abs( sqrt(size*(parent_size-size)) - size);
             parent_size = parent_size * 0.04;
             if ( size_diff <= parent_size)
             {

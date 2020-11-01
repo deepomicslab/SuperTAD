@@ -28,17 +28,18 @@ namespace multi {
 //  }
 
 
-    Tree::Tree ()
+    Tree::Tree()
     {
-        _root = new TreeNode (0, SuperTAD::_N_);
+        _root = new TreeNode(0, SuperTAD::_N_);
 //    _nodeList.emplace_back (_root);
     }
 
 
-    Tree::~Tree ()
+    Tree::~Tree()
     {
 //        for (int i = 0; i < _nodeList.size (); i++)
 //            delete _nodeList[i];
+        delete _root;
     }
 
 

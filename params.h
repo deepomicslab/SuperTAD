@@ -31,7 +31,7 @@ namespace SuperTAD
     extern int _HU_;
     extern int _HD_;
     extern std::string _PRE_;
-    extern float _THRESHOLD_;
+    extern double _THRESHOLD_;
     extern bool _PRE_LOG_;
     extern bool _FILTERING_;
     extern bool _FAST_;

@@ -26,6 +26,14 @@ namespace multi {
             _val[1] = end;
         }
 
+        ~TreeNode() {
+            while (!_children.empty()) {
+                auto it = _children.begin();
+                delete *it;
+                _children.erase(it);
+            }
+        }
+
         TreeNode& operator=(const TreeNode &copy) {
             _val[0] = copy._val[0];
             _val[1] = copy._val[1];
@@ -100,7 +108,7 @@ namespace multi {
     private:
 //        std::vector<TreeNode*> _nodeList;
     public:
-        TreeNode *_root;
+        TreeNode *_root = NULL;
 
         Tree();
 

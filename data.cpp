@@ -40,16 +40,10 @@ SuperTAD::Data::Data(std::string input)
 
 SuperTAD::Data::Data(double **array, int n)
 {
+    _initByPointer = true;
     _N_ = n;
     printf("initing the data class via 2d array\n");
     printf("number of bins is %d\n", _N_);
-//    _contactArray = new double *[_N_];
-//    for (int i=0; i<_N_; i++) {
-//        _contactArray[i] = new double [_N_]{};
-//        for (int j=0; j<_N_; j++) {
-//            _contactArray[i][j] = array[i][j];
-//        }
-//    }
     _contactArray = array;
 //    printf("countactArray=\n");
 //    utils::print2Darray(_contactArray, _N_, _N_);
@@ -89,12 +83,14 @@ SuperTAD::Data::~Data()
         delete [] _logVolTable[s];
         delete [] _volTable[s];
         delete [] _edgeCountArray[s];
-        delete [] _contactArray[s];
+        if (!_initByPointer)
+            delete [] _contactArray[s];
     }
     delete [] _logVolTable;
     delete [] _volTable;
     delete [] _edgeCountArray;
-    delete [] _contactArray;
+    if (!_initByPointer)
+        delete [] _contactArray;
 }
 
 

@@ -33,6 +33,8 @@ namespace SuperTAD
 
         double **_contactArray=NULL;
 
+        bool _initByPointer=false;
+
     public:
 
         // upper tri is intra; lower tri is inter

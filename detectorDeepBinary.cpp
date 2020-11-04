@@ -107,6 +107,7 @@ namespace SuperTAD::deepBinary
     void Detector::backTrace(bool add)
     {
 //        init();
+        printf("the SE for optimal deepbinary coding tree is %f\n", _table[0][SuperTAD::_N_-1]);
         binarySplit(0, SuperTAD::_N_ - 1, add);
 
 //        sort(_boundaries.begin(), _boundaries.end(), utils::cmpBoundary);

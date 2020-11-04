@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include "detectorH.h"
 #include "compare.h"
+#include "detectorDeepBinary.h"
 
 using namespace SuperTAD;
 
@@ -51,6 +52,9 @@ int printUsage(char *argv[], int err)
             "\t\t\t--hu <int>: The height of layers for merging (go up), default: 1\n"
             "\t\t\t--pre <string>: The pre-detected result file\n"
 
+            "\tdeepbinary\tThe fouth mode requires no user-defined parameters, an updated version of binary\n"
+            "\t\t./SuperTAD deepbinary <input Hi-C matrix> [-option values]\n"
+
             "\t    SHARED OPTIONS for binary and multi COMMAND:\n"
             "\t\t-K <int>: The number of leaves in the coding tree, default: nan (determined by the algorithm)\n"
             "\t\t--chrom1 <string>: chrom1 label, default: chr1\n"
@@ -82,7 +86,7 @@ int printUsage(char *argv[], int err)
 
 int parseArg(int argc, char *argv[], int i)
 {
-    if (SuperTAD::_BINARY_ || SuperTAD::_MULTI_ || SuperTAD::_FILTER_ || SuperTAD::_MULTI_H_) {
+    if (SuperTAD::_BINARY_ || SuperTAD::_MULTI_ || SuperTAD::_FILTER_ || SuperTAD::_MULTI_H_ || SuperTAD::_DEEPBINARY_) {
         SuperTAD::_INPUT_ = std::string(*(argv + i));
         printf("input file is %s\n", SuperTAD::_INPUT_.c_str());
     }
@@ -272,6 +276,12 @@ int parseCommands(int argc, char *argv[])
         i = 2;
     }
 
+    else if (std::string(*(argv + 1)) == std::string("deepbinary")){
+        SuperTAD::_DEEPBINARY_ = true;
+        printf("do deepbinary\n");
+        i = 2;
+    }
+
     return parseArg(argc, argv, i);
 }
 
@@ -286,7 +296,7 @@ int main (int argc, char *argv[])
     if (SuperTAD::_VERBOSE_)
         t = std::clock();
 
-    if (SuperTAD::_BINARY_ || SuperTAD::_MULTI_ || SuperTAD::_FILTER_ || SuperTAD::_MULTI_H_) {
+    if (SuperTAD::_BINARY_ || SuperTAD::_MULTI_ || SuperTAD::_FILTER_ || SuperTAD::_MULTI_H_ || SuperTAD::_DEEPBINARY_) {
         SuperTAD::Data data(SuperTAD::_INPUT_);
         data.init();
 
@@ -310,6 +320,10 @@ int main (int argc, char *argv[])
         else if (SuperTAD::_MULTI_H_){
             multi::detectorH dh(data);
             dh.pipeline(SuperTAD::_PRE_);
+        }
+        else if (SuperTAD::_DEEPBINARY_){
+            deepBinary::Detector ddb(data);
+            ddb.execute();
         }
     }
 

@@ -1,0 +1,152 @@
+//
+// Created by yuwzhang7 on 2020/11/2.
+//
+
+#include "detectorDeepBinary.h"
+#include "binaryTree.h"
+
+namespace SuperTAD::deepBinary
+{
+
+    Detector::Detector(SuperTAD::Data &data)
+    {
+        _data = &data;
+        _table = new double *[SuperTAD::_N_];
+        _minIndexArray = new int *[SuperTAD::_N_];
+        for (int s = 0; s < SuperTAD::_N_; s++)
+        {
+            _table[s] = new double[SuperTAD::_N_]{};
+            _minIndexArray[s] = new int[SuperTAD::_N_]{};
+        }
+        _boundaries.reserve(2 * SuperTAD::_N_);
+        _binaryTree = new binary::Tree();
+    }
+
+    Detector::~Detector()
+    {
+        delete _binaryTree;
+        for (int s = 0; s < SuperTAD::_N_; s++)
+        {
+            delete _table[s];
+            delete _minIndexArray[s];
+        }
+        delete _table;
+        delete _minIndexArray;
+    }
+
+    void Detector::execute()
+    {
+        std::clock_t tTmp;
+
+        fillTable();
+
+        backTrace(true);
+
+        _nodeList = &_binaryTree->nodeList();
+
+        if (SuperTAD::_VERBOSE_)
+        {
+            printf("nodes:");
+            for (int i = 0; i < _nodeList->size(); i++)
+            {
+                printf("(%d, %d)", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+                if (i < _nodeList->size() - 1)
+                    printf(", ");
+            }
+            printf("\n");
+        }
+
+        SuperTAD::Writer::writeTree(SuperTAD::_OUTPUT_ + ".deepbinary", *_nodeList);
+
+    }
+
+    void Detector::fillTable()
+    {
+        std::clock_t t;
+        if (SuperTAD::_VERBOSE_)
+        {
+            printf("start filling dp table\n");
+            t = std::clock();
+        } else
+            printf("fill dp table\n");
+
+//        for (int s = 0; s < SuperTAD::_N_; s++)
+//        {
+//            printf("s: %d, _table[s][s]: %f, zero: %d\n", s, _table[s][s], _table[s][s] == 0);
+//            _table[s][s] = 0;
+//        }
+
+        double parentVol, tmpSE, minSE;
+        int leftE;
+        for (int step = 1; step < SuperTAD::_N_; step++)
+        {
+            if (SuperTAD::_VERBOSE_)
+                printf("step = %d\n", step);
+            for (int s = 0; s < SuperTAD::_N_ - step; s++)
+            {
+                parentVol = _data->getVol(s, s + step);
+                minSE = std::numeric_limits<double>::infinity();
+                for (int i = s; i < s + step; i++)
+                {
+                    tmpSE = _table[s][i] + _table[i + 1][s + step];
+                    tmpSE += _data->getSE(s, i, parentVol);
+                    tmpSE += _data->getSE(i + 1, s + step, parentVol);
+                    if (tmpSE < minSE)
+                    {
+                        minSE = tmpSE;
+                        leftE = i;
+                    }
+                }
+                _table[s][s + step] = minSE;
+                _minIndexArray[s][s + step] = leftE;
+//                printf("step: %d, s: %d, _table[%d][%d]: %f, i=%d\n", step, s, s, s+step, _table[s][s+step], leftE);
+            }
+        }
+    }
+
+    void Detector::backTrace(bool add)
+    {
+//        init();
+        binarySplit(0, SuperTAD::_N_ - 1, add);
+
+//        sort(_boundaries.begin(), _boundaries.end(), utils::cmpBoundary);
+
+        if (SuperTAD::_VERBOSE_) {
+            printf("boundaries:");
+            for (int i = 0; i < _boundaries.size(); i++) {
+                printf("(%d, %d)", _boundaries[i].first, _boundaries[i].second);
+                if (i < _boundaries.size()-1)
+                    printf(", ");
+            }
+            printf("\n");
+        }
+
+    }
+
+    void Detector::binarySplit(int s, int e, bool add)
+    {
+        if (add)
+        {
+            int label;
+            if (e-s==0){
+                label = 0;
+                _binaryTree->add(s, e, label);
+            }
+            else {
+                label = 1;
+                _binaryTree->add(s, e, label);
+            }
+        }
+
+        if (e - s == 0)
+            return;
+        else {
+            int i = _minIndexArray[s][e];
+            _boundaries.emplace_back(s, i);
+            _boundaries.emplace_back(i + 1, e);
+            binarySplit(s, i, add);
+            binarySplit(i+1, e, add);
+        }
+    }
+
+}

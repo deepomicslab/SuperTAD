@@ -17,6 +17,7 @@ bool SuperTAD::_MULTI_ = false;
 bool SuperTAD::_MULTI_H_ = false;
 bool SuperTAD::_FILTER_ = false;
 bool SuperTAD::_COMPARE_ = false;
+bool SuperTAD::_DEEPBINARY_ = false;
 
 int SuperTAD::_K_ = -999;
 int SuperTAD::_MinSize_ = 2;

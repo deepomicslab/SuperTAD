@@ -21,6 +21,7 @@ namespace SuperTAD
     extern bool _MULTI_H_;
     extern bool _FILTER_;
     extern bool _COMPARE_;
+    extern bool _DEEPBINARY_;
     extern int _K_;
     extern int _MinSize_;
     extern int _optimalK_;

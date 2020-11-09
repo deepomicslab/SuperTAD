@@ -3,27 +3,36 @@
 //
 
 #include "binaryTree.h"
-#include "params.h"
 
 
 namespace SuperTAD::binary {
 
-    std::ostream& operator<< (std::ostream &os, const TreeNode &node)
-    {
-        os << "self=(" << node._val[0] << ", " << node._val[1] << ")";
-        if (node._left != NULL && node._right != NULL) {
-            os << ", left=(" << node._left->_val[0] << ", " << node._left->_val[1] << ")";
-            os << ", right=(" << node._right->_val[0] << ", " << node._right->_val[1] << ")";
-        }
-        return os;
-    }
+//    std::ostream& operator<<(std::ostream &os, const TreeNode &node)
+//    {
+//        os << "idx=" << node._idx << ", ";
+//        os << "self=(" << node._val[0] << ", " << node._val[1] << ")";
+//        if (node._left != NULL && node._right != NULL) {
+//            os << ", left=(" << node._left->_val[0] << ", " << node._left->_val[1] << ")";
+//            os << ", right=(" << node._right->_val[0] << ", " << node._right->_val[1] << ")";
+//        }
+//        return os;
+//    }
 
 
-    Tree::Tree ()
+    Tree::Tree()
     {
         _root = NULL;
+
+        // reserve 1000 pointers of nodes
         _nodeList.reserve (1000);
     }
+
+
+//    Tree::Tree(Data &d)
+//    {
+//        Tree();
+//        _data = &d;
+//    }
 
 
     Tree::~Tree()
@@ -34,15 +43,22 @@ namespace SuperTAD::binary {
     }
 
 
-    void Tree::add(int &start, int &end, int &k)
+    void Tree::setData(Data &d)
     {
-        TreeNode *treeNode = new TreeNode(start, end);
+        _data = &d;
+    }
 
+
+    void Tree::add(int start, int end, int k)
+    {
+        TreeNode *treeNode = new TreeNode(start, end, *_data);
+
+        // leaf node (only 1 bin)
         if (k == 0) {
             if (SuperTAD::_DEBUG_)
                 printf("leaf node: (%d, %d)\n", start, end);
 
-            TreeNode *treeExistNode = _t.top ();
+            TreeNode *treeExistNode = _t.top();
             if (treeExistNode->_left == NULL) {
                 treeExistNode->_left = treeNode;
                 treeNode->_parent = treeExistNode;
@@ -50,47 +66,195 @@ namespace SuperTAD::binary {
             else {
                 treeExistNode->_right = treeNode;
                 treeNode->_parent = treeExistNode;
-                _t.pop ();
+                _t.pop();
             }
         }
+        // other nodes
         else {
             if (_root == NULL) {
                 _root = treeNode;
-                _t.push (_root);
+                _t.push(_root);
+                _root->setIdx(_nodeList.size());
+                _nodeList.emplace_back(_root);
             }
             else {
-                TreeNode *treeExistNode = _t.top ();
+                TreeNode *treeExistNode = _t.top();
                 if (treeExistNode->_left == NULL) {
                     treeExistNode->_left = treeNode;
                     treeNode->_parent = treeExistNode;
-                    _t.push (treeExistNode->_left);
+                    _t.push(treeExistNode->_left);
                 }
                 else {
                     treeExistNode->_right = treeNode;
                     treeNode->_parent = treeExistNode;
-                    _t.pop ();
-                    _t.push (treeExistNode->_right);
+                    _t.pop();
+                    _t.push(treeExistNode->_right);
                 }
             }
         }
-        if (treeNode != _root)
-            _nodeList.emplace_back(treeNode);
-    }
 
-    void Tree::insert(TreeNode *treeNode, TreeNode *parentNode){
-        if (parentNode->_left==NULL){
-            parentNode->_left = treeNode;
-            treeNode->_parent = parentNode;
+        if (treeNode != _root) {
+            treeNode->setIdx(_nodeList.size());
+//            treeNode->setVol(*_data);
             _nodeList.emplace_back(treeNode);
         }
-        else if (treeNode->_val[1] <= parentNode->_left->_val[1])
+    }
+
+
+    void Tree::insert(TreeNode *treeNode, TreeNode *parentNode)
+    {
+        if (parentNode->_left==NULL) {
+            parentNode->_left = treeNode;
+            treeNode->_parent = parentNode;
+            treeNode->setIdx(_nodeList.size());
+            treeNode->setVol(*_data);
+            _nodeList.emplace_back(treeNode);
+        }
+        else if (treeNode->_val[1] <= parentNode->_left->_val[1]) {
             insert(treeNode, parentNode->_left);
-        else if (parentNode->_right == NULL){
+        }
+        else if (parentNode->_right == NULL) {
             parentNode->_right = treeNode;
             treeNode->_parent = parentNode;
+            treeNode->setIdx(_nodeList.size());
             _nodeList.emplace_back(treeNode);
-        } else
+        }
+        else {
             insert(treeNode, parentNode->_right);
+        }
+    }
 
+
+//    TreeNode* Tree::getNode(int idx)
+//    {
+//        if (idx==0)
+//            return _root;
+//        int i=0;
+//        TreeNode *node = _root;
+//        while (node->_left || node->_right) {
+//            i++;
+//            if (i==idx)
+//                return node->_left;
+//            i++;
+//            if (i==idx)
+//                return node->_right;
+//
+//        }
+//    }
+
+
+    Pruner::Pruner(Tree &tree, int k)
+    {
+        _data = tree._data;
+        _tree = &tree;
+        _Mu = _tree->_nodeList.size();
+        _K = k;
+        _minHtable = new double *[_K];
+        _minIdxTable = new int *[_K];
+        for (int i=0; i<_K; i++) {
+            _minHtable[i] = new double [_Mu] {};
+            std::fill(&_minHtable[i][0], &_minHtable[i][_Mu], std::numeric_limits<double>::infinity());
+            _minIdxTable[i] = new int [_Mu] {};
+            std::fill(&_minIdxTable[i][0], &_minIdxTable[i][_Mu], -1);
+        }
+    }
+
+
+    Pruner::~Pruner()
+    {
+        for (int i=0; i < _K; i++) {
+            delete [] _minHtable[i];
+            delete [] _minIdxTable[i];
+        }
+        delete [] _minHtable;
+        delete [] _minIdxTable;
+    }
+
+
+    void Pruner::execute()
+    {
+//        printf("before: minIdxtable:\n");
+//        utils::print2Darray(_minIdxTable, _K, _Mu);
+        getH(*_tree->_root, _K);
+//        printf("minHtable:\n");
+//        utils::print2Darray(_minHtable, _K, _Mu);
+//        printf("minIdxtable:\n");
+//        utils::print2Darray(_minIdxTable, _K, _Mu);
+        backTrace(*_tree->_root, _K);
+    }
+
+
+    double Pruner::getH(TreeNode &node, int k)
+    {
+        if (k==1) {
+            double tmp = node.getSE(*(_tree->_data), *(_tree->_root));
+            // if leaf node is bin
+            if (node._left == NULL || node._right == NULL) {
+                // no extra op
+            }
+            // if leaf node is node bin (but node contains bin(s))
+            else {
+                for (int i=node._val[0]; i<=node._val[1]; i++) {
+                    tmp += _data->getSE(i, i, node._vol);
+                }
+//                std::cout << "k=" << k << ", current node chosen:" << node << ", se=" << tmp << "\n";
+                _minHtable[k - 1][node._idx] = tmp;
+            }
+            return tmp;
+        }
+        else {
+            if (node._left == NULL || node._right == NULL) {
+//                std::cout << "k=" << k << ", but current node is leaf node:" << node << "\n";
+                return std::numeric_limits<double>::infinity();
+            }
+            else {
+                double minH = std::numeric_limits<double>::infinity();
+                int minK1 = -1;
+                for (int k1 = 1; k1<k; k1++) {
+                    double tmp = getH(*node._left, k1) + getH(*node._right, k - k1);
+//                    if (k==10) {
+//                        std::cout << "split node: " << node << " into " << k1 << " and " << k-k1 << "\nse=" << tmp << "\n";
+//                    }
+                    if (tmp < minH) {
+                        minH = tmp;
+                        minK1 = k1;
+                    }
+                }
+
+                if (minH < std::numeric_limits<double>::infinity()) {
+//                    if (k==10) {
+//                        std::cout << "k=" << k << ", current node:" << node << "\n";
+//                        printf("minH=%f, minK1=%d\n", minH, minK1);
+//                    }
+                    _minHtable[k - 1][node._idx] = minH;
+                    _minIdxTable[k - 1][node._idx] = minK1;
+                    return minH;
+                }
+                else {
+//                    std::cout << "k=" << k << ", current node cannot be splited into " << k << " nodes:" << node << "\n";
+                    return std::numeric_limits<double>::infinity();
+                }
+            }
+        }
+    }
+
+
+    void Pruner::backTrace(TreeNode &node, int k)
+    {
+//        std::cout << "root: " << *(_tree->_root) << "\n";
+        _prunedTree.add(_tree->_root->_val[0], _tree->_root->_val[1]);
+
+        if (k==1) {
+//            std::cout << "selected node:" << node << "\n";
+            _prunedTree.add(node._val[0], node._val[1]);
+            return;
+        }
+
+        int k1 = _minIdxTable[k-1][node._idx];
+//        printf("k=%d, k1=%d, k-k1=%d\n", k, k1, k-k1);
+        if (node._left)
+            backTrace(*node._left, k1);
+        if (node._right)
+            backTrace(*node._right, k-k1);
     }
 }

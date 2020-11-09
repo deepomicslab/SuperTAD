@@ -3,9 +3,6 @@
 //
 
 #include "detectorH.h"
-#include "data.h"
-#include "params.h"
-#include "inputAndOutput.h"
 
 
 namespace SuperTAD::multi {

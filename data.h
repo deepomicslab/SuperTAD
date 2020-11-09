@@ -60,6 +60,9 @@ namespace SuperTAD
 
         static void parseSubMatrix(double **&subMatrix, Data &Matrix, int start, int end);
 
+        // debug use
+        double getG(int s, int e);
+
         double getVol(int s, int e);
 
         double getSE(int s, int e, double parentVol);
@@ -73,7 +76,6 @@ namespace SuperTAD
         double getSEwithLogDiff(int s, int e, double logDiff);
 
         double getGtimesLogG(double binG);
-
     };
 }
 

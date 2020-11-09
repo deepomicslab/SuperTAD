@@ -3,7 +3,6 @@
 //
 
 #include "inputAndOutput.h"
-#include "params.h"
 
 
 void SuperTAD::Reader::parseMatrix2Table(double **&table, std::string path)

@@ -13,14 +13,7 @@
 // 
 // modified by wang mengbo on 2020-07-30
 
-#include <stdlib.h>
-#include <cfloat> // for DBL_MAX
-#include <cmath>  // for fabs()
 #include "Hungarian.h"
-
-
-HungarianAlgorithm::HungarianAlgorithm(){}
-HungarianAlgorithm::~HungarianAlgorithm(){}
 
 
 //********************************************************//

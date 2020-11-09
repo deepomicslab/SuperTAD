@@ -9,14 +9,14 @@
 #include <iostream>
 #include <fstream>
 #include <sys/stat.h>
-#include "binaryTree.h"
-#include "multiTree.h"
-#include "utils.h"
 #include <map>
-#include "data.h"
-#include <vector>
 #include <limits>
 #include <algorithm>
+#include <vector>
+//#include "data.h"
+//#include "binaryTree.h"
+//#include "multiTree.h"
+#include "utils.h"
 #include "params.h"
 
 

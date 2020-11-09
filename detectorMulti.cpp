@@ -3,9 +3,6 @@
 //
 
 #include "detectorMulti.h"
-#include "data.h"
-#include "params.h"
-#include "multiTree.h"
 
 namespace SuperTAD::multi {
 
@@ -391,7 +388,7 @@ namespace SuperTAD::multi {
     {
         if (k == 1) {
             if (add)
-                _multiTree.insert(start, end);
+                _multiTree.add(start, end);
             if (SuperTAD::_DEBUG_) {
                 printf("multisplit-------------%d %d %d %d k=1, parentEnd: %d %f\n",
                        start, end, k, h, parentEnd, _table[start][end][k-1][h][parentEnd]);
@@ -404,7 +401,7 @@ namespace SuperTAD::multi {
                 int leftK = _leftKArray[start][end][k-1][h][parentEnd];
                 if (leftK == 0) {
                     if (add)
-                        _multiTree.insert(start, end);
+                        _multiTree.add(start, end);
                     if (SuperTAD::_DEBUG_) {
                         printf("multisplit-------------%d %d %d %d leftK=1, parentEnd: %d %f\n",
                                start, end, k, h, parentEnd, _table[start][end][k - 1][h][parentEnd]);
@@ -416,7 +413,7 @@ namespace SuperTAD::multi {
                     int midPos = _minIndexArray[start][end][k-1][h][parentEnd];
                     _boundaries.emplace_back(midPos + 1, 0);
                     if (add)
-                        _multiTree.insert(midPos+1, end);
+                        _multiTree.add(midPos + 1, end);
                     if (SuperTAD::_DEBUG_) {
                         printf("multisplit-------------%d %d %d %d h!=1, parentEnd: %d %f\n",
                                start, end, k, h, parentEnd, _table[start][end][k - 1][h][parentEnd]);
@@ -430,7 +427,7 @@ namespace SuperTAD::multi {
                 int midPos = _minIndexArray[start][end][k-1][h][parentEnd];
                 _boundaries.emplace_back(midPos + 1, 0);
                 if (add)
-                    _multiTree.insert(midPos+1, end);
+                    _multiTree.add(midPos + 1, end);
                 if (SuperTAD::_DEBUG_) {
                     printf("multisplitmultisplit-------------%d %d %d %d h=1, parentEnd: %d %f\n",
                            start, end, k, h, parentEnd, _table[start][end][k - 1][h][parentEnd]);

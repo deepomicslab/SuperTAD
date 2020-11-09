@@ -3,7 +3,6 @@
 //
 
 #include "multiTree.h"
-#include "params.h"
 
 
 namespace SuperTAD::multi {
@@ -43,23 +42,23 @@ namespace SuperTAD::multi {
     }
 
 
-    void Tree::insert(int start, int end)
+    void Tree::add(int start, int end)
     {
         TreeNode *treeNode = new TreeNode(start, end);
-        if (!add(*treeNode, *_root)) {
+        if (!insert(*treeNode, *_root)) {
             fprintf(stderr, "cannot add node: %s\n", treeNode->verbose().c_str());
         }
     }
 
 
-    bool Tree::add(multi::TreeNode &newNode, multi::TreeNode &parentNode)
+    bool Tree::insert(multi::TreeNode &newNode, multi::TreeNode &parentNode)
     {
         if (parentNode._val[0] <= newNode._val[0]
             && parentNode._val[1] >= newNode._val[1]
             && !parentNode.hasBiggerChild(newNode)
             && parentNode._children.emplace(&newNode).second) {
             newNode._parent = &parentNode;
-//            _nodeList.emplace_back(&newNode);
+            _nodeList.emplace_back(&newNode);
 
 //            std::cout << "parentNode=\n";
 //            treeNodeVerbose(parentNode);
@@ -69,7 +68,7 @@ namespace SuperTAD::multi {
         }
         else {
             for (auto it: parentNode._children) {
-                if (add(newNode, *it))
+                if (insert(newNode, *it))
                     return true;
             }
         }
@@ -83,4 +82,12 @@ namespace SuperTAD::multi {
         _root->getChildren(nl);
     }
 
+
+//    double Tree::getSE()
+//    {
+//        double se = 0;
+//        for (auto it=_root->_children.begin(); it!=_root->_children.end(); it++) {
+//            se +=
+//        }
+//    }
 }

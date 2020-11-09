@@ -20,30 +20,18 @@ namespace SuperTAD::binary {
 
     class Detector {
     private:
-        SuperTAD::Data *_data;
-
-        binary::Tree *_binaryTree;
-
-        std::vector<binary::TreeNode *> *_nodeList;
-
+        Data *_data;
+        Tree *_binaryTree;
+        std::vector<TreeNode *> *_nodeList;
         double ***_table;
-
         int ***_minIndexTableForBold;
-
         int ***_minIndexArray;
-
         int ***_leftKArray;
-
         std::vector<Boundary> _boundaries;
-
-        std::vector<binary::TreeNode *> _trueNodeList;
-
+        std::vector<TreeNode*> _trueNodeList;
         int *_numBins;
-
         int *_kTmpIdx;
-
         int *_kMinusKtmpIdx;
-
         float *_scoreTable;
 
     public:
@@ -73,20 +61,19 @@ namespace SuperTAD::binary {
 
         void binarySplit(int s, int e, int k, bool add=false, int lv=0);
 
-        void calculateD(binary::TreeNode &node);
+        void calculateD(TreeNode &node);
 
-        void calculateDensity(binary::TreeNode &node);
+        void calculateDensity(TreeNode &node);
 
-        double minusParent(double d, binary::TreeNode &node);
+        double minusParent(double d, TreeNode &node);
 
         int * filterNodes();
 
-        double getX(binary::TreeNode &node);
+        double getX(TreeNode &node);
 
-        double getY(binary::TreeNode &node);
+        double getY(TreeNode &node);
 
-        bool simpleLinearRegression(std::vector<std::pair<int, binary::TreeNode *>> &nodeList, double ab[]);
-
+        bool simpleLinearRegression(std::vector<std::pair<int, TreeNode*>> &nodeList, double ab[]);
     };
 }
 

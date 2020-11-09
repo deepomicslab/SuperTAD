@@ -3,29 +3,30 @@
 //
 
 #include "detectorDeepBinary.h"
-#include "binaryTree.h"
 
 namespace SuperTAD::deepBinary
 {
 
-    Detector::Detector(SuperTAD::Data &data)
+    Detector::Detector(Data &data)
     {
         _data = &data;
-        _table = new double *[SuperTAD::_N_];
-        _minIndexArray = new int *[SuperTAD::_N_];
-        for (int s = 0; s < SuperTAD::_N_; s++)
+        _table = new double *[_N_];
+        _minIndexArray = new int *[_N_];
+        for (int s = 0; s < _N_; s++)
         {
-            _table[s] = new double[SuperTAD::_N_]{};
-            _minIndexArray[s] = new int[SuperTAD::_N_]{};
+            _table[s] = new double[_N_]{};
+            _minIndexArray[s] = new int[_N_]{};
         }
-        _boundaries.reserve(2 * SuperTAD::_N_);
+        _boundaries.reserve(2 * _N_);
         _binaryTree = new binary::Tree();
+        _binaryTree->setData(*_data);
     }
+
 
     Detector::~Detector()
     {
         delete _binaryTree;
-        for (int s = 0; s < SuperTAD::_N_; s++)
+        for (int s = 0; s < _N_; s++)
         {
             delete _table[s];
             delete _minIndexArray[s];
@@ -33,6 +34,7 @@ namespace SuperTAD::deepBinary
         delete _table;
         delete _minIndexArray;
     }
+
 
     void Detector::execute()
     {
@@ -42,35 +44,43 @@ namespace SuperTAD::deepBinary
 
         backTrace(true);
 
-        _nodeList = &_binaryTree->nodeList();
+        _nodeList = &_binaryTree->_nodeList;
 
-        if (SuperTAD::_VERBOSE_)
-        {
-            printf("nodes:");
-            for (int i = 0; i < _nodeList->size(); i++)
-            {
-                printf("(%d, %d)", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
-                if (i < _nodeList->size() - 1)
-                    printf(", ");
-            }
-            printf("\n");
+//        if (_VERBOSE_)
+//        {
+//            printf("nodes:\n");
+//            for (int i = 0; i < _nodeList->size(); i++)
+//            {
+//                std::cout << *(*_nodeList)[i] << "\n";
+//            }
+//        }
+
+        if (!_NO_OUTPUT_)
+            Writer::writeTree(_OUTPUT_ + ".deepbinary", *_nodeList);
+
+        if (_PRUNE_) {
+            binary::Pruner filter(*_binaryTree);
+            filter.execute();
+//        multi::treeNodeVerbose(*(filter._prunedTree._root), 0);
+            if (!_NO_OUTPUT_)
+                Writer::writeTree(_OUTPUT_ + ".deepbinary.pruned", filter._prunedTree._nodeList);
         }
-
-        SuperTAD::Writer::writeTree(SuperTAD::_OUTPUT_ + ".deepbinary", *_nodeList);
-
+        return;
     }
+
 
     void Detector::fillTable()
     {
         std::clock_t t;
-        if (SuperTAD::_VERBOSE_)
+        if (_VERBOSE_)
         {
             printf("start filling dp table\n");
             t = std::clock();
-        } else
+        }
+        else
             printf("fill dp table\n");
 
-//        for (int s = 0; s < SuperTAD::_N_; s++)
+//        for (int s = 0; s < _N_; s++)
 //        {
 //            printf("s: %d, _table[s][s]: %f, zero: %d\n", s, _table[s][s], _table[s][s] == 0);
 //            _table[s][s] = 0;
@@ -78,11 +88,11 @@ namespace SuperTAD::deepBinary
 
         double parentVol, tmpSE, minSE;
         int leftE;
-        for (int step = 1; step < SuperTAD::_N_; step++)
+        for (int step = 1; step < _N_; step++)
         {
-            if (SuperTAD::_VERBOSE_)
-                printf("step = %d\n", step);
-            for (int s = 0; s < SuperTAD::_N_ - step; s++)
+//            if (_VERBOSE_)
+//                printf("step = %d\n", step);
+            for (int s = 0; s < _N_ - step; s++)
             {
                 parentVol = _data->getVol(s, s + step);
                 minSE = std::numeric_limits<double>::infinity();
@@ -104,15 +114,16 @@ namespace SuperTAD::deepBinary
         }
     }
 
+
     void Detector::backTrace(bool add)
     {
 //        init();
-        printf("the SE for optimal deepbinary coding tree is %f\n", _table[0][SuperTAD::_N_-1]);
-        binarySplit(0, SuperTAD::_N_ - 1, add);
+        printf("the SE for optimal deepbinary coding tree is %f\n", _table[0][_N_-1]);
+        binarySplit(0, _N_ - 1, add);
 
 //        sort(_boundaries.begin(), _boundaries.end(), utils::cmpBoundary);
 
-        if (SuperTAD::_VERBOSE_) {
+        if (_VERBOSE_) {
             printf("boundaries:");
             for (int i = 0; i < _boundaries.size(); i++) {
                 printf("(%d, %d)", _boundaries[i].first, _boundaries[i].second);
@@ -123,6 +134,7 @@ namespace SuperTAD::deepBinary
         }
 
     }
+
 
     void Detector::binarySplit(int s, int e, bool add)
     {

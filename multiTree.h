@@ -11,6 +11,7 @@
 #include <string>
 #include <sstream>
 #include "params.h"
+#include "data.h"
 
 
 namespace SuperTAD::multi {
@@ -82,6 +83,7 @@ namespace SuperTAD::multi {
                 (*it)->getChildren(nl);
             }
         }
+
     };
 
     inline bool operator<(const TreeNode &t1, const TreeNode &t2)
@@ -104,23 +106,28 @@ namespace SuperTAD::multi {
             treeNodeVerbose(**it, numHeadingSpace+2);
     }
 
+
     class Tree {
     private:
 //        std::vector<TreeNode*> _nodeList;
+
     public:
         TreeNode *_root = NULL;
+        std::vector<TreeNode*> _nodeList;
 
         Tree();
 
         ~Tree();
 
-        void insert(int start, int end);
+        void add(int start, int end);
 
-        bool add(TreeNode &newNode, TreeNode &parentNode);
+        bool insert(TreeNode &newNode, TreeNode &parentNode);
 
 //        std::vector<TreeNode*> &nodeList() { return _nodeList; }
 
         void getNodeList(std::vector<TreeNode *> &nl);
+
+        double getSE();
     };
 }
 

@@ -5,55 +5,60 @@
 #include "params.h"
 
 
-std::string SuperTAD::_WORK_DIR_ = "";
-std::string SuperTAD::_INPUT_;
-std::string SuperTAD::_OUTPUT_;
-std::string SuperTAD::_RESULT_;
-std::string SuperTAD::_RESULT_1_;
-std::string SuperTAD::_RESULT_2_;
+namespace SuperTAD
+{
+    std::string _WORK_DIR_ = "";
+    std::string _INPUT_;
+    std::string _OUTPUT_;
+    std::string _RESULT_;
+    std::string _RESULT_1_;
+    std::string _RESULT_2_;
 
-bool SuperTAD::_BINARY_ = false;
-bool SuperTAD::_MULTI_ = false;
-bool SuperTAD::_MULTI_H_ = false;
-bool SuperTAD::_FILTER_ = false;
-bool SuperTAD::_COMPARE_ = false;
-bool SuperTAD::_DEEPBINARY_ = false;
+    bool _BINARY_ = false;
+    bool _MULTI_ = false;
+    bool _MULTI_H_ = false;
+    bool _FILTER_ = false;
+    bool _COMPARE_ = false;
+    bool _DEEPBINARY_ = false;
+    bool _PRUNE_ = false;
 
-int SuperTAD::_K_ = -999;
-int SuperTAD::_MinSize_ = 2;
-int SuperTAD::_optimalK_ = -999;
-bool SuperTAD:: _DETERMINE_K_ = true;
-int SuperTAD::_N_ = -999;
-int SuperTAD::_H_ = 2;
+    int _K_ = -999;
+    int _MinSize_ = 2;
+    int _optimalK_ = -999;
+    bool _DETERMINE_K_ = true;
+    int _N_ = -999;
+    int _H_ = 2;
 
 // for multi_2d mode
-int SuperTAD::_HU_ = 1;
-int SuperTAD::_HD_ = 2;
-std::string SuperTAD::_PRE_ = "";
+    int _HU_ = 1;
+    int _HD_ = 2;
+    std::string _PRE_ = "";
 
-double SuperTAD::_THRESHOLD_ = 1e-6;
-bool SuperTAD::_PRE_LOG_ = true;
+    double _THRESHOLD_ = 1e-6;
+    bool _PRE_LOG_ = true;
 
-bool SuperTAD::_FILTERING_ = true;
+    bool _FILTERING_ = true;
 
-bool SuperTAD::_FAST_ = true;
-int SuperTAD::_PENALTY_ = -1;
+    bool _FAST_ = true;
+    int _PENALTY_ = -1;
 
-bool SuperTAD::_VERBOSE_ = false;
+    bool _VERBOSE_ = false;
 
 // for matrix input
-std::string SuperTAD::_CHROM1_ = "chr1";
-std::string SuperTAD::_CHROM2_ = "chr1";
-int64_t SuperTAD::_CHROM1_START_ = 0;
-int64_t SuperTAD::_CHROM2_START_ = 0;
-int SuperTAD::_RESOLUTION_ = 1;
+    std::string _CHROM1_ = "chr1";
+    std::string _CHROM2_ = "chr1";
+    int64_t _CHROM1_START_ = 0;
+    int64_t _CHROM2_START_ = 0;
+    int _RESOLUTION_ = 1;
 
 // output format
-bool SuperTAD::_BEDPE_ = false;
-bool SuperTAD::_SHORT_ = false;
-bool SuperTAD::_BIN_LIST_ = false;
-bool SuperTAD::_NO_OUTPUT_ = false;
+    bool _BEDPE_ = false;
+    bool _SHORT_ = false;
+    bool _BIN_LIST_ = false;
+    bool _NO_OUTPUT_ = false;
 
 // debug
-bool SuperTAD::_DEBUG_ = false;
-std::string SuperTAD::_TMP_PATH_;
+    bool _DEBUG_ = false;
+    std::string _TMP_PATH_;
+
+}

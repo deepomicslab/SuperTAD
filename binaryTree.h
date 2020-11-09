@@ -5,76 +5,187 @@
 #ifndef PROGRAM_BINARYTREE_H
 #define PROGRAM_BINARYTREE_H
 
-
 #include <vector>
 #include <stack>
 #include <iostream>
+#include <limits>
+#include <cmath>
+#include "data.h"
+#include "multiTree.h"
 #include "params.h"
+#include "utils.h"
+
 
 namespace SuperTAD::binary {
-  
-  struct TreeNode {
-    int _val[1];
-    TreeNode *_left;
-    TreeNode *_right;
-    double _se;
-    double _info;
-    TreeNode *_parent;
-    double _D;
-    //  double _size;
-    
-    TreeNode (int start, int end)
-    {
-      _val[0] = start;
-      _val[1] = end;
-      _se = 0;
-      _left = NULL;
-      _right = NULL;
-      _info = 0;
-      _parent = NULL;
-      _D = 0;
-    }
-    
-    TreeNode &operator= (const TreeNode &copy)
-    {
-      _val[0] = copy._val[0];
-      _val[1] = copy._val[1];
-      _se = copy._se;
-      _left = copy._left;
-      _right = copy._right;
-      _info = copy._info;
-      _parent = copy._parent;
-      _D = copy._D;
-      return *this;
-    }
-    
-    bool operator== (const TreeNode &t) const
-    {
-      return _val[0] == t._val[0] && _val[1] == t._val[1];
-    }
-  };
-  
-  std::ostream& operator<< (std::ostream &os, const TreeNode &node);
-  
-  class Tree {
-  private:
-    TreeNode *_root;
-    std::stack<TreeNode *> _t;
-    std::vector<TreeNode *> _nodeList;
-  
-  public:
-    Tree ();
-    
-    ~Tree ();
-    
-    void add (int &start, int &end, int &k);
 
-    void insert (TreeNode *treeNode, TreeNode *parentNode);
-    
-    std::vector<TreeNode *> &nodeList () { return _nodeList; }
-    
-    TreeNode &root () { return *_root; }
-  };
+    struct TreeNode {
+        int _val[2] = {0, 0};
+        TreeNode *_left;
+        TreeNode *_right;
+        double _se;
+        double _info;
+        TreeNode *_parent;
+        double _D;
+        double _vol;
+        int _idx;
+        //  double _size;
+
+        TreeNode(int start, int end)
+        {
+            _val[0] = start;
+            _val[1] = end;
+            _se = 0;
+            _left = NULL;
+            _right = NULL;
+            _info = 0;
+            _parent = NULL;
+            _D = 0;
+            _vol = 0;
+            _idx = 0;
+        }
+
+        TreeNode(int start, int end, Data &data) : TreeNode(start, end)
+        {
+            this->setVol(data);
+        }
+
+        TreeNode &operator= (const TreeNode &copy)
+        {
+            _val[0] = copy._val[0];
+            _val[1] = copy._val[1];
+            _se = copy._se;
+            _left = copy._left;
+            _right = copy._right;
+            _info = copy._info;
+            _parent = copy._parent;
+            _D = copy._D;
+            _vol = copy._vol;
+            _idx = copy._idx;
+            return *this;
+        }
+
+        void setIdx(int idx)
+        {
+            _idx = idx;
+        }
+
+        void updateSE(Data &data, double pV)
+        {
+            _se = this->getSE(data, pV);
+        }
+
+        double getSE(Data &data, double pV)
+        {
+            double se = data.getSE(_val[0], _val[1], pV, _vol);
+            if (_left)
+                se += _left->getSE(data, _vol);
+            if (_right)
+                se += _right->getSE(data, _vol);
+            return se;
+        }
+
+        void updateSE(Data &data, TreeNode &p)
+        {
+            _se = this->getSE(data, p);
+        }
+
+        double getSE(Data &data, TreeNode &p)
+        {
+            double se = data.getSE(_val[0], _val[1], p._vol, _vol);
+            if (_left)
+                se += _left->getSE(data, *this);
+            if (_right)
+                se += _right->getSE(data, *this);
+            return se;
+        }
+
+        void setVol(Data &data)
+        {
+            _vol = data.getVol(_val[0], _val[1]);
+        }
+
+        bool operator==(const TreeNode &t) const
+        {
+            return _val[0] == t._val[0] && _val[1] == t._val[1];
+        }
+    };
+
+    inline std::ostream& operator<<(std::ostream &os, const TreeNode &node)
+    {
+        os << "idx=" << node._idx << ", ";
+        os << "self=(" << node._val[0] << ", " << node._val[1] << ")";
+        if (node._left != NULL) {
+            os << ", left=(" << node._left->_val[0] << ", " << node._left->_val[1] << ")";
+        }
+        else {
+            os << ", no left child";
+        }
+
+        if (node._right != NULL) {
+            os << ", right=(" << node._right->_val[0] << ", " << node._right->_val[1] << ")";
+        }
+        else {
+            os << ", no right child";
+        }
+        return os;
+    }
+
+
+    class Tree {
+    private:
+        // ???
+        std::stack<TreeNode*> _t;
+
+    public:
+        Data *_data;
+        TreeNode *_root;
+        std::vector<TreeNode*> _nodeList;
+
+        Tree();
+
+        // cannot find this function when usage
+//        Tree(Data &d);
+
+        ~Tree();
+
+        void setData(Data &d);
+
+        // problematic function
+        void add(int start, int end, int k);
+
+        void insert(TreeNode *treeNode, TreeNode *parentNode);
+
+//        std::vector<TreeNode*> &nodeList() { return _nodeList; }
+
+        TreeNode &root() { return *_root; }
+
+//        TreeNode *getNode(int idx);
+
+        double getSE(TreeNode &child, TreeNode &parent);
+    };
+
+
+    class Pruner {
+    private:
+        Data *_data;
+        double **_minHtable;
+        int **_minIdxTable;
+        int _K, _Mu;
+        binary::Tree *_tree;
+
+    public:
+        multi::Tree _prunedTree;
+
+        Pruner(Tree &tree, int k=10);
+
+        ~Pruner();
+
+        void execute();
+
+        double getH(TreeNode &node, int k);
+
+        void backTrace(TreeNode &node, int k);
+    };
 }
 
 #endif //PROGRAM_BINARYTREE_H

@@ -3,9 +3,6 @@
 //
 
 #include "detectorBinary.h"
-#include "data.h"
-#include "params.h"
-#include "inputAndOutput.h"
 
 
 namespace SuperTAD::binary {
@@ -38,7 +35,10 @@ namespace SuperTAD::binary {
         }
 //        printf("db table size=%d\n", size);
         _boundaries.reserve(SuperTAD::_K_);
-        _binaryTree = new binary::Tree();
+        _binaryTree = new Tree();
+        _binaryTree->setData(*_data);
+//        _binaryTree = new Tree(*_data);
+
         _numBins = new int(0);
         _kTmpIdx = new int(0);
         _kMinusKtmpIdx = new int(0);
@@ -107,7 +107,6 @@ namespace SuperTAD::binary {
                 printf("determining optimal K consumes %fs\n", (float)(std::clock()-tTmp)/CLOCKS_PER_SEC);
 
             backTrace(SuperTAD::_K_, true);
-
         }
         else {
             printf("K=%d\n", SuperTAD::_K_);
@@ -132,8 +131,7 @@ namespace SuperTAD::binary {
                 SuperTAD::_K_ * (SuperTAD::_N_ - 1))) * log2(SuperTAD::_K_);
             normLeaves.emplace_back(SuperTAD::_K_, leafSum / divisor);
         }
-
-        _nodeList = &_binaryTree->nodeList();
+        _nodeList = &_binaryTree->_nodeList;
         if (SuperTAD::_VERBOSE_) {
             printf("nodes:");
             for (int i = 0; i < _nodeList->size(); i++) {
@@ -144,12 +142,13 @@ namespace SuperTAD::binary {
             printf("\n");
         }
 
-
-        SuperTAD::Writer::writeTree(SuperTAD::_OUTPUT_ + ".binary.original", *_nodeList);
+        if (!SuperTAD::_NO_OUTPUT_)
+            SuperTAD::Writer::writeTree(SuperTAD::_OUTPUT_ + ".binary.original", *_nodeList);
 
         if (SuperTAD::_FILTERING_)
             filter();
     }
+
 
     bool Detector::sortStart (Boundary a, Boundary b){
         if (a.first == b.first)
@@ -157,6 +156,7 @@ namespace SuperTAD::binary {
         else
             return a.first < b.first;
     }
+
 
     void Detector::executeFILTER (std::string result){
         SuperTAD::Reader::parseBoundariesIn8ColsFormat(_boundaries, result);
@@ -166,17 +166,22 @@ namespace SuperTAD::binary {
         s = 0;
         e = SuperTAD::_N_ - 1;
         k = 1;
-        _binaryTree->add(s, e, k);  //add root
+
+        //add root
+        _binaryTree->add(s, e, k);
+
+        //construct coding tree
         for (int i =0; i<_boundaries.size(); i++){
-            newNode = new binary::TreeNode(_boundaries[i].first-1, _boundaries[i].second-1);
+            newNode = new binary::TreeNode(_boundaries[i].first - 1, _boundaries[i].second - 1);
             _binaryTree->insert(newNode, &_binaryTree->root());
-        }   //construct coding tree
-        _nodeList = &_binaryTree->nodeList();
+        }
+        _nodeList = &_binaryTree->_nodeList;
 //        for (int i=0;i<_nodeList->size();i++){
 //            printf("%d, %d, %d, %d, %d\n", i, (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1], (*_nodeList)[i]->_parent->_val[0], (*_nodeList)[i]->_parent->_val[1]);
 //        }
         filter();
     }
+
 
     void Detector::fillTable()
     {
@@ -527,7 +532,9 @@ namespace SuperTAD::binary {
         if (SuperTAD::_VERBOSE_)
             printf("filtering consumes %fs\n", (float)(std::clock() - tTmp) / CLOCKS_PER_SEC);
         printf("%d TAD candidates filtered into %d true TADs\n", _nodeList->size(), _trueNodeList.size());
-        SuperTAD::Writer::writeTree(SuperTAD::_OUTPUT_ + ".binary.filter", _trueNodeList);
+
+        if (!SuperTAD::_NO_OUTPUT_)
+            SuperTAD::Writer::writeTree(SuperTAD::_OUTPUT_ + ".binary.filter", _trueNodeList);
     }
 
     int * Detector::filterNodes()

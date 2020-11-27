@@ -229,6 +229,7 @@ void SuperTAD::Writer::writeBoundaries(std::string path, std::vector<Boundary> &
         std::cerr << "cannot open file: " << path << "\n";
 }
 
+
 void SuperTAD::Writer::writeBoundIn8Cols(std::string path, std::vector<Boundary> &boundaryList) {
     path += ".tsv";
     FILE *outFile = NULL;
@@ -258,6 +259,7 @@ void SuperTAD::Writer::writeBoundIn8Cols(std::string path, std::vector<Boundary>
     else
         std::cerr << "cannot open file: " << path << "\n";
 }
+
 
 void SuperTAD::Writer::dumpCoordinates(Int2DoubleMap &map, std::string path, std::ofstream *f)
 {

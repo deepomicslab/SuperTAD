@@ -116,7 +116,10 @@ namespace SuperTAD::multi {
         }
 
         if (h==-1)
-            _writer.writeBoundIn8Cols(SuperTAD::_OUTPUT_ + ".multi2D", _boundaries);
+            if (_BIN_LIST_)
+                _writer.writeBoundaries(SuperTAD::_OUTPUT_ + ".multi2D.txt", _boundaries);
+            else
+                _writer.writeBoundIn8Cols(SuperTAD::_OUTPUT_ + ".multi2D", _boundaries);
         return _boundaries;
     }
 

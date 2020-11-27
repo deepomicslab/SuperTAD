@@ -100,6 +100,11 @@ int parseArg(int argc, char *argv[], int i)
             printUsage(argv, 0);
         }
 
+        if (std::string(*(argv + i)) == std::string("--result")) {
+            _SE_RESULT_PATH_ = std::string (*(argv + ++i));
+            printf("se results path is %s\n", _SE_RESULT_PATH_.c_str());
+        }
+
         if (std::string(*(argv + i)) == std::string("-w")) {
             _WORK_DIR_ = std::string (*(argv + ++i));
             printf("working dir is %s\n", _WORK_DIR_.c_str());

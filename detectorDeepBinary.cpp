@@ -55,6 +55,14 @@ namespace SuperTAD::deepBinary
 //            }
 //        }
 
+        if (_SE_RESULT_PATH_!="")
+        {
+            std::ofstream outfile;
+            outfile.open(_SE_RESULT_PATH_, std::ios_base::app); // append instead of overwrite
+            outfile << _table[0][_N_-1] << "\n";
+            outfile.close();
+        }
+
         if (!_NO_OUTPUT_)
             Writer::writeTree(_OUTPUT_ + ".deepbinary", *_nodeList);
 

@@ -16,6 +16,8 @@ namespace SuperTAD
     extern std::string _RESULT_;
     extern std::string _RESULT_1_;
     extern std::string _RESULT_2_;
+    extern std::string _SE_RESULT_PATH_;
+
     extern bool _BINARY_;
     extern bool _MULTI_;
     extern bool _MULTI_H_;

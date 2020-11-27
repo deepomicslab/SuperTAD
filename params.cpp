@@ -13,6 +13,7 @@ namespace SuperTAD
     std::string _RESULT_;
     std::string _RESULT_1_;
     std::string _RESULT_2_;
+    std::string _SE_RESULT_PATH_;
 
     bool _BINARY_ = false;
     bool _MULTI_ = false;

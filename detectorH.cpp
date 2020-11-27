@@ -107,6 +107,14 @@ namespace SuperTAD::multi {
         }
 
         DetectorH1::backTrace();
+
+        if (_SE_RESULT_PATH_ != "") {
+            std::ofstream outfile;
+            outfile.open(_SE_RESULT_PATH_, std::ios_base::app); // append instead of overwrite
+            outfile << _table[_N_-1][_k-1] << "\n";
+            outfile.close();
+        }
+
         if (h==-1)
             _writer.writeBoundIn8Cols(SuperTAD::_OUTPUT_ + ".multi2D", _boundaries);
         return _boundaries;

@@ -159,9 +159,10 @@ namespace SuperTAD
 //                    printf("inter[%d][%d]<0\n", i, j);
 //                }
                     _edgeCountArray[j][i] = 0;
-                } else
+                } else {
                     _edgeCountArray[j][i] = inter;
-//            printf("edgeCountArray[%d][%d]=%f\n", i, j, _edgeCountArray[i][j]);
+                }
+//                printf("edgeCountArray[%d][%d]=%f\n", i, j, _edgeCountArray[i][j]);
             }
         }
 //    printf("edgeCountArray=\n");

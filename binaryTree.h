@@ -69,9 +69,15 @@ namespace SuperTAD::binary {
             _idx = idx;
         }
 
+        // parentVolume
         void updateSE(Data &data, double pV)
         {
             _se = this->getSE(data, pV);
+        }
+
+        void updateSE(Data &data, TreeNode &pNode)
+        {
+            _se = this->getSE(data, pNode);
         }
 
         double getSE(Data &data, double pV)
@@ -84,14 +90,21 @@ namespace SuperTAD::binary {
             return se;
         }
 
-        void updateSE(Data &data, TreeNode &p)
+        double getSEasLeaf(Data &data, TreeNode &pNode)
         {
-            _se = this->getSE(data, p);
+            double se = data.getSE(_val[0], _val[1], pNode._vol, _vol);
+            // save this calculation if leaf only has one bin
+            if (_val[0] != _val[1]) {
+                for (int i = _val[0]; i < _val[1]; i++) {
+                    se += data.getSE(i, i, _vol);
+                }
+            }
+            return se;
         }
 
-        double getSE(Data &data, TreeNode &p)
+        double getSE(Data &data, TreeNode &pNode)
         {
-            double se = data.getSE(_val[0], _val[1], p._vol, _vol);
+            double se = data.getSE(_val[0], _val[1], pNode._vol, _vol);
             if (_left)
                 se += _left->getSE(data, *this);
             if (_right)
@@ -165,27 +178,53 @@ namespace SuperTAD::binary {
     };
 
 
-    class Pruner {
-    private:
+    static const int PruneMethod1 = 1;
+    static const int PruneMethod2 = 2;
+
+    class BasePruner {
+    protected:
+        BasePruner(Tree &tree);
+        ~BasePruner(){};
+    public:
         Data *_data;
         double **_minHtable;
         int **_minIdxTable;
-        int _K, _Mu;
+        int _K, _mu;
         binary::Tree *_tree;
-
-    public:
         multi::Tree _prunedTree;
+        virtual void execute() { fprintf(stderr, "execute() in BasePruner should not be called\n"); };
+    };
 
-        Pruner(Tree &tree, int k=10);
 
-        ~Pruner();
+    class Pruner1 : public BasePruner {
+    public:
+        Pruner1(Tree &tree, int k=10);
 
-        void execute();
+        ~Pruner1();
+
+        void execute() override;
 
         double getH(TreeNode &node, int k);
 
         void backTrace(TreeNode &node, int k);
     };
+
+
+    class Pruner2 : public BasePruner {
+    public:
+        Pruner2(Tree &tree);
+
+        ~Pruner2();
+
+        void init();
+
+        void execute() override;
+
+        double getH(TreeNode &node, int k);
+
+        void backTrace(TreeNode &node, int k);
+    };
+
 }
 
 #endif //PROGRAM_BINARYTREE_H

@@ -214,6 +214,20 @@ int parseArg(int argc, char *argv[], int i)
             printf("deep binary tree will be pruned for best fit\n");
         }
 
+        if (std::string(*(argv + i)) == std::string("--prune_method") ) {
+            _PRUNE_METHOD_ = atoi(*(argv+ ++i));
+            switch (_PRUNE_METHOD_) {
+                case binary::PruneMethod1 :
+                    printf("prune method 1\n");
+                    break;
+                case binary::PruneMethod2 :
+                    printf("prune method 2\n");
+                    break;
+                default:
+                    printf("undefined prune method; use default");
+            }
+        }
+
         // debug
         if (std::string(*(argv + i)) == std::string("--no-pre-log")) {
             _PRE_LOG_ = false;

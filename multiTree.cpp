@@ -51,28 +51,46 @@ namespace SuperTAD::multi {
     }
 
 
-    bool Tree::insert(multi::TreeNode &newNode, multi::TreeNode &parentNode)
-    {
-        if (parentNode._val[0] <= newNode._val[0]
-            && parentNode._val[1] >= newNode._val[1]
-            && !parentNode.hasBiggerChild(newNode)
-            && parentNode._children.emplace(&newNode).second) {
-            newNode._parent = &parentNode;
-            _nodeList.emplace_back(&newNode);
+//    bool Tree::insert(multi::TreeNode &newNode, multi::TreeNode &parentNode)
+//    {
+//        if (parentNode._val[0] <= newNode._val[0]
+//            && parentNode._val[1] >= newNode._val[1]
+//            && !parentNode.hasBiggerChild(newNode)
+//            && parentNode._children.emplace(&newNode).second) {
+//            newNode._parent = &parentNode;
+//            _nodeList.emplace_back(&newNode);
+//
+////            std::cout << "parentNode=\n";
+////            treeNodeVerbose(parentNode);
+//            std::cout << "emplaced newNode: " << newNode << "\n";
+//            return true;
+//        }
+//        else {
+//            for (auto it: parentNode._children) {
+//                if (insert(newNode, *it))
+//                    return true;
+//            }
+//        }
+//        return false;
+//    }
 
-//            std::cout << "parentNode=\n";
-//            treeNodeVerbose(parentNode);
-//            std::cout << "newNode=" << newNode << "\n";
-//            std::cout << "\n";
-            return true;
-        }
-        else {
-            for (auto it: parentNode._children) {
-                if (insert(newNode, *it))
+    bool Tree::insert(multi::TreeNode &newNode, multi::TreeNode &parent)
+    {
+        if (parent._children.size() > 0) {
+            for (auto it: parent._children) {
+                if (insert(newNode, *it)) {
                     return true;
+                }
             }
         }
-        return false;
+        else if (parent._val[0] <= newNode._val[0] && parent._val[1] >= newNode._val[0]) {
+            newNode._parent = &parent;
+            _nodeList.emplace_back(&newNode);
+            std::cout << "emplaced newNode: " << newNode << "\n";
+            return true;
+        } else {
+            return false;
+        }
     }
 
 

@@ -121,7 +121,7 @@ namespace SuperTAD::multi {
 
         void add(int start, int end);
 
-        bool insert(TreeNode &newNode, TreeNode &parentNode);
+        bool insert(TreeNode &newNode, TreeNode &parent);
 
 //        std::vector<TreeNode*> &nodeList() { return _nodeList; }
 

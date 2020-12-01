@@ -4,6 +4,7 @@
 
 #include "detectorDeepBinary.h"
 
+
 namespace SuperTAD::deepBinary
 {
 
@@ -55,8 +56,7 @@ namespace SuperTAD::deepBinary
 //            }
 //        }
 
-        if (_SE_RESULT_PATH_!="")
-        {
+        if (_SE_RESULT_PATH_!="") {
             std::ofstream outfile;
             outfile.open(_SE_RESULT_PATH_, std::ios_base::app); // append instead of overwrite
             outfile << _table[0][_N_-1] << "\n";
@@ -66,12 +66,31 @@ namespace SuperTAD::deepBinary
         if (!_NO_OUTPUT_)
             Writer::writeTree(_OUTPUT_ + ".deepbinary", *_nodeList);
 
+        if (_VERBOSE_)
+            printf("start pruning deep binary tree\n");
+        else
+            printf("prune deep binary tree\n");
+
+        binary::BasePruner *p;
         if (_PRUNE_) {
-            binary::Pruner filter(*_binaryTree);
-            filter.execute();
-//        multi::treeNodeVerbose(*(filter._prunedTree._root), 0);
+            switch (_PRUNE_METHOD_) {
+                case binary::PruneMethod1:
+                    p = new binary::Pruner1(*_binaryTree);
+                    break;
+                case binary::PruneMethod2:
+                    p = new binary::Pruner2(*_binaryTree);
+                    break;
+                default:
+                    p = new binary::Pruner2(*_binaryTree);
+
+            }
+            p->execute();
+            multi::treeNodeVerbose(*(p->_prunedTree._root), 0);
+            if (_VERBOSE_)
+                printf("finish pruning deep binary tree\n");
+
             if (!_NO_OUTPUT_)
-                Writer::writeTree(_OUTPUT_ + ".deepbinary.pruned", filter._prunedTree._nodeList);
+                Writer::writeTree(_OUTPUT_ + ".deepbinary.pruned", p->_prunedTree._nodeList);
         }
         return;
     }

@@ -56,15 +56,16 @@ namespace SuperTAD::deepBinary
 //            }
 //        }
 
-        if (_SE_RESULT_PATH_!="") {
-            std::ofstream outfile;
-            outfile.open(_SE_RESULT_PATH_, std::ios_base::app); // append instead of overwrite
-            outfile << _table[0][_N_-1] << "\n";
-            outfile.close();
-        }
-
-        if (!_NO_OUTPUT_)
+        if (!_NO_OUTPUT_) {
             Writer::writeTree(_OUTPUT_ + ".deepbinary", *_nodeList);
+            if (_SE_RESULT_PATH_!="") {
+                std::ofstream outfile;
+                outfile.open(_SE_RESULT_PATH_, std::ios_base::app); // append instead of overwrite
+                outfile << "before prune:\n";
+                outfile << _table[0][_N_-1] << "\n";
+                outfile.close();
+            }
+        }
 
         if (_VERBOSE_)
             printf("start pruning deep binary tree\n");
@@ -89,8 +90,16 @@ namespace SuperTAD::deepBinary
             if (_VERBOSE_)
                 printf("finish pruning deep binary tree\n");
 
-            if (!_NO_OUTPUT_)
+            if (!_NO_OUTPUT_) {
                 Writer::writeTree(_OUTPUT_ + ".deepbinary.pruned", p->_prunedTree._nodeList);
+                if (_SE_RESULT_PATH_ != "") {
+                    std::ofstream outfile;
+                    outfile.open(_SE_RESULT_PATH_, std::ios_base::app); // append instead of overwrite
+                    outfile << "after prune:\n";
+                    outfile << p->_minHtable[p->_optimalK-1][p->_tree->_root->_idx] << "\n";
+                    outfile.close();
+                }
+            }
         }
         return;
     }

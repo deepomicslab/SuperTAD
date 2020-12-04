@@ -152,6 +152,7 @@ namespace SuperTAD::multi {
 
         }
         else {
+            kOpt = SuperTAD::_K_;
             printf("K=%d\n", SuperTAD::_K_);
 //            sumOfEntropy.emplace_back(num, _table[0][_N_ - 1][indexK(num)][_H_ - 1][_N_ - 1]);
             sumOfEntropy.emplace_back(SuperTAD::_K_, _table[0][SuperTAD::_N_ - 1][SuperTAD::_K_ - 1][SuperTAD::_H_ - 1][
@@ -172,8 +173,15 @@ namespace SuperTAD::multi {
             printf("\n");
         }
 
-        if (!SuperTAD::_NO_OUTPUT_)
+        if (!SuperTAD::_NO_OUTPUT_) {
             _writer.writeTree(SuperTAD::_OUTPUT_ + ".multi", _nodeList);
+            if (_SE_RESULT_PATH_ != "") {
+                std::ofstream outfile;
+                outfile.open(_SE_RESULT_PATH_, std::ios_base::app); // append instead of overwrite
+                outfile <<  _table[0][SuperTAD::_N_ - 1][kOpt - 1][SuperTAD::_H_ - 1][SuperTAD::_N_ - 1] << "\n";
+                outfile.close();
+            }
+        }
     }
 
 

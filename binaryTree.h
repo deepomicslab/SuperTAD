@@ -189,7 +189,7 @@ namespace SuperTAD::binary {
         Data *_data;
         double **_minHtable;
         int **_minIdxTable;
-        int _K, _mu;
+        int _K, _mu, _optimalK;
         binary::Tree *_tree;
         multi::Tree _prunedTree;
         virtual void execute() { fprintf(stderr, "execute() in BasePruner should not be called\n"); };

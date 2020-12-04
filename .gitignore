@@ -4,4 +4,5 @@ cmake-build-*
 .DS_Store
 data
 test.cpp
+build
 

@@ -305,6 +305,7 @@ namespace SuperTAD::binary
                 break;
             }
         }
+        _optimalK = minIdx;
         printf("optimal k is %d with minial se %f\n", minIdx, minSE);
         backTrace(*_tree->_root, minIdx);
     }

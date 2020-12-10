@@ -7,7 +7,7 @@
 
 namespace SuperTAD
 {
-    std::string _WORK_DIR_ = "";
+    std::string _WORK_DIR_;
     std::string _INPUT_;
     std::string _OUTPUT_;
     std::string _RESULT_;
@@ -16,7 +16,7 @@ namespace SuperTAD
     std::string _SE_RESULT_PATH_;
     std::string _CHROM1_ = "chr1";
     std::string _CHROM2_ = "chr1";
-    std::string _PRE_ = "";
+    std::string _PRE_;
 
     bool _BINARY_ = false;
     bool _MULTI_ = false;
@@ -34,6 +34,7 @@ namespace SuperTAD
     bool _BIN_LIST_ = false;
     bool _NO_OUTPUT_ = false;
     bool _DETERMINE_K_ = true;
+    bool _APPEND_RESULT_ = false;
 
     int _K_ = -999;
     int _MinSize_ = 2;

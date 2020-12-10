@@ -105,6 +105,11 @@ int parseArg(int argc, char *argv[], int i)
             printf("se results path is %s\n", _SE_RESULT_PATH_.c_str());
         }
 
+        if (std::string(*(argv + i)) == std::string("--append")) {
+            _APPEND_RESULT_ = true;
+            printf("append result to file\n");
+        }
+
         if (std::string(*(argv + i)) == std::string("-w")) {
             _WORK_DIR_ = std::string (*(argv + ++i));
             printf("working dir is %s\n", _WORK_DIR_.c_str());

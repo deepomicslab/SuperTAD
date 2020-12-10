@@ -37,6 +37,7 @@ namespace SuperTAD
     extern bool _SHORT_;
     extern bool _BIN_LIST_;
     extern bool _NO_OUTPUT_;
+    extern bool _APPEND_RESULT_;
 
     extern int _HU_;
     extern int _HD_;

@@ -184,7 +184,9 @@ namespace SuperTAD::binary {
     class BasePruner {
     protected:
         BasePruner(Tree &tree);
+
         ~BasePruner(){};
+
     public:
         Data *_data;
         double **_minHtable;
@@ -192,6 +194,7 @@ namespace SuperTAD::binary {
         int _K, _mu, _optimalK;
         binary::Tree *_tree;
         multi::Tree _prunedTree;
+
         virtual void execute() { fprintf(stderr, "execute() in BasePruner should not be called\n"); };
     };
 
@@ -216,11 +219,13 @@ namespace SuperTAD::binary {
 
         ~Pruner2();
 
-        void init();
+//        void init();
 
         void execute() override;
 
         double getH(TreeNode &node, int k);
+
+        double getH();
 
         void backTrace(TreeNode &node, int k);
     };

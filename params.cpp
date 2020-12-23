@@ -35,6 +35,7 @@ namespace SuperTAD
     bool _NO_OUTPUT_ = false;
     bool _DETERMINE_K_ = true;
     bool _APPEND_RESULT_ = false;
+    bool _TURBO_PRUNE_ = true;
 
     int _K_ = -999;
     int _MinSize_ = 2;

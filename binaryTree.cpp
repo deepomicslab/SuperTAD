@@ -52,6 +52,9 @@ namespace SuperTAD::binary
 
     void Tree::add(int start, int end, int k)
     {
+        if (_VERBOSE_)
+            fprintf(stderr, "binary::Tree::add() is deprecated and going to be removed. Please use insert instead.\n");
+
         TreeNode *treeNode = new TreeNode(start, end, *_data);
 
         // leaf node (only 1 bin)
@@ -63,7 +66,8 @@ namespace SuperTAD::binary
             if (treeExistNode->_left == NULL) {
                 treeExistNode->_left = treeNode;
                 treeNode->_parent = treeExistNode;
-            } else {
+            }
+            else {
                 treeExistNode->_right = treeNode;
                 treeNode->_parent = treeExistNode;
                 _t.pop();
@@ -76,13 +80,15 @@ namespace SuperTAD::binary
                 _t.push(_root);
                 _root->setIdx(_nodeList.size());
                 _nodeList.emplace_back(_root);
-            } else {
+            }
+            else {
                 TreeNode *treeExistNode = _t.top();
                 if (treeExistNode->_left == NULL) {
                     treeExistNode->_left = treeNode;
                     treeNode->_parent = treeExistNode;
                     _t.push(treeExistNode->_left);
-                } else {
+                }
+                else {
                     treeExistNode->_right = treeNode;
                     treeNode->_parent = treeExistNode;
                     _t.pop();
@@ -107,14 +113,17 @@ namespace SuperTAD::binary
             treeNode->setIdx(_nodeList.size());
             treeNode->setVol(*_data);
             _nodeList.emplace_back(treeNode);
-        } else if (treeNode->_val[1] <= parentNode->_left->_val[1]) {
+        }
+        else if (treeNode->_val[1] <= parentNode->_left->_val[1]) {
             insert(treeNode, parentNode->_left);
-        } else if (parentNode->_right == NULL) {
+        }
+        else if (parentNode->_right == NULL) {
             parentNode->_right = treeNode;
             treeNode->_parent = parentNode;
             treeNode->setIdx(_nodeList.size());
             _nodeList.emplace_back(treeNode);
-        } else {
+        }
+        else {
             insert(treeNode, parentNode->_right);
         }
     }
@@ -279,31 +288,50 @@ namespace SuperTAD::binary
     }
 
 
-    void Pruner2::init()
-    {
-        for (int i = 0; i < _N_; i++) {
-            std::fill(&_minHtable[i][0], &_minHtable[i][_mu], std::numeric_limits<double>::infinity());
-            std::fill(&_minIdxTable[i][0], &_minIdxTable[i][_mu], -1);
-        }
-    }
+//    void Pruner2::init()
+//    {
+//        for (int i = 0; i < _N_; i++) {
+//            std::fill(&_minHtable[i][0], &_minHtable[i][_mu], std::numeric_limits<double>::infinity());
+//            std::fill(&_minIdxTable[i][0], &_minIdxTable[i][_mu], -1);
+//        }
+//    }
 
 
     void Pruner2::execute()
     {
         double minSE = std::numeric_limits<double>::infinity();
         int minIdx;
-        for (int k=1; k<_N_; k++) {
-            getH(*_tree->_root, k);
-            double tmpMinSE = _minHtable[k - 1][_tree->_root->_idx];
-            printf("========\nk=%d, minSE=%f\n", k, tmpMinSE);
-            if (minSE > tmpMinSE) {
-                minSE = tmpMinSE;
-                minIdx = k;
+        if (!_TURBO_PRUNE_) {
+//            std::clock_t tTmp = std::clock();
+            for (int k = 1; k < _N_; k++) {
+                getH(*_tree->_root, k);
+                double tmpMinSE = _minHtable[k - 1][_tree->_root->_idx];
+                printf("========\nk=%d, minSE=%f\n", k, tmpMinSE);
+                if (minSE > tmpMinSE) {
+                    minSE = tmpMinSE;
+                    minIdx = k;
+                } else {
+                    printf("met potential inflection\n");
+                    break;
+                }
             }
-            else {
-                printf("met potential inflection\n");
-                break;
+//            printf("getH for %d consumes %fs\n", _N_, (float)(std::clock() - tTmp)/CLOCKS_PER_SEC);
+        }
+        else {
+            std::clock_t tTmp = std::clock();
+            for (int k=_N_; k>0; k--) {
+                getH(*_tree->_root, k);
+                double tmpMinSE = _minHtable[k - 1][_tree->_root->_idx];
+                printf("========\nk=%d, minSE=%f\n", k, tmpMinSE);
+                if (minSE > tmpMinSE) {
+                    minSE = tmpMinSE;
+                    minIdx = k;
+                } else {
+                    printf("met potential inflection\n");
+                    break;
+                }
             }
+//            printf("getH for %d consumes %fs\n", _N_, (float)(std::clock() - tTmp)/CLOCKS_PER_SEC);
         }
         _optimalK = minIdx;
         printf("optimal k is %d with minial se %f\n", minIdx, minSE);
@@ -313,29 +341,60 @@ namespace SuperTAD::binary
 
     double Pruner2::getH(TreeNode &node, int k)
     {
-        if (k==1) {
-            double tmp = node.getSEasLeaf(*(_tree->_data), *(_tree->_root));
-            _minHtable[k-1][node._idx] = tmp;
-            return tmp;
+//        printf("getH(node=%d, k=%d)\n", node._idx, k);
+        if (_minHtable[k-1][node._idx] != std::numeric_limits<double>::infinity() && _minIdxTable[k-1][node._idx]!=-1) {
+//            printf("already obtained optimal H for node=%d and k=%d;optimal H=%f, k1=%d\n", node._idx, k, _minHtable[0][node._idx], _minIdxTable[k-1][node._idx]);
+            return _minHtable[k-1][node._idx];
         } else {
-            if (node._left==NULL || node._right==NULL) {
-                return std::numeric_limits<double>::infinity();
+            if (k == 1) {
+                double tmp = node.getSEasLeaf(*(_tree->_data), *(_tree->_root));
+                _minHtable[0][node._idx] = tmp;
+//                printf("getH(k=1, id=%d)=%f\n", node._idx, tmp);
+                return tmp;
             } else {
-                double minH = std::numeric_limits<double>::infinity();
-                int minK1;
-                for (int k1 = 1; k1 < k; k1++) {
-                    double tmp = getH(*node._left, k1) + getH(*node._right, k - k1);
-                    if (tmp < minH) {
-                        minH = tmp;
-                        minK1 = k1;
-                    }
-                }
-                if (minH < std::numeric_limits<double>::infinity()) {
-                    _minHtable[k - 1][node._idx] = minH;
-                    _minIdxTable[k - 1][node._idx] = minK1;
-                    return minH;
-                } else {
+                if (node._left == NULL || node._right == NULL) {
+//                    printf("getH(node=%d, k=%d): no child exists\n", node._idx, k);
+//                    std::cout << node << "\n";
                     return std::numeric_limits<double>::infinity();
+                } else if (node._val[1]-node._val[0]+1<k) {
+//                    printf("getH(node=%d, k=%d): k>#bins\n", node._idx, k);
+//                    std::cout << node << "\n";
+                    return std::numeric_limits<double>::infinity();
+                }
+                else {
+                    double minH = std::numeric_limits<double>::infinity();
+                    int minK1;
+                    for (int k1 = 1; k1 < k; k1++) {
+                        double tmp = getH(*node._left, k1) + getH(*node._right, k - k1);
+                        if (tmp < minH) {
+                            minH = tmp;
+                            minK1 = k1;
+                        }
+                    }
+
+                    if (minH < std::numeric_limits<double>::infinity()) {
+                        _minHtable[k - 1][node._idx] = minH;
+                        _minIdxTable[k - 1][node._idx] = minK1;
+//                        printf("getH(k=%d, id=%d)=%f, k1=%d\n", k - 1, node._idx, minH, minK1);
+                    }
+                    return minH;
+                }
+            }
+        }
+    }
+
+
+    double Pruner2::getH()
+    {
+        for (int k=0; k<_K; k++) {
+            for (int i=0; i<_mu; i++) {
+                for (int k1=0; k1<i; k1++) {
+//                    double tmp = _minHtable[k1][_mu] + getH(*node._right, k - k1);
+//                    double minH =
+//                    if (tmp < minH) {
+//                        minH = tmp;
+//                        minK1 = k1;
+//                    }
                 }
             }
         }

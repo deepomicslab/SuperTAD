@@ -36,18 +36,8 @@ namespace SuperTAD
         bool _initByPointer=false;
 
     public:
-
         // upper tri is intra; lower tri is inter
-        double **_edgeCountArray=NULL;
-
-        double _edgeSum;
-
-        double _doubleEdgeSum;
-
-        double **_logVolTable=NULL;
-
-        double **_volTable=NULL;
-
+        double **_edgeCountArray=NULL, _edgeSum, _doubleEdgeSum, **_logVolTable=NULL, **_volTable=NULL;
         std::vector<double> _sumOfGtimesLogG;
 
         Data(std::string input);

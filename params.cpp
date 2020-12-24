@@ -35,7 +35,7 @@ namespace SuperTAD
     bool _NO_OUTPUT_ = false;
     bool _DETERMINE_K_ = true;
     bool _APPEND_RESULT_ = false;
-    bool _TURBO_PRUNE_ = true;
+    bool _TURBO_PRUNE_ = false;
 
     int _K_ = -999;
     int _MinSize_ = 2;
@@ -47,7 +47,7 @@ namespace SuperTAD
     int _PENALTY_ = -1;
     int _RESOLUTION_ = 1;
     int _PRUNE_METHOD_ = 0;
-    double _THRESHOLD_ = 1e-6;
+    double _THRESHOLD_ = 1e-13;
 
     int64_t _CHROM1_START_ = 0;
     int64_t _CHROM2_START_ = 0;

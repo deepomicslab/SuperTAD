@@ -216,7 +216,6 @@ namespace SuperTAD::binary {
         double normOfLeavesTmp = std::numeric_limits<double>::infinity();
 
         for (k = 2; k <= SuperTAD::_K_; k++) {
-
             if (breakFlag) {
                 if (SuperTAD::_DEBUG_)
                     printf("break at loop k; s=%d, e=%d, k=%d\n", s, e, k);
@@ -536,6 +535,7 @@ namespace SuperTAD::binary {
         if (!SuperTAD::_NO_OUTPUT_)
             SuperTAD::Writer::writeTree(SuperTAD::_OUTPUT_ + ".binary.filter", _trueNodeList);
     }
+
 
     int * Detector::filterNodes()
     {

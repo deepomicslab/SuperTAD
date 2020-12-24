@@ -105,26 +105,26 @@ namespace SuperTAD::binary
     }
 
 
-    void Tree::insert(TreeNode *treeNode, TreeNode *parentNode)
+    void Tree::insert(TreeNode *newNode, TreeNode *parentNode)
     {
         if (parentNode->_left == NULL) {
-            parentNode->_left = treeNode;
-            treeNode->_parent = parentNode;
-            treeNode->setIdx(_nodeList.size());
-            treeNode->setVol(*_data);
-            _nodeList.emplace_back(treeNode);
+            parentNode->_left = newNode;
+            newNode->_parent = parentNode;
+            newNode->setIdx(_nodeList.size());
+            newNode->setVol(*_data);
+            _nodeList.emplace_back(newNode);
         }
-        else if (treeNode->_val[1] <= parentNode->_left->_val[1]) {
-            insert(treeNode, parentNode->_left);
+        else if (newNode->_val[1] <= parentNode->_left->_val[1]) {
+            insert(newNode, parentNode->_left);
         }
         else if (parentNode->_right == NULL) {
-            parentNode->_right = treeNode;
-            treeNode->_parent = parentNode;
-            treeNode->setIdx(_nodeList.size());
-            _nodeList.emplace_back(treeNode);
+            parentNode->_right = newNode;
+            newNode->_parent = parentNode;
+            newNode->setIdx(_nodeList.size());
+            _nodeList.emplace_back(newNode);
         }
         else {
-            insert(treeNode, parentNode->_right);
+            insert(newNode, parentNode->_right);
         }
     }
 
@@ -152,6 +152,7 @@ namespace SuperTAD::binary
         _data = tree._data;
         _tree = &tree;
         _mu = _tree->_nodeList.size();
+        _prunedTree.setData(*_data);
     }
 
 
@@ -301,13 +302,58 @@ namespace SuperTAD::binary
     {
         double minSE = std::numeric_limits<double>::infinity();
         int minIdx;
-        if (!_TURBO_PRUNE_) {
+
+//        // test
+//        int k=63;
+//        getH(*_tree->_root, k);
+//        double tmpMinSE = _minHtable[k - 1][_tree->_root->_idx];
+//        printf("========\nk=%d, minSE=%f\n", k, tmpMinSE);
+//        backTrace(*_tree->_root, k);
+//        _prunedTree._root->setVol(*_data);
+//        std::cout << "prunedTree.root:" << *_prunedTree._root << "\n";
+//        double se=0;
+//        printf("root vol=%f\n", _prunedTree._root->_vol);
+//        std::ofstream file;
+//        file.open("../data/test/edge_graph_3421.txt.deepbinary.pruned.tsv.test.log.tsv");
+//        file << "start\tend\tvol\tse\n";
+//        for (auto it:_prunedTree._nodeList) {
+//            file << it->_val[0] << "\t" << it->_val[1] << "\t" << it->_vol << "\t" << it->_se << "\n";
+//            std::cout << *it << "\n";
+//            double tmp=_data->getSE(it->_val[0],it->_val[1], _prunedTree._root->_vol, it->_vol);
+//            printf("se=%f\n", tmp);
+//            se += tmp;
+//            printf("\n");
+//        }
+//        printf("\n");
+//        for (auto it:_prunedTree._nodeList) {
+////            file << it->_val[0] << "\t" << it->_val[1] << "\t" << it->_vol << "\t" << it->_se << "\n";
+////            std::cout << *it << "\n";
+////            double tmp=_data->getSE(it->_val[0],it->_val[1], _prunedTree._root->_vol, it->_vol);
+////            printf("se=%f\n", tmp);
+////            se += tmp;
+//            double tmp;
+//            for (int i=it->_val[0]; i<=it->_val[1]; i++) {
+//                tmp = _data->getSE(i, i, it->_vol);
+//                printf("se of bin %d=%f\n", i, tmp);
+//                file << i << "\t" << i << "\t" << it->_vol << "\t" << tmp << "\n";
+//                se += tmp;
+//            }
+//        }
+//        file.close();
+//        printf("final se=%f\n", se);
+//        _optimalK = k;
+//        _optimalSE = se;
+////        exit(0);
+
+
+        if (_TURBO_PRUNE_) {
 //            std::clock_t tTmp = std::clock();
-            for (int k = 1; k < _N_; k++) {
+            for (int k = 1; k <= _N_; k++) {
                 getH(*_tree->_root, k);
                 double tmpMinSE = _minHtable[k - 1][_tree->_root->_idx];
                 printf("========\nk=%d, minSE=%f\n", k, tmpMinSE);
                 if (minSE > tmpMinSE) {
+                    printf("update min SE\n");
                     minSE = tmpMinSE;
                     minIdx = k;
                 } else {
@@ -323,33 +369,33 @@ namespace SuperTAD::binary
                 getH(*_tree->_root, k);
                 double tmpMinSE = _minHtable[k - 1][_tree->_root->_idx];
                 printf("========\nk=%d, minSE=%f\n", k, tmpMinSE);
-                if (minSE > tmpMinSE) {
+                if (minSE >= tmpMinSE) {
+                    printf("update min SE\n");
                     minSE = tmpMinSE;
                     minIdx = k;
-                } else {
-                    printf("met potential inflection\n");
-                    break;
                 }
             }
 //            printf("getH for %d consumes %fs\n", _N_, (float)(std::clock() - tTmp)/CLOCKS_PER_SEC);
         }
         _optimalK = minIdx;
-        printf("optimal k is %d with minial se %f\n", minIdx, minSE);
-        backTrace(*_tree->_root, minIdx);
+        _optimalSE = minSE;
+        printf("optimal k is %d with minial se %f\n", _optimalK, _optimalSE);
+        backTrace(*_tree->_root, _optimalK);
     }
 
 
     double Pruner2::getH(TreeNode &node, int k)
     {
 //        printf("getH(node=%d, k=%d)\n", node._idx, k);
-        if (_minHtable[k-1][node._idx] != std::numeric_limits<double>::infinity() && _minIdxTable[k-1][node._idx]!=-1) {
+        if (_minHtable[k-1][node._idx] != std::numeric_limits<double>::infinity()) {
 //            printf("already obtained optimal H for node=%d and k=%d;optimal H=%f, k1=%d\n", node._idx, k, _minHtable[0][node._idx], _minIdxTable[k-1][node._idx]);
             return _minHtable[k-1][node._idx];
         } else {
             if (k == 1) {
                 double tmp = node.getSEasLeaf(*(_tree->_data), *(_tree->_root));
                 _minHtable[0][node._idx] = tmp;
-//                printf("getH(k=1, id=%d)=%f\n", node._idx, tmp);
+//                std::cout << "for node: " << node;
+//                printf(", getH(k=1, id=%d)=%f\n", node._idx, tmp);
                 return tmp;
             } else {
                 if (node._left == NULL || node._right == NULL) {
@@ -403,11 +449,10 @@ namespace SuperTAD::binary
 
     void Pruner2::backTrace(TreeNode &node, int k)
     {
-//        _prunedTree.add(_tree->_root->_val[0], _tree->_root->_val[1]);
-
         if (k == 1) {
-            std::cout << "selected node:" << node << "\n";
-            _prunedTree.add(node._val[0], node._val[1]);
+//            std::cout << "selected node:" << node << "\n";
+            multi::TreeNode *tn = _prunedTree.add(node._val[0], node._val[1]);
+//            std::cout << "inserted node:" << *tn << "\n\n";
             return;
         }
 

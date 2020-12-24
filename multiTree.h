@@ -18,7 +18,7 @@ namespace SuperTAD::multi {
 
     struct TreeNode {
         int _val[2];
-        double _info=0;
+        double _info=0, _g=0, _vol=0, _se=0;
         std::set<TreeNode*> _children;
         TreeNode *_parent=NULL;
 
@@ -39,6 +39,8 @@ namespace SuperTAD::multi {
             _val[0] = copy._val[0];
             _val[1] = copy._val[1];
             _info = copy._info;
+            _g = copy._g;
+            _vol = copy._vol;
             _children = copy._children;
             _parent = copy._parent;
             return *this;
@@ -74,6 +76,8 @@ namespace SuperTAD::multi {
             else {
                 iss << ", no parent";
             }
+            iss << ", vol=" << _vol;
+            iss << ", se=" << _se;
             return iss.str();
         }
 
@@ -84,6 +88,20 @@ namespace SuperTAD::multi {
             }
         }
 
+        void setG(Data &data)
+        {
+            _g = data.getG(_val[0], _val[1]);
+        }
+
+        void setVol(Data &data)
+        {
+            _vol = data.getVol(_val[0], _val[1]);
+        }
+
+        void setSE(Data &data)
+        {
+            _se = data.getSE(_val[0], _val[1], _parent->_vol, _vol);
+        }
     };
 
     inline bool operator<(const TreeNode &t1, const TreeNode &t2)
@@ -112,14 +130,19 @@ namespace SuperTAD::multi {
 //        std::vector<TreeNode*> _nodeList;
 
     public:
+        Data *_data;
         TreeNode *_root = NULL;
-        std::vector<TreeNode*> _nodeList;
+        std::vector<TreeNode*> _nodeList;  // NOT containing root
 
         Tree();
 
+        Tree(Data &d);
+
         ~Tree();
 
-        void add(int start, int end);
+        void setData(Data &d);
+
+        TreeNode * add(int start, int end);
 
         bool insert(TreeNode &newNode, TreeNode &parent);
 

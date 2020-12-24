@@ -219,9 +219,9 @@ int parseArg(int argc, char *argv[], int i)
             printf("deep binary tree will be pruned for best fit\n");
         }
 
-        if (std::string(*(argv + i)) == std::string("--no-turbo-prune")) {
-            _TURBO_PRUNE_ = false;
-            printf("disble turbo prune\n");
+        if (std::string(*(argv + i)) == std::string("--turbo-prune")) {
+            _TURBO_PRUNE_ = true;
+            printf("enable turbo prune\n");
         }
 
         if (std::string(*(argv + i)) == std::string("--prune_method") ) {

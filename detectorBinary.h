@@ -49,7 +49,7 @@ namespace SuperTAD::binary {
 
         void fillTable();
 
-        static bool sortStart (Boundary a, Boundary b);
+        static bool sortStart(Boundary a, Boundary b);
 
         void indexKtmp(int k) { *_kTmpIdx = k - 1; }
 

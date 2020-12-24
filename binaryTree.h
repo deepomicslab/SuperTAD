@@ -19,29 +19,14 @@
 namespace SuperTAD::binary {
 
     struct TreeNode {
-        int _val[2] = {0, 0};
-        TreeNode *_left;
-        TreeNode *_right;
-        double _se;
-        double _info;
-        TreeNode *_parent;
-        double _D;
-        double _vol;
-        int _idx;
-        //  double _size;
+        TreeNode *_left=NULL, *_right=NULL, *_parent=NULL;
+        double _se=0, _info=0, _D=0, _vol=0;
+        int _val[2] = {0, 0}, _idx;
 
         TreeNode(int start, int end)
         {
             _val[0] = start;
             _val[1] = end;
-            _se = 0;
-            _left = NULL;
-            _right = NULL;
-            _info = 0;
-            _parent = NULL;
-            _D = 0;
-            _vol = 0;
-            _idx = 0;
         }
 
         TreeNode(int start, int end, Data &data) : TreeNode(start, end)
@@ -94,11 +79,13 @@ namespace SuperTAD::binary {
         {
             double se = data.getSE(_val[0], _val[1], pNode._vol, _vol);
             // save this calculation if leaf only has one bin
-            if (_val[0] != _val[1]) {
-                for (int i = _val[0]; i < _val[1]; i++) {
-                    se += data.getSE(i, i, _vol);
+//            if (_val[0] != _val[1]) {
+                for (int i = _val[0]; i <= _val[1]; i++) {
+                    double tmp = data.getSE(i, i, _vol);
+//                    printf("se of bin %d=%f\n", i, tmp);
+                    se += tmp;
                 }
-            }
+//            }
             return se;
         }
 
@@ -140,6 +127,8 @@ namespace SuperTAD::binary {
         else {
             os << ", no right child";
         }
+
+        os << ", vol=" << node._vol;
         return os;
     }
 
@@ -166,7 +155,7 @@ namespace SuperTAD::binary {
         // problematic function
         void add(int start, int end, int k);
 
-        void insert(TreeNode *treeNode, TreeNode *parentNode);
+        void insert(TreeNode *newNode, TreeNode *parentNode);
 
 //        std::vector<TreeNode*> &nodeList() { return _nodeList; }
 
@@ -189,9 +178,8 @@ namespace SuperTAD::binary {
 
     public:
         Data *_data;
-        double **_minHtable;
-        int **_minIdxTable;
-        int _K, _mu, _optimalK;
+        double **_minHtable, _optimalSE;
+        int **_minIdxTable, _K, _mu, _optimalK;
         binary::Tree *_tree;
         multi::Tree _prunedTree;
 

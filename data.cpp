@@ -77,7 +77,6 @@ namespace SuperTAD
     }
 
 
-
     Data::~Data()
     {
         for (int s=0; s<_N_; s++) {
@@ -116,10 +115,10 @@ namespace SuperTAD
             for (i = 0; i < _N_ - k; i++) {
                 j = i + k;
                 double intra = _contactArray[i][j];
-//            printf("intra=contactArray[%d][%d]=%f\n", i, j, intra);
+//                printf("intra=contactArray[%d][%d]=%f\n", i, j, intra);
                 if (j - 1 > 0) {
                     intra += _edgeCountArray[i][j - 1];
-//                printf("intra+edgeCountArray[%d][%d]=%f\n", i, j-1, intra);
+//                    printf("intra+edgeCountArray[%d][%d]=%f\n", i, j-1, intra);
                 }
                 if (i + 1 < _N_) {
                     intra += _edgeCountArray[i + 1][j];
@@ -132,12 +131,11 @@ namespace SuperTAD
 //            printf("intra=%f, abs(intra)=%f, _THRESHOLD_=%f\n", intra, std::abs(intra), _THRESHOLD_);
 
                 if (std::abs(intra) < _THRESHOLD_ || intra < 0) {
-//                fprintf(stderr, "[ERROR] intra=%f, abs(intra)=%f, _THRESHOLD_=%f\n", intra, std::abs(intra), _THRESHOLD_);
-//                if (std::abs(intra) < _THRESHOLD_)
-//                    printf("intra[%d][%d]<THRESHOLD(%f)\n", i, j, _THRESHOLD_);
-//                else if (intra < 0) {
-//                    printf("intra[%d][%d]<0\n", i, j);
-//                }
+//                    fprintf(stderr, "[ERROR] intra=%f, abs(intra)=%f, _THRESHOLD_=%f\n", intra, std::abs(intra), _THRESHOLD_);
+//                    if (std::abs(intra) < _THRESHOLD_)
+//                        printf("intra[%d][%d]<THRESHOLD(%f)\n", i, j, _THRESHOLD_);
+//                    if (intra < 0)
+//                        printf("intra[%d][%d]<0\n", i, j);
                     _edgeCountArray[i][j] = 0;
                 } else
                     _edgeCountArray[i][j] = intra;
@@ -153,11 +151,12 @@ namespace SuperTAD
                     inter -= _edgeCountArray[j + 1][_N_ - 1];
 
                 if (std::abs(inter) < _THRESHOLD_ || inter < 0) {
-//                if (std::abs(inter) < _THRESHOLD_)
-//                    printf("inter[%d][%d]<THRESHOLD(%f)\n", i, j, _THRESHOLD_);
-//                else if (inter < 0) {
-//                    printf("inter[%d][%d]<0\n", i, j);
-//                }
+//                    if (i==j) {
+//                        if (std::abs(inter) < _THRESHOLD_)
+//                            fprintf(stderr,"inter[%d][%d]<THRESHOLD(%f)\n", i, j, _THRESHOLD_);
+//                        if (inter <= 0)
+//                            fprintf(stderr, "inter[%d][%d]<0\n", i, j);
+//                    }
                     _edgeCountArray[j][i] = 0;
                 } else {
                     _edgeCountArray[j][i] = inter;
@@ -165,12 +164,20 @@ namespace SuperTAD
 //                printf("edgeCountArray[%d][%d]=%f\n", i, j, _edgeCountArray[i][j]);
             }
         }
-//    printf("edgeCountArray=\n");
-//    utils::print2Darray(_edgeCountArray, _N_, _N_);
+//        printf("edgeCountArray=\n");
+//        utils::print2Darray(_edgeCountArray, _N_, _N_);
+//        std::cout << "diag of edgeCountArray=";
+//        for (int i=0; i<_N_; i++) {
+//            std::cout << _edgeCountArray[i][i] << "\t";
+//        }
+//        for (int i=0; i<_N_; i++) {
+//            if (_edgeCountArray[i][i]==0)
+//                printf("_edgeCountArray[%d][%d]==0\n", i, i);
+//        }
 
         _edgeSum = _edgeCountArray[0][_N_ - 1];
         _doubleEdgeSum = 2. * _edgeSum;
-//    printf("edgesum=%f, doubleEdgesum=%f\n", _edgeSum, _doubleEdgeSum);
+//        printf("edgesum=%f, doubleEdgesum=%f\n", _edgeSum, _doubleEdgeSum);
 
         // calculate volTble and logTable
         for (int s = 0; s < _N_; s++) {
@@ -230,7 +237,7 @@ namespace SuperTAD
         if (s != e)
             return 2. * _edgeCountArray[s][e] + _edgeCountArray[e][s];
         else
-            return _edgeCountArray[e][s];
+            return _edgeCountArray[e][e];
     }
 
 
@@ -238,8 +245,8 @@ namespace SuperTAD
     {
         // g / edge_sum * log2(V_p / V)
         double currentVol = getVol(s, e);
-//    if(currentVol > 0 && parentVol >= currentVol)
-//        return _edgeCountMat(e, s) / _doubleEdgeSum * log2(parentVol / currentVol);
+//        if (currentVol==0)
+//            fprintf(stderr, "s=%d, e=%d, vol cannot be 0\n", s, e);
         if (currentVol > 0 && parentVol >= currentVol)
             return _edgeCountArray[e][s] / _doubleEdgeSum * log2(parentVol / currentVol);
         return 0;

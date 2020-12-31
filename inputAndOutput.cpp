@@ -29,10 +29,10 @@ void SuperTAD::Reader::parseMatrix2Table(double **&table, std::string path)
 
             SuperTAD::_N_ = 0;
             std::string line;
-            double c;
+            std::string ct;
             getline(file, line);
             std::istringstream iss(line);
-            while (iss >> c)
+            while (iss >> ct)
                 SuperTAD::_N_++;
             iss.clear();
             table = new double *[SuperTAD::_N_];
@@ -41,8 +41,9 @@ void SuperTAD::Reader::parseMatrix2Table(double **&table, std::string path)
             int i=0, j=0;
             table[i] = new double [SuperTAD::_N_]{};
             for (; j < SuperTAD::_N_; j++) {
-                iss >> c;
-                table[i][j] = c;
+                iss >> ct;
+                if (std::isnormal(std::stod(ct)))
+                    table[i][j] = std::stod(ct);
             }
             iss.clear();
 
@@ -50,8 +51,9 @@ void SuperTAD::Reader::parseMatrix2Table(double **&table, std::string path)
                 iss.str(line);
                 table[++i] = new double [SuperTAD::_N_]{};
                 for (j=0; j < SuperTAD::_N_; j++) {
-                    iss >> c;
-                    table[i][j] = c;
+                    iss >> ct;
+                    if (std::isnormal(std::stod(ct)))
+                        table[i][j] = std::stod(ct);;
                 }
                 iss.clear();
             }

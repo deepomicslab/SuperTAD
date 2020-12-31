@@ -128,25 +128,6 @@ namespace SuperTAD::binary
         }
     }
 
-
-//    TreeNode* Tree::getNode(int idx)
-//    {
-//        if (idx==0)
-//            return _root;
-//        int i=0;
-//        TreeNode *node = _root;
-//        while (node->_left || node->_right) {
-//            i++;
-//            if (i==idx)
-//                return node->_left;
-//            i++;
-//            if (i==idx)
-//                return node->_right;
-//
-//        }
-//    }
-
-
     BasePruner::BasePruner(Tree &tree)
     {
         _data = tree._data;

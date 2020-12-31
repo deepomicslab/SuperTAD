@@ -46,17 +46,9 @@ namespace SuperTAD::deepBinary
         backTrace(true);
 
         _nodeList = &_binaryTree->_nodeList;
-
-//        if (_VERBOSE_)
-//        {
-//            printf("nodes:\n");
-//            for (int i = 0; i < _nodeList->size(); i++)
-//            {
-//                std::cout << *(*_nodeList)[i] << "\n";
-//            }
-//        }
-
-
+        if (!_NO_OUTPUT_) {
+            Writer::writeTree(_OUTPUT_ + ".deepbinary", *_nodeList);
+        }
 
         if (_VERBOSE_)
             printf("start pruning deep binary tree\n");
@@ -84,7 +76,7 @@ namespace SuperTAD::deepBinary
 
 
         if (!_NO_OUTPUT_) {
-            Writer::writeTree(_OUTPUT_ + ".deepbinary", *_nodeList);
+
             if (_PRUNE_)
                 Writer::writeTree(_OUTPUT_ + ".deepbinary.pruned", p->_prunedTree._nodeList);
             if (_SE_RESULT_PATH_!="") {

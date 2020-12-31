@@ -66,6 +66,7 @@ int printUsage(char *argv[], int err)
             "\t\t--chrom1-start <int>: start pos on chrom1, default: 0\n"
             "\t\t--chrom2-start <int>: start pos on chrom2, default: the same as --chrom1-start\n"
             "\t\t-r/--resolution <int>: bin resolution, default: 10000\n"
+            "\t\t-s/--sparse: If given, apply the modified version for the sparse input matrix\n"
 
             "\tfilter\tThe nodes filter for optimal coding tree:\n"
             "\t\t./SuperTAD filter <input Hi-C matrix> -i <original result> \n"
@@ -134,6 +135,11 @@ int parseArg(int argc, char *argv[], int i)
             _VERBOSE_ = true;
             setbuf(stdout, NULL);
             printf("print verbose\n");
+        }
+
+        if (std::string(*(argv + i)) == std::string("-s") || std::string(*(argv + i)) == std::string("--sparse")) {
+            _SPARSE_ = true;
+            printf("Apply the sparse input modification\n");
         }
 
         if (std::string(*(argv + i)) == std::string("-K")) {

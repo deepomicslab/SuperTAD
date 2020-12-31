@@ -29,6 +29,7 @@ namespace SuperTAD
     bool _FILTERING_ = true;
     bool _FAST_ = true;
     bool _VERBOSE_ = false;
+    bool _SPARSE_ = false;
     bool _BEDPE_ = false;
     bool _SHORT_ = false;
     bool _BIN_LIST_ = false;

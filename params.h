@@ -33,6 +33,7 @@ namespace SuperTAD
     extern bool _FILTERING_;
     extern bool _FAST_;
     extern bool _VERBOSE_;
+    extern bool _SPARSE_;
     extern bool _BEDPE_;
     extern bool _SHORT_;
     extern bool _BIN_LIST_;

@@ -50,9 +50,17 @@ namespace SuperTAD
             return p1.second < p2.second;
         }
 
-        bool equalDoubleArrays(double *a1, double *a2, int n);
+        template<typename T>
+        bool equalArrays(T *a1, T *a2, int n)
+        {
+            for (int i = 0; i < n; i++) {
+                if (a1[i] != a2[i])
+                    return false;
+            }
+            return true;
+        }
 
-        void copyDoubleArray(double from[], double to[], int n);
+//        void copyDoubleArray(double from[], double to[], int n);
 
         int LCM(int num1, int num2);
 

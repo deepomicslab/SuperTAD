@@ -30,11 +30,15 @@ namespace SuperTAD::multi {
 
     public:
         DetectorH1(SuperTAD::Data &data);
+
         ~DetectorH1();
+
         std::vector<Boundary> execute(int h=-1);
+
         void backTrace();
     };
 
+    
     class Merge {
     private:
         SuperTAD::Data * _data;
@@ -49,8 +53,11 @@ namespace SuperTAD::multi {
 
     public:
         Merge(SuperTAD::Data &data, std::vector<Boundary> &_preBoundList);
+
         ~Merge();
+
         std::vector<Boundary> execute(int h=-1);
+
         void backTrace();
     };
 

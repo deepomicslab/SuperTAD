@@ -142,7 +142,7 @@ namespace SuperTAD::multi {
 
         void setData(Data &d);
 
-        TreeNode * add(int start, int end);
+        TreeNode *add(int start, int end);
 
         bool insert(TreeNode &newNode, TreeNode &parent);
 

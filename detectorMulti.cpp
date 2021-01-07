@@ -36,7 +36,7 @@ namespace SuperTAD::multi {
     }
 
 
-    Detector::~Detector ()
+    Detector::~Detector()
     {
         for (int s = 0; s < SuperTAD::_N_; s++) {
             for (int e = s; e < SuperTAD::_N_; e++) {
@@ -80,9 +80,9 @@ namespace SuperTAD::multi {
             if (SuperTAD::_VERBOSE_) {
                 printf("start determine optimal K\n");
                 tTmp = std::clock();
-            }
-            else
+            } else {
                 printf("determine optimal K\n");
+            }
 
             for (int k=2; k < SuperTAD::_optimalK_ + 1; k++) {
 
@@ -91,8 +91,9 @@ namespace SuperTAD::multi {
 
 
                 entropy = _table[0][SuperTAD::_N_ - 1][k - 1][SuperTAD::_H_ - 1][SuperTAD::_N_ - 1];
-                if (SuperTAD::_VERBOSE_)
+                if (SuperTAD::_VERBOSE_) {
                     printf("min structure entropy=%f\n", entropy);
+                }
 
 //                sumOfEntropy.emplace_back(num, _table[0][_N_ - 1][indexK(num)][_H_ - 1][_N_ - 1]);
                 sumOfEntropy.emplace_back(k, _table[0][SuperTAD::_N_ - 1][k - 1][SuperTAD::_H_ - 1][SuperTAD::_N_ - 1]);
@@ -113,16 +114,18 @@ namespace SuperTAD::multi {
                     log2(SuperTAD::_N_ / (double) k) + (SuperTAD::_N_ * (k - 1) / (double) (k * (SuperTAD::_N_ - 1))) * log2((double) k);
                 normLeaves.emplace_back(k, leafSum / divisor);
                 fflush(stdout);
-
             }
+
             if (SuperTAD::_VERBOSE_){
                 printf("--------\n");
                 printf("sumOfEntropy:\n");
-                for (int i=0; i<sumOfEntropy.size(); i++)
+                for (int i=0; i<sumOfEntropy.size(); i++) {
                     printf("(%d, %f)\n", sumOfEntropy[i].first, sumOfEntropy[i].second);
+                }
                 printf("normLeaves:\n");
-                for (int i=0; i<normLeaves.size(); i++)
+                for (int i=0; i<normLeaves.size(); i++) {
                     printf("(%d, %f)\n", normLeaves[i].first, normLeaves[i].second);
+                }
             }
 
 //            if (_H_ == 1 || _H_ == 2) {
@@ -189,14 +192,16 @@ namespace SuperTAD::multi {
     {
         std::clock_t t;
         if (SuperTAD::_VERBOSE_) {
-            if (SuperTAD::_DEBUG_)
+            if (SuperTAD::_DEBUG_) {
                 t = std::clock();
-
+            }
             printf("start filling db table\n");
         }
-        else
+        else {
             printf("fill db table\n");
+        }
 
+        // base case: k=1, h=1
         for (int s = 0; s < SuperTAD::_N_; s++) {
             for (int e = s; e < SuperTAD::_N_; e++) {
                 double currentVolume = _data->getVol(s, e);
@@ -210,7 +215,7 @@ namespace SuperTAD::multi {
             }
         }
 
-
+        // base case: h=1
         for (int k = 1; k < SuperTAD::_K_; k++) {
             for (int s = 0; s < SuperTAD::_N_; s++) {
                 for (int parentEnd = s; parentEnd < SuperTAD::_N_; parentEnd++) {
@@ -248,15 +253,13 @@ namespace SuperTAD::multi {
         }
 
         for (int h = 1; h < SuperTAD::_H_; h++) {
-            initH(h);
+            initByH(h);
             for (int k = 2; k < SuperTAD::_K_ + 1; k++) {
                 for (int s = 0; s < SuperTAD::_N_; s++) {
                     for (int parentEnd = s; parentEnd < SuperTAD::_N_; parentEnd++) {
                         for (int e = s; e < parentEnd + 1; e++) {
-
 //                            if (e-s+1 < k)
 //                                continue;
-
                             double minTmp, currentVol, parentVol;
                             int minIdx, leftK;
                             if (e - s + 1 >= k) {
@@ -268,10 +271,8 @@ namespace SuperTAD::multi {
                                 leftK = 0;
                                 for (int kTmp = 1; kTmp < k; kTmp++) {
                                     for (int i = s; i < e; i++) {
-
 //                                        if (i-s+1 < kTmp)
 //                                            continue;
-//
 //                                        if (e-i+1 < k-kTmp)
 //                                            continue;
 
@@ -282,8 +283,7 @@ namespace SuperTAD::multi {
                                             tmp = _table[s][i][kTmp - 1][h - 1][i] +
                                                   _table[i + 1][e][k - kTmp - 1][h - 1][e];
                                             tmp += _data->getSE(s, i, parentVol);
-                                        }
-                                        else {
+                                        } else {
 //                                            tmp = _table[start][mid][indexK(binaryK)][height][parentEnd] +
 //                                                  _table[mid + 1][end][indexK(cluster - binaryK)][height - 1][end];
                                             tmp = _table[s][i][kTmp - 1][h][parentEnd] +
@@ -298,8 +298,7 @@ namespace SuperTAD::multi {
                                         }
                                     }
                                 }
-                            }
-                            else {
+                            } else {
                                 minTmp = std::numeric_limits<double>::infinity();
                                 minIdx = 0;
                                 leftK = 0;
@@ -312,6 +311,7 @@ namespace SuperTAD::multi {
                 }
 //                printf("h=%d, k=%d, table=%f\n", h, k, _table[0][_N_-1][k-1][h][_N_-1]);
 
+                // max h
                 if (h == SuperTAD::_H_ - 1 and SuperTAD::_DETERMINE_K_ ) {
 //                    printf("h=%d, SuperTAD::_H_=%d\n", h, SuperTAD::_H_);
                     if (_table[0][SuperTAD::_N_ - 1][k - 1][h][SuperTAD::_N_ - 1] < _table[0][SuperTAD::_N_ - 1][k - 2][h][
@@ -333,15 +333,17 @@ namespace SuperTAD::multi {
             }
         }
 
-        if (SuperTAD::_VERBOSE_)
+        if (SuperTAD::_VERBOSE_) {
             printf("finish filling db table\n");
+        }
 
-        if (SuperTAD::_DEBUG_)
-            printf("filling db table consumes %fs\n", (float)(std::clock() - t)/CLOCKS_PER_SEC);
+        if (SuperTAD::_DEBUG_) {
+            printf("filling db table consumes %fs\n", (float) (std::clock() - t) / CLOCKS_PER_SEC);
+        }
     }
 
 
-    void Detector::initH(int h)
+    void Detector::initByH(int h)
     {
         for (int s = 0; s < SuperTAD::_N_; s++) {
             for (int e = s; e < SuperTAD::_N_; e++) {
@@ -366,8 +368,7 @@ namespace SuperTAD::multi {
         for (int i = 0; i < _boundaries.size(); i++) {
             if (i == _boundaries.size() - 1) {
                 _boundaries[i].second = SuperTAD::_N_ - 1;
-            }
-            else {
+            } else {
                 _boundaries[i].second = _boundaries[i + 1].first - 1;
             }
         }
@@ -376,8 +377,9 @@ namespace SuperTAD::multi {
             printf("boundaries:");
             for (int i = 0; i < _boundaries.size(); i++) {
                 printf("(%d, %d)", _boundaries[i].first, _boundaries[i].second);
-                if (i < _boundaries.size()-1)
+                if (i < _boundaries.size()-1) {
                     printf(", ");
+                }
             }
             printf("\n");
         }
@@ -395,8 +397,10 @@ namespace SuperTAD::multi {
     void Detector::multiSplit (int start, int end, int k, int h, int parentEnd, bool add)
     {
         if (k == 1) {
-            if (add)
+            if (add) {
                 _multiTree.add(start, end);
+            }
+
             if (SuperTAD::_DEBUG_) {
                 printf("multisplit-------------%d %d %d %d k=1, parentEnd: %d %f\n",
                        start, end, k, h, parentEnd, _table[start][end][k-1][h][parentEnd]);
@@ -408,15 +412,16 @@ namespace SuperTAD::multi {
 //                int leftK = _leftKArray[start][end][indexK(k)][h][parentEnd];
                 int leftK = _leftKArray[start][end][k-1][h][parentEnd];
                 if (leftK == 0) {
-                    if (add)
+                    if (add) {
                         _multiTree.add(start, end);
+                    }
+
                     if (SuperTAD::_DEBUG_) {
                         printf("multisplit-------------%d %d %d %d leftK=1, parentEnd: %d %f\n",
                                start, end, k, h, parentEnd, _table[start][end][k - 1][h][parentEnd]);
                     }
                     multiSplit(start, end, k, h-1, end, add);
-                }
-                else {
+                } else {
 //                    int midPos = _minIndexArray[start][end][indexK(k)][h][parentEnd];
                     int midPos = _minIndexArray[start][end][k-1][h][parentEnd];
                     _boundaries.emplace_back(midPos + 1, 0);
@@ -429,13 +434,14 @@ namespace SuperTAD::multi {
                     multiSplit(start, midPos, leftK, h, parentEnd, add);
                     multiSplit(midPos + 1, end, k-leftK, h-1, end, add);
                 }
-            }
-            else {
+            } else {
 //                int midPos = _minIndexArray[start][end][indexK(k)][h][parentEnd];
                 int midPos = _minIndexArray[start][end][k-1][h][parentEnd];
                 _boundaries.emplace_back(midPos + 1, 0);
-                if (add)
+                if (add) {
                     _multiTree.add(midPos + 1, end);
+                }
+
                 if (SuperTAD::_DEBUG_) {
                     printf("multisplitmultisplit-------------%d %d %d %d h=1, parentEnd: %d %f\n",
                            start, end, k, h, parentEnd, _table[start][end][k - 1][h][parentEnd]);

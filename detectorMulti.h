@@ -33,14 +33,24 @@ namespace SuperTAD::multi {
     public:
         std::vector<multi::TreeNode*> _nodeList;
         multi::Tree _multiTree;
+
         Detector(SuperTAD::Data &data);
+
         ~Detector ();
+
 //        int indexK(int k) { return _kToIdx.find(k)->second; }
+
         void execute();
+
         void initK();
+
         void fillTable();
-        void initH(int h);
+
+        // init dp table given h
+        void initByH(int h);
+
         void backTrace(int k, int h, bool add = false);
+
         void multiSplit(int start, int end, int k, int h, int parentEnd, bool add = false);
     };
 

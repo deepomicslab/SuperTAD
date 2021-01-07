@@ -360,7 +360,7 @@ int main (int argc, char *argv[])
         }
         else if (_FILTER_){
             binary::Detector db(data);
-            db.executeFILTER(_RESULT_);
+            db.executeFilter(_RESULT_);
         }
         else if (_MULTI_H_){
             multi::detectorH dh(data);

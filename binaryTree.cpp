@@ -57,7 +57,7 @@ namespace SuperTAD::binary
 
         TreeNode *treeNode = new TreeNode(start, end, *_data);
 
-        // leaf node (only 1 bin)
+        // add leaf nodes (only 1 bin)
         if (k == 0) {
             if (SuperTAD::_DEBUG_)
                 printf("leaf node: (%d, %d)\n", start, end);
@@ -72,9 +72,7 @@ namespace SuperTAD::binary
                 treeNode->_parent = treeExistNode;
                 _t.pop();
             }
-        }
-        // other nodes
-        else {
+        } else {    // add regular nodes
             if (_root == NULL) {
                 _root = treeNode;
                 _t.push(_root);
@@ -326,7 +324,7 @@ namespace SuperTAD::binary
 //        _optimalSE = se;
 ////        exit(0);
 
-
+        // aggressive prune mode
         if (_TURBO_PRUNE_) {
 //            std::clock_t tTmp = std::clock();
             for (int k = 1; k <= _N_; k++) {
@@ -343,8 +341,7 @@ namespace SuperTAD::binary
                 }
             }
 //            printf("getH for %d consumes %fs\n", _N_, (float)(std::clock() - tTmp)/CLOCKS_PER_SEC);
-        }
-        else {
+        } else {    // general prune mode
             std::clock_t tTmp = std::clock();
             for (int k=_N_; k>0; k--) {
                 getH(*_tree->_root, k);
@@ -405,23 +402,6 @@ namespace SuperTAD::binary
 //                        printf("getH(k=%d, id=%d)=%f, k1=%d\n", k - 1, node._idx, minH, minK1);
                     }
                     return minH;
-                }
-            }
-        }
-    }
-
-
-    double Pruner2::getH()
-    {
-        for (int k=0; k<_K; k++) {
-            for (int i=0; i<_mu; i++) {
-                for (int k1=0; k1<i; k1++) {
-//                    double tmp = _minHtable[k1][_mu] + getH(*node._right, k - k1);
-//                    double minH =
-//                    if (tmp < minH) {
-//                        minH = tmp;
-//                        minK1 = k1;
-//                    }
                 }
             }
         }

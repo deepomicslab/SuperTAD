@@ -512,20 +512,21 @@ namespace SuperTAD::binary {
         int *label1;    //  label from 1000 times random experiments
         label1 = filterNodes();
         for (int i = 0; i < _nodeList->size(); i++){
-            int size = (*_nodeList)[i]->_val[1] - (*_nodeList)[i]->_val[0] + 1;
-            int parent_size = (*_nodeList)[i]->_parent->_val[1] - (*_nodeList)[i]->_parent->_val[0] + 1;
-            double size_diff = std::abs( sqrt(size*(parent_size-size)) - size);
-            parent_size = parent_size * 0.04;
-            if ( size_diff <= parent_size)
-            {
+            if ((*_nodeList)[i]->_parent) {
+                int size = (*_nodeList)[i]->_val[1] - (*_nodeList)[i]->_val[0] + 1;
+                int parent_size = (*_nodeList)[i]->_parent->_val[1] - (*_nodeList)[i]->_parent->_val[0] + 1;
+                double size_diff = std::abs(sqrt(size * (parent_size - size)) - size);
+                parent_size = parent_size * 0.04;
+                if (size_diff <= parent_size) {
 //                printf("size_diff <= threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
-                if (label1[i] > 0 and (*_nodeList)[i]->_se > (*_nodeList)[i]->_parent->_se){
-                    _trueNodeList.emplace_back((*_nodeList)[i]);
+                    if (label1[i] > 0 and (*_nodeList)[i]->_se > (*_nodeList)[i]->_parent->_se) {
+                        _trueNodeList.emplace_back((*_nodeList)[i]);
 //                        printf("both labels are 1, %d, %d, \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
-                }
-            } else{
-                _trueNodeList.emplace_back((*_nodeList)[i]);
+                    }
+                } else {
+                    _trueNodeList.emplace_back((*_nodeList)[i]);
 //                    printf("size_diff > threshold parentsize*0.04, %d, %d \n", (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1]);
+                }
             }
         }
         if (SuperTAD::_VERBOSE_)

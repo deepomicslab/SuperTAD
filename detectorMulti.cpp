@@ -9,6 +9,7 @@ namespace SuperTAD::multi {
     Detector::Detector(SuperTAD::Data &data)
     {
         _data = &data;
+        _multiTree.setData(data);
         _boundaries.reserve(SuperTAD::_K_);
         _table = new double ****[SuperTAD::_N_];
         _minIndexArray = new int ****[SuperTAD::_N_];

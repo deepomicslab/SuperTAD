@@ -60,7 +60,8 @@ int printUsage(char *argv[], int err)
             "\t\t\t-k <int>: number of subtrees to be pruned into; must be set along --prune\n"
 
             "\t    SHARED OPTIONS for binary and multi COMMAND:\n"
-            "\t\t-K <int>: The number of leaves in the coding tree, default: nan (determined by the algorithm)\n"
+            "\t\t-K <int>: The number of leaves in the coding tree; default: nan (determined by the algorithm)\n"
+            "\t\t--max-k <int>: The max number of leaves in the coding tree; default: nan\n"
             "\t\t--chrom1 <string>: chrom1 label, default: chr1\n"
             "\t\t--chrom2 <string>: chrom2 label, default: the same as chrom1\n"
             "\t\t--chrom1-start <int>: start pos on chrom1, default: 0\n"
@@ -148,7 +149,7 @@ int parseArg(int argc, char *argv[], int i)
             printf("set K to %d\n", _K_);
         }
 
-        if (std::string(*(argv + i)) == std::string("-k")) {
+        if (std::string(*(argv + i)) == std::string("--max-k")) {
             _K_ = atoi(*(argv + ++i));
             printf("set max K to %d\n", _K_);
         }

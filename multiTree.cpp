@@ -89,6 +89,7 @@ namespace SuperTAD::multi {
 //        return false;
 //    }
 
+
     bool Tree::insert(multi::TreeNode &newNode, multi::TreeNode &parent)
     {
         if (parent._children.size() > 0) {

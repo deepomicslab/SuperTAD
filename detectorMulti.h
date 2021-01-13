@@ -34,7 +34,7 @@ namespace SuperTAD::multi {
         std::vector<multi::TreeNode*> _nodeList;
         multi::Tree _multiTree;
         Detector(SuperTAD::Data &data);
-        ~Detector ();
+        ~Detector();
 //        int indexK(int k) { return _kToIdx.find(k)->second; }
         void execute();
         void initK();

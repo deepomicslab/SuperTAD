@@ -29,11 +29,11 @@ namespace SuperTAD::deepBinary
         delete _binaryTree;
         for (int s = 0; s < _N_; s++)
         {
-            delete _table[s];
-            delete _minIndexArray[s];
+            delete [] _table[s];
+            delete [] _minIndexArray[s];
         }
-        delete _table;
-        delete _minIndexArray;
+        delete [] _table;
+        delete [] _minIndexArray;
     }
 
 
@@ -55,8 +55,13 @@ namespace SuperTAD::deepBinary
         else
             printf("prune deep binary tree\n");
 
-        binary::BasePruner *p;
+        binary::BasePruner *p = NULL;
         if (_PRUNE_) {
+            binary::TreeNode *node = new binary::TreeNode(0, _N_-1, *_data);
+            _nodeList->insert((*_nodeList).begin(), node);
+            for (auto it=_nodeList->begin()+1; it!=_nodeList->end(); it++) {
+                (*it)->_idx++;
+            }
             switch (_PRUNE_METHOD_) {
                 case binary::PruneMethod1:
                     p = new binary::Pruner1(*_binaryTree);
@@ -76,7 +81,6 @@ namespace SuperTAD::deepBinary
 
 
         if (!_NO_OUTPUT_) {
-
             if (_PRUNE_)
                 Writer::writeTree(_OUTPUT_ + ".deepbinary.pruned", p->_prunedTree._nodeList);
             if (_SE_RESULT_PATH_!="") {
@@ -92,6 +96,12 @@ namespace SuperTAD::deepBinary
                 outfile.close();
             }
         }
+
+        if (_PRUNE_) {
+            if (p)
+                delete p;
+        }
+
         return;
     }
 

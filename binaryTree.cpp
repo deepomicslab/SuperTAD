@@ -41,6 +41,7 @@ namespace SuperTAD::binary
         for (int i = 0; i < _nodeList.size(); i++) {
             delete _nodeList[i];
         }
+        delete _root;
     }
 
 
@@ -79,7 +80,7 @@ namespace SuperTAD::binary
                 _root = treeNode;
                 _t.push(_root);
                 _root->setIdx(_nodeList.size());
-                _nodeList.emplace_back(_root);
+//                _nodeList.emplace_back(_root);
             }
             else {
                 TreeNode *treeExistNode = _t.top();
@@ -128,13 +129,30 @@ namespace SuperTAD::binary
         }
     }
 
+
     BasePruner::BasePruner(Tree &tree)
     {
         _data = tree._data;
         _tree = &tree;
-        _mu = _tree->_nodeList.size();
+        _mu = _tree->_nodeList.size()+1;
         _prunedTree.setData(*_data);
     }
+
+    BasePruner::~BasePruner()
+    {
+        _data = NULL;
+        _tree = NULL;
+    }
+
+//    BasePruner::~BasePruner()
+//    {
+//        for (int i = 0; i < _K; i++) {
+//            delete[] _minHtable[i];
+//            delete[] _minIdxTable[i];
+//        }
+//        delete[] _minHtable;
+//        delete[] _minIdxTable;
+//    }
 
 
     Pruner1::Pruner1(Tree &tree, int k) : BasePruner(tree)
@@ -262,11 +280,11 @@ namespace SuperTAD::binary
     Pruner2::~Pruner2()
     {
         for (int i = 0; i < _N_; i++) {
-            delete[] _minHtable[i];
-            delete[] _minIdxTable[i];
+            delete [] _minHtable[i];
+            delete [] _minIdxTable[i];
         }
-        delete[] _minHtable;
-        delete[] _minIdxTable;
+        delete [] _minHtable;
+        delete [] _minIdxTable;
     }
 
 

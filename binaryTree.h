@@ -142,6 +142,7 @@ namespace SuperTAD::binary {
         Data *_data;
         TreeNode *_root;
         std::vector<TreeNode*> _nodeList;
+//        std::vector<TreeNode> _nodeList;
 
         Tree();
 
@@ -171,17 +172,16 @@ namespace SuperTAD::binary {
     static const int PruneMethod2 = 2;
 
     class BasePruner {
-    protected:
-        BasePruner(Tree &tree);
-
-        ~BasePruner(){};
-
     public:
         Data *_data;
         double **_minHtable, _optimalSE;
         int **_minIdxTable, _K, _mu, _optimalK;
         binary::Tree *_tree;
         multi::Tree _prunedTree;
+
+        BasePruner(Tree &tree);
+
+        virtual ~BasePruner();
 
         virtual void execute() { fprintf(stderr, "execute() in BasePruner should not be called\n"); };
     };
@@ -191,7 +191,7 @@ namespace SuperTAD::binary {
     public:
         Pruner1(Tree &tree, int k=10);
 
-        ~Pruner1();
+        ~Pruner1() override;
 
         void execute() override;
 
@@ -205,7 +205,7 @@ namespace SuperTAD::binary {
     public:
         Pruner2(Tree &tree);
 
-        ~Pruner2();
+        ~Pruner2() override;
 
 //        void init();
 

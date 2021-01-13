@@ -162,20 +162,29 @@ namespace SuperTAD::multi {
             backTrace(SuperTAD::_K_, SuperTAD::_H_, true);
         }
 
-//        _nodeList = &_multiTree.nodeList();
-        _multiTree.getNodeList(_nodeList);
+//        _multiTree.getNodeList(_nodeList);
+//        if (SuperTAD::_VERBOSE_) {
+//            printf("nodes:");
+//            for (int i = 0; i < _nodeList.size(); i++) {
+//                printf("(%d, %d)", _nodeList[i]->_val[0], _nodeList[i]->_val[1]);
+//                if (i < _nodeList.size()-1)
+//                    printf(", ");
+//            }
+//            printf("\n");
+//        }
         if (SuperTAD::_VERBOSE_) {
             printf("nodes:");
-            for (int i = 0; i < _nodeList.size(); i++) {
-                printf("(%d, %d)", _nodeList[i]->_val[0], _nodeList[i]->_val[1]);
-                if (i < _nodeList.size()-1)
+            for (int i = 0; i < _multiTree._nodeList.size(); i++) {
+                printf("(%d, %d)", _multiTree._nodeList[i]->_val[0], _multiTree._nodeList[i]->_val[1]);
+                if (i < _multiTree._nodeList.size()-1)
                     printf(", ");
             }
             printf("\n");
         }
 
         if (!SuperTAD::_NO_OUTPUT_) {
-            _writer.writeTree(SuperTAD::_OUTPUT_ + ".multi", _nodeList);
+//            _writer.writeTree(SuperTAD::_OUTPUT_ + ".multi", _nodeList);
+            _writer.writeTree(SuperTAD::_OUTPUT_ + ".multi", _multiTree._nodeList);
             if (_SE_RESULT_PATH_ != "") {
                 std::ofstream outfile;
                 outfile.open(_SE_RESULT_PATH_, std::ios_base::app); // append instead of overwrite
@@ -393,7 +402,7 @@ namespace SuperTAD::multi {
     }
 
 
-    void Detector::multiSplit (int start, int end, int k, int h, int parentEnd, bool add)
+    void Detector::multiSplit(int start, int end, int k, int h, int parentEnd, bool add)
     {
         if (k == 1) {
             if (add)
@@ -438,7 +447,7 @@ namespace SuperTAD::multi {
                 if (add)
                     _multiTree.add(midPos + 1, end);
                 if (SuperTAD::_DEBUG_) {
-                    printf("multisplitmultisplit-------------%d %d %d %d h=1, parentEnd: %d %f\n",
+                    printf("multisplit-------------%d %d %d %d h=1, parentEnd: %d %f\n",
                            start, end, k, h, parentEnd, _table[start][end][k - 1][h][parentEnd]);
                 }
                 multiSplit(start, midPos, k-1, h, parentEnd, add);

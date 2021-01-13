@@ -43,8 +43,8 @@ namespace SuperTAD::multi {
 
     Tree::~Tree()
     {
-//        for (int i = 0; i < _nodeList.size (); i++)
-//            delete _nodeList[i];
+        for (int i = 0; i < _nodeList.size (); i++)
+            delete _nodeList[i];
         delete _root;
     }
 
@@ -56,7 +56,7 @@ namespace SuperTAD::multi {
     }
 
 
-    TreeNode * Tree::add(int start, int end)
+    TreeNode* Tree::add(int start, int end)
     {
         TreeNode *node = new TreeNode(start, end);
         if (!insert(*node, *_root)) {

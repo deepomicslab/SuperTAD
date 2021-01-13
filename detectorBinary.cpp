@@ -7,7 +7,7 @@
 
 namespace SuperTAD::binary {
 
-    Detector::Detector (SuperTAD::Data &data)
+    Detector::Detector(SuperTAD::Data &data)
     {
         _data = &data;
         _table = new double **[SuperTAD::_N_];
@@ -45,34 +45,46 @@ namespace SuperTAD::binary {
     }
 
 
-    Detector::~Detector ()
+    Detector::~Detector()
     {
         delete _binaryTree;
         for (int s = 0; s < SuperTAD::_N_; s++) {
             for (int e = s; e < SuperTAD::_N_; e++) {
-                delete _table[s][e];
-                delete _minIndexArray[s][e];
-                delete _leftKArray[s][e];
+                delete [] _table[s][e];
+                delete [] _minIndexArray[s][e];
+                delete [] _leftKArray[s][e];
 
                 if (SuperTAD::_FAST_) {
-                    delete _minIndexTableForBold[s][e];
+                    delete [] _minIndexTableForBold[s][e];
                 }
             }
-            delete _table[s];
-            delete _minIndexArray[s];
-            delete _leftKArray[s];
+            delete [] _table[s];
+            delete [] _minIndexArray[s];
+            delete [] _leftKArray[s];
+
+            if (SuperTAD::_FAST_) {
+                delete [] _minIndexTableForBold[s];
+            }
         }
-        delete _table;
-        delete _minIndexArray;
-        delete _leftKArray;
+        delete [] _table;
+        delete [] _minIndexArray;
+        delete [] _leftKArray;
 
         delete _numBins;
         delete _kTmpIdx;
         delete _kMinusKtmpIdx;
+
+        if (_FAST_) {
+            delete [] _minIndexTableForBold;
+        }
+
+        if (_FILTERING_) {
+            delete [] _scoreTable;
+        }
     }
 
 
-    void Detector::execute ()
+    void Detector::execute()
     {
         std::clock_t tTmp;
 
@@ -150,7 +162,7 @@ namespace SuperTAD::binary {
     }
 
 
-    bool Detector::sortStart (Boundary a, Boundary b){
+    bool Detector::sortStart(Boundary a, Boundary b){
         if (a.first == b.first)
             return a.size > b.size;
         else
@@ -158,7 +170,7 @@ namespace SuperTAD::binary {
     }
 
 
-    void Detector::executeFILTER (std::string result){
+    void Detector::executeFILTER(std::string result){
         SuperTAD::Reader::parseBoundariesIn8ColsFormat(_boundaries, result);
         sort(_boundaries.begin(), _boundaries.end(), Detector::sortStart);    //sort boundaries in the increasing of start pos
         binary::TreeNode *newNode;

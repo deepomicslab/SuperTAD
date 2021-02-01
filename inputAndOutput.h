@@ -102,7 +102,7 @@ public:
 
         }
         else
-            fprintf(stderr, "cannot open file: %s\n", filePath);
+            fprintf(stderr, "cannot open file: %s\n", filePath.c_str());
     }
 
     template<class T>
@@ -147,7 +147,7 @@ public:
 
         }
         else
-            fprintf(stderr, "cannot open file: %s\n", filePath);
+            fprintf(stderr, "cannot open file: %s\n", filePath.c_str());
     }
 
     template<class T>
@@ -181,7 +181,7 @@ public:
 
         }
         else
-            fprintf(stderr, "cannot open file: %s\n", filePath);
+            fprintf(stderr, "cannot open file: %s\n", filePath.c_str());
     }
 
     template<class T>

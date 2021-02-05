@@ -27,7 +27,8 @@ namespace SuperTAD::deepBinary {
         double **_table;
         int **_minIndexArray;
         std::vector<Boundary> _boundaries;
-
+        binary::BasePruner *_pruner=NULL;
+        
         Detector(SuperTAD::Data &data);
 
         ~Detector();

@@ -34,6 +34,10 @@ namespace SuperTAD::deepBinary
         }
         delete [] _table;
         delete [] _minIndexArray;
+        if (_PRUNE_) {
+            if (_pruner)
+                delete _pruner;
+        }
     }
 
 
@@ -55,7 +59,6 @@ namespace SuperTAD::deepBinary
         else
             printf("prune deep binary tree\n");
 
-        binary::BasePruner *p = NULL;
         if (_PRUNE_) {
             binary::TreeNode *node = new binary::TreeNode(0, _N_-1, *_data);
             _nodeList->insert((*_nodeList).begin(), node);
@@ -64,17 +67,17 @@ namespace SuperTAD::deepBinary
             }
             switch (_PRUNE_METHOD_) {
                 case binary::PruneMethod1:
-                    p = new binary::Pruner1(*_binaryTree);
+                    _pruner = new binary::Pruner1(*_binaryTree);
                     break;
                 case binary::PruneMethod2:
-                    p = new binary::Pruner2(*_binaryTree);
+                    _pruner = new binary::Pruner2(*_binaryTree);
                     break;
                 default:
-                    p = new binary::Pruner2(*_binaryTree);
+                    _pruner = new binary::Pruner2(*_binaryTree);
 
             }
-            p->execute();
-            multi::treeNodeVerbose(*(p->_prunedTree._root), 0);
+            _pruner->execute();
+            multi::treeNodeVerbose(*(_pruner->_prunedTree._root), 0);
             if (_VERBOSE_)
                 printf("finish pruning deep binary tree\n");
         }
@@ -82,7 +85,7 @@ namespace SuperTAD::deepBinary
 
         if (!_NO_OUTPUT_) {
             if (_PRUNE_)
-                Writer::writeTree(_OUTPUT_ + ".deepbinary.pruned", p->_prunedTree._nodeList);
+                Writer::writeTree(_OUTPUT_ + ".deepbinary.pruned", _pruner->_prunedTree._nodeList);
             if (_SE_RESULT_PATH_!="") {
                 std::ofstream outfile;
                 if (_APPEND_RESULT_)
@@ -91,15 +94,10 @@ namespace SuperTAD::deepBinary
                     outfile.open(_SE_RESULT_PATH_);
                 outfile << _table[0][_N_-1];
                 if (_PRUNE_)
-                    outfile << "\t" << p->_minHtable[p->_optimalK-1][p->_tree->_root->_idx];
+                    outfile << "\t" << _pruner->_minHtable[_pruner->_optimalK - 1][_pruner->_tree->_root->_idx];
                 outfile << "\n";
                 outfile.close();
             }
-        }
-
-        if (_PRUNE_) {
-            if (p)
-                delete p;
         }
 
         return;

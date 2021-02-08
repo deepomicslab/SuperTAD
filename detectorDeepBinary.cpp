@@ -41,7 +41,7 @@ namespace SuperTAD::deepBinary
     }
 
 
-    void Detector::execute()
+    void Detector::execute(int K)
     {
         std::clock_t tTmp;
 

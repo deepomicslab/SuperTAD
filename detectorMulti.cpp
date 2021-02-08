@@ -85,7 +85,7 @@ namespace SuperTAD::multi {
             else
                 printf("determine optimal K\n");
 
-            for (int k=2; k < SuperTAD::_optimalK_ + 1; k++) {
+            for (int k=2; k < SuperTAD::_OPTIMAL_K_ + 1; k++) {
 
                 if (SuperTAD::_VERBOSE_)
                     printf("--------\nK=%d\n", k);
@@ -140,7 +140,7 @@ namespace SuperTAD::multi {
 //                sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
 //                kOpt = normLeaves[0].first;
 //            }
-            kOpt = SuperTAD::_optimalK_;
+            kOpt = SuperTAD::_OPTIMAL_K_;
             printf("optimal K is %d\n", kOpt);
 
             if (SuperTAD::_VERBOSE_)
@@ -326,11 +326,11 @@ namespace SuperTAD::multi {
 //                    printf("h=%d, SuperTAD::_H_=%d\n", h, SuperTAD::_H_);
                     if (_table[0][SuperTAD::_N_ - 1][k - 1][h][SuperTAD::_N_ - 1] < _table[0][SuperTAD::_N_ - 1][k - 2][h][
                         SuperTAD::_N_ - 1]) {
-                        SuperTAD::_optimalK_ = k;
-                        printf("--------\noptimalK=%d, table=%f\n", SuperTAD::_optimalK_, _table[0][SuperTAD::_N_ - 1][k - 1][
+                        SuperTAD::_OPTIMAL_K_ = k;
+                        printf("--------\noptimalK=%d, table=%f\n", SuperTAD::_OPTIMAL_K_, _table[0][SuperTAD::_N_ - 1][k - 1][
                             SuperTAD::_H_ - 1][SuperTAD::_N_ - 1]);
                     } else {
-                        printf("--------\nno more optimalK=%d, table=%f\n", SuperTAD::_optimalK_, _table[0][
+                        printf("--------\nno more optimalK=%d, table=%f\n", SuperTAD::_OPTIMAL_K_, _table[0][
                             SuperTAD::_N_ - 1][k - 1][SuperTAD::_H_ - 1][SuperTAD::_N_ - 1]);
                         if (SuperTAD::_VERBOSE_)
                             printf("finish filling db table\n");

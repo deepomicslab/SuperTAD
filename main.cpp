@@ -154,6 +154,17 @@ int parseArg(int argc, char *argv[], int i)
             printf("set max K to %d\n", _K_);
         }
 
+        if (std::string(*(argv+i))=="--prune-k") {
+            _PRUNE_K_ = atoi(*(argv+ ++i));
+            printf("set K to prune to %d; do not determine K\n", _PRUNE_K_);
+        }
+
+        if (std::string(*(argv+i))=="--max-prune-k") {
+            _MAX_PRUNE_K_ = false;
+            _PRUNE_K_ = atoi(*(argv+ ++i));
+            printf("set max K to prune to %d\n", _PRUNE_K_);
+        }
+
         if (std::string(*(argv + i)) == std::string("-h")) {
             _H_ = atoi(*(argv + ++i));
             printf("set H to %d\n", _H_);

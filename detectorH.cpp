@@ -13,7 +13,7 @@ namespace SuperTAD::multi {
 //        for (int i=0; i < SuperTAD::_K_; i++) {
 //            _kToIdx.emplace(k++, i);
 //        }
-        SuperTAD::_K_ = SuperTAD::_N_/SuperTAD::_MinSize_;
+        SuperTAD::_K_ = SuperTAD::_N_/SuperTAD::_MIN_SIZE_;
         printf("set max K to be %d\n", SuperTAD::_K_);
         _table = new double *[SuperTAD::_N_];
         _minIndexArray = new int *[SuperTAD::_N_];
@@ -88,7 +88,7 @@ namespace SuperTAD::multi {
                 printf("finish k=%d, structure entropy=%f\n", a, minSE);
             if (SuperTAD::_DETERMINE_K_) {
                 if (_table[SuperTAD::_N_ - 1][a] < sumOfLeavesTmp){
-                    SuperTAD::_optimalK_ = a;
+                    SuperTAD::_OPTIMAL_K_ = a;
                     sumOfLeavesTmp = minSE;
                 }
                 else
@@ -101,8 +101,8 @@ namespace SuperTAD::multi {
 
         if (SuperTAD::_DETERMINE_K_) {
 //            printf("optimalK=%d, K=%d, _k=%d\n", SuperTAD::_optimalK_ , SuperTAD::_K_, _k);
-            if (SuperTAD::_optimalK_ < SuperTAD::_K_)
-                _k = SuperTAD::_optimalK_ + 1;
+            if (SuperTAD::_OPTIMAL_K_ < SuperTAD::_K_)
+                _k = SuperTAD::_OPTIMAL_K_ + 1;
             printf("determine k to be %d\n", _k);
         }
 
@@ -243,7 +243,7 @@ namespace SuperTAD::multi {
                 printf("finish k = %d, structure entropy=%f\n", a, minSE);
             if (SuperTAD::_DETERMINE_K_) {
                 if (_table[N-1][a] < sumOfLeavesTmp){
-                    SuperTAD::_optimalK_ = a;
+                    SuperTAD::_OPTIMAL_K_ = a;
                     sumOfLeavesTmp = minSE;
                 }
                 else
@@ -255,8 +255,8 @@ namespace SuperTAD::multi {
             printf("finish calculating h=1\n");
 
         if (SuperTAD::_DETERMINE_K_) {
-            if (SuperTAD::_optimalK_ < SuperTAD::_K_)
-                _k = SuperTAD::_optimalK_ + 1;
+            if (SuperTAD::_OPTIMAL_K_ < SuperTAD::_K_)
+                _k = SuperTAD::_OPTIMAL_K_ + 1;
             printf("determine k to be %d\n", _k);
         }
 
@@ -327,7 +327,7 @@ namespace SuperTAD::multi {
                 start = _preboundForDivi[node].first;
                 end = _preboundForDivi[node].second;
                 printf("start=%d, end=%d, node=%d\n", start, end, node);
-                if (end-start+1 <= SuperTAD::_MinSize_)
+                if (end-start+1 <= SuperTAD::_MIN_SIZE_)
                     continue;
                 else {
                     SuperTAD::Data::parseSubMatrix(_subMatrix, *_data, start, end);

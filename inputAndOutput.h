@@ -13,6 +13,7 @@
 #include <limits>
 #include <algorithm>
 #include <vector>
+#include <set>
 //#include "data.h"
 //#include "binaryTree.h"
 //#include "multiTree.h"
@@ -35,7 +36,7 @@ namespace SuperTAD
 
         ~Reader() {};
 
-        static void parseMatrix2Table(double **&table, std::string path);
+        static void parseInput(double **&table, std::string path);
 
         static void readBoundariesIntoGraph(std::string path1, std::string path2, std::vector<Boundary> &boundaries1,
                                 std::vector<Boundary> &boundaries2, int **&graph);

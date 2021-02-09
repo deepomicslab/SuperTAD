@@ -11,7 +11,7 @@ namespace SuperTAD
     Data::Data(std::string input)
     {
         // Reader::parseMatrix(_contactMat, _INPUT_);
-        Reader::parseMatrix2Table(_contactArray, input);
+        Reader::parseInput(_contactArray, input);
         printf("number of bins is %d\n", _N_);
 
         if (_K_ <= 0)

@@ -103,8 +103,8 @@ namespace SuperTAD::binary {
             else
                 printf("determine K\n");
 
-            if (SuperTAD::_optimalK_ < SuperTAD::_K_)
-                SuperTAD::_K_ = SuperTAD::_optimalK_;
+            if (SuperTAD::_OPTIMAL_K_ < SuperTAD::_K_)
+                SuperTAD::_K_ = SuperTAD::_OPTIMAL_K_;
 
             if (SuperTAD::_VERBOSE_)
                 printf("--------\n");
@@ -353,9 +353,9 @@ namespace SuperTAD::binary {
                     SuperTAD::_N_ - 1))) * log2(k);
                 double Tmp = leafSum/divisor;
                 if (Tmp - normOfLeavesTmp < -1e-6){
-                    SuperTAD::_optimalK_ = k;
+                    SuperTAD::_OPTIMAL_K_ = k;
                     normOfLeavesTmp = Tmp;
-                    printf("--------\noptimalK=%d, normLeaves=%f, se=%f\n", SuperTAD::_optimalK_, Tmp, _table[0][SuperTAD::_N_ -1][kIdx]);
+                    printf("--------\noptimalK=%d, normLeaves=%f, se=%f\n", SuperTAD::_OPTIMAL_K_, Tmp, _table[0][SuperTAD::_N_ -1][kIdx]);
                 }
                 else{
                     if (SuperTAD::_VERBOSE_)

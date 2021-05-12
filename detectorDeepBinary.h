@@ -33,7 +33,7 @@ namespace SuperTAD::deepBinary {
 
         ~Detector();
 
-        void execute(int K=_N_);
+        void execute();
 
         void fillTable();
 

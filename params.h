@@ -40,17 +40,19 @@ namespace SuperTAD
     extern bool _NO_OUTPUT_;
     extern bool _APPEND_RESULT_;
     extern bool _TURBO_PRUNE_;
+    extern bool _MAX_PRUNE_K_;
 
     extern int _HU_;
     extern int _HD_;
     extern int _PENALTY_;
     extern int _PRUNE_METHOD_;
     extern int _K_;
-    extern int _MinSize_;
-    extern int _optimalK_;
+    extern int _MIN_SIZE_;
+    extern int _OPTIMAL_K_;
     extern int _N_;
     extern int _H_;
     extern int _RESOLUTION_;
+    extern int _PRUNE_K_;
 
     extern double _THRESHOLD_;
 

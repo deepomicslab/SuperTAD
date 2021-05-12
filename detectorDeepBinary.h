@@ -27,12 +27,13 @@ namespace SuperTAD::deepBinary {
         double **_table;
         int **_minIndexArray;
         std::vector<Boundary> _boundaries;
-
+        binary::BasePruner *_pruner=NULL;
+        
         Detector(SuperTAD::Data &data);
 
         ~Detector();
 
-        void execute();
+        void execute(int K=_N_);
 
         void fillTable();
 

@@ -5,7 +5,7 @@
 #include "inputAndOutput.h"
 
 
-void SuperTAD::Reader::parseMatrix2Table(double **&table, std::string path)
+void SuperTAD::Reader::parseInput(double **&table, std::string path)
 {
     if (path == "") {
         fprintf(stderr, "input must be provided\n");
@@ -21,47 +21,119 @@ void SuperTAD::Reader::parseMatrix2Table(double **&table, std::string path)
     file.exceptions(std::ifstream::badbit);
     try {
         file.open(path);
-        if (file.is_open()) {
-            if (SuperTAD::_VERBOSE_)
-                printf("start parsing input from %s\n", path.c_str());
-            else
-                printf("parse input\n");
-
-            SuperTAD::_N_ = 0;
-            std::string line;
-            std::string ct;
-            getline(file, line);
-            std::istringstream iss(line);
-            while (iss >> ct)
-                SuperTAD::_N_++;
-            iss.clear();
-            table = new double *[SuperTAD::_N_];
-
-            iss.str(line);
-            int i=0, j=0;
-            table[i] = new double [SuperTAD::_N_]{};
-            for (; j < SuperTAD::_N_; j++) {
-                iss >> ct;
-                if (std::isnormal(std::stod(ct)))
-                    table[i][j] = std::stod(ct);
+        _N_ = 0;
+        int m = 0;
+        std::string line;
+        std::string ct;
+        getline(file, line);
+        m++;
+        std::istringstream iss(line);
+        while (iss >> ct) {
+            _N_++;
+        }
+        iss.clear();
+        while (getline(file, line)) {
+            if (line.size()>0) {
+                m++;
             }
-            iss.clear();
+        }
+        file.close();
 
-            while (getline(file, line)) {
-                iss.str(line);
-                table[++i] = new double [SuperTAD::_N_]{};
-                for (j=0; j < SuperTAD::_N_; j++) {
-                    iss >> ct;
-                    if (std::isnormal(std::stod(ct)))
-                        table[i][j] = std::stod(ct);;
+        if (_N_==m) {
+            file.open(path);
+            if (file.is_open()) {
+                if (SuperTAD::_VERBOSE_)
+                    printf("start parsing input from %s\n", path.c_str());
+                else
+                    printf("parse input\n");
+
+                SuperTAD::_N_ = 0;
+                std::string line;
+                std::string ct;
+                getline(file, line);
+                std::istringstream iss(line);
+                while (iss >> ct) {
+                    SuperTAD::_N_++;
                 }
                 iss.clear();
+                table = new double *[SuperTAD::_N_];
+
+                iss.str(line);
+                int i = 0, j = 0;
+                table[i] = new double[SuperTAD::_N_]{};
+                for (; j < SuperTAD::_N_; j++) {
+                    iss >> ct;
+                    if (std::isnormal(std::stod(ct)))
+                        table[i][j] = std::stod(ct);
+                }
+                iss.clear();
+
+                while (getline(file, line)) {
+                    iss.str(line);
+                    table[++i] = new double[SuperTAD::_N_]{};
+                    for (j = 0; j < SuperTAD::_N_; j++) {
+                        iss >> ct;
+                        if (std::isnormal(std::stod(ct)))
+                            table[i][j] = std::stod(ct);;
+                    }
+                    iss.clear();
+                }
+            }
+        } else {
+            std::string line;
+            int id;
+            m = 0;
+            std::set<int> labels;
+            file.open(path);
+            if (file.is_open()) {
+                while (std::getline(file, line)) {
+                    if (line[0] == '#') {
+                        continue;
+                    }
+                    iss.str(line);
+                    for (int i = 0; i < 2; i++) {
+                        iss >> id;
+                        labels.emplace(id);
+                    }
+                    m++;
+                    iss.clear();
+                }
+                file.close();
+                _N_ = labels.size();
+                printf("found %d records, %d samples\n", m, _N_);
+            } else {
+                fprintf(stderr, "cannot open file %s\n", path.c_str());
+                exit(1);
             }
 
-            if (SuperTAD::_VERBOSE_)
-                printf("finish parsing input\n");
+            int minus = 0;
+            if (*labels.begin() == 1) {
+                minus = 1;
+            }
 
+            table = new double *[_N_]{};
+            for (int i = 0; i < _N_; i++) {
+                table[i] = new double [_N_]{};
+            }
+
+            file.open(path);
+            int i, j;
+            double v;
+            if (file.is_open()) {
+                while (std::getline(file, line)) {
+                    iss.str(line);
+                    iss >> i >> j >> v;
+                    table[i - minus][j - minus] = table[j - minus][i - minus] = v;
+                    iss.clear();
+                }
+                file.close();
+            } else {
+                fprintf(stderr, "cannot open file %s\n", path.c_str());
+                exit(1);
+            }
         }
+        if (SuperTAD::_VERBOSE_)
+            printf("finish parsing input\n");
     }
     catch (const std::ifstream::failure& e) {
         printf("exception reading file\n");

@@ -302,6 +302,10 @@ namespace SuperTAD::binary
         double minSE = std::numeric_limits<double>::infinity();
         int minIdx;
 
+        int K = _N_;
+        if (_PRUNE_K_ > 0 && _PRUNE_K_ < _N_) {
+            K = _PRUNE_K_;
+        }
 //        // test
 //        int k=63;
 //        getH(*_tree->_root, k);
@@ -344,10 +348,9 @@ namespace SuperTAD::binary
 //        _optimalSE = se;
 ////        exit(0);
 
-
         if (_TURBO_PRUNE_) {
 //            std::clock_t tTmp = std::clock();
-            for (int k = 1; k <= _N_; k++) {
+            for (int k = 1; k <= K; k++) {
                 getH(*_tree->_root, k);
                 double tmpMinSE = _minHtable[k - 1][_tree->_root->_idx];
                 printf("========\nk=%d, minSE=%f\n", k, tmpMinSE);
@@ -364,7 +367,7 @@ namespace SuperTAD::binary
         }
         else {
             std::clock_t tTmp = std::clock();
-            for (int k=_N_; k>0; k--) {
+            for (int k=K; k>0; k--) {
                 getH(*_tree->_root, k);
                 double tmpMinSE = _minHtable[k - 1][_tree->_root->_idx];
                 printf("========\nk=%d, minSE=%f\n", k, tmpMinSE);
@@ -378,8 +381,13 @@ namespace SuperTAD::binary
         }
         _optimalK = minIdx;
         _optimalSE = minSE;
-        printf("optimal k is %d with minial se %f\n", _optimalK, _optimalSE);
-        backTrace(*_tree->_root, _optimalK);
+        if (_MAX_PRUNE_K_ || K==_N_) {
+            printf("optimal k is %d with minial se %f\n", _optimalK, _optimalSE);
+            backTrace(*_tree->_root, _optimalK);
+        } else {
+            printf("optimal result with k=%d is %f\n", _PRUNE_K_, _minHtable[_PRUNE_K_-1][_tree->_root->_idx]);
+            backTrace(*_tree->_root, _PRUNE_K_);
+        }
     }
 
 

@@ -11,11 +11,11 @@ namespace SuperTAD
     Data::Data(std::string input)
     {
         // Reader::parseMatrix(_contactMat, _INPUT_);
-        Reader::parseMatrix2Table(_contactArray, input);
+        Reader::parseInput(_contactArray, input);
         printf("number of bins is %d\n", _N_);
 
         if (_K_ <= 0)
-            _K_ = _N_ / _MinSize_;
+            _K_ = _N_ / _MIN_SIZE_;
 
         _logVolTable = new double *[_N_];
         _volTable = new double *[_N_];
@@ -33,7 +33,7 @@ namespace SuperTAD
         }
 
         if (_DETERMINE_K_ && _K_ < 0) {
-            _K_ = _N_ / _MinSize_;
+            _K_ = _N_ / _MIN_SIZE_;
             printf("set max K to %d\n", _K_);
         }
     }
@@ -50,7 +50,7 @@ namespace SuperTAD
         // utils::print2Darray(_contactArray, _N_, _N_);
 
         if (_N_ < _K_) {
-            _K_ = _N_ / _MinSize_;
+            _K_ = _N_ / _MIN_SIZE_;
             // printf("reset max K to %d\n", _N_);
         }
 
@@ -71,7 +71,7 @@ namespace SuperTAD
         }
 
         if (_DETERMINE_K_ && _K_ < 0) {
-            _K_ = _N_ / _MinSize_;
+            _K_ = _N_ / _MIN_SIZE_;
             printf("set max K to %d\n", _K_);
         }
     }

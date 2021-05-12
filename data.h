@@ -23,21 +23,14 @@ namespace SuperTAD
 {
     class Data {
     private:
-        std::string _chrom1;
-
-        std::string _chrom2;
-
-        std::map<int, std::pair<int64_t, int64_t>> _chrom1Idx2Interval;
-
-        std::map<int, std::pair<int64_t, int64_t>> _chrom2Idx2Interval;
-
-        double **_contactArray=NULL;
-
+        std::string _chrom1, _chrom2;
+        std::map<int, std::pair<int64_t, int64_t>> _chrom1Idx2Interval, _chrom2Idx2Interval;
+        double **_contactTable=NULL;
         bool _initByPointer=false;
 
     public:
-        // upper tri is intra; lower tri is inter
-        double **_edgeCountArray=NULL, _edgeSum, _doubleEdgeSum, **_logVolTable=NULL, **_volTable=NULL;
+        double **_edgeCountTable=NULL;  // upper triangular is intra cluster conductance; lower triangular is inter clusters conductance
+        double _edgeSum, _doubleEdgeSum, **_logVolTable=NULL, **_volTable=NULL;
         std::vector<double> _sumOfGtimesLogG;
 
         Data(std::string input);
@@ -50,21 +43,28 @@ namespace SuperTAD
 
         static void parseSubMatrix(double **&subMatrix, Data &Matrix, int start, int end);
 
-        // debug use
+        // return intra conductance(g) of node(s, e)
         double getG(int s, int e);
 
+        // calculate and return volume of node(s, e)
         double getVol(int s, int e);
 
+        // calculate and return  structure entropy given s and e; se=g/edge_sum*log2(V_p/V)
         double getSE(int s, int e, double parentVol);
 
+        // calculate and return  structure entropy given s and e and parent volume; se=g/edge_sum*log2(V_p/V)
         double getSEwithLogPV(int s, int e, double logPV);
 
+        // calculate and return  structure entropy given s, e, volumes of parent and current nodes; se=g/edge_sum*log2(V_p/V)
         double getSE(int s, int e, double parentVol, double currentVol);
 
+        // calculate and return  structure entropy given s, e, log of volumes of parent and current nodes; se=g/edge_sum*log2(V_p/V)
         double getSEwithLogs(int s, int e, double logPV, double logCV);
 
+        // calculate and return  structure entropy given s, e, log(volume of parent node)-log(volume of current node); se=g/edge_sum*logDiff
         double getSEwithLogDiff(int s, int e, double logDiff);
 
+        // calculate and return  g*log(g)
         double getGtimesLogG(double binG);
     };
 }

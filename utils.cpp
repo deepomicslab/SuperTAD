@@ -21,7 +21,7 @@ namespace SuperTAD::utils {
 
 
     // including low but excluding high
-    int randInt (int low, int high)
+    int randInt(int low, int high)
     {
         double d = (double)rand() / (double)RAND_MAX * (high - low);
         double intpart;
@@ -42,22 +42,12 @@ namespace SuperTAD::utils {
     }
 
 
-    bool equalDoubleArrays(double *a1, double *a2, int n)
-    {
-        for (int i = 0; i < n; i++) {
-            if (a1[i] != a2[i])
-                return false;
-        }
-        return true;
-    }
-
-
-    void copyDoubleArray (double from[], double to[], int n)
-    {
-        for (int i = 0; i < n; i++) {
-            to[i] = from[i];
-        }
-    }
+//    void copyDoubleArray(double from[], double to[], int n)
+//    {
+//        for (int i = 0; i < n; i++) {
+//            to[i] = from[i];
+//        }
+//    }
 
 
     int LCM(int num1, int num2)

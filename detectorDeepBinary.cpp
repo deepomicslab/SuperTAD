@@ -13,8 +13,7 @@ namespace SuperTAD::deepBinary
         _data = &data;
         _table = new double *[_N_];
         _minIndexArray = new int *[_N_];
-        for (int s = 0; s < _N_; s++)
-        {
+        for (int s = 0; s < _N_; s++) {
             _table[s] = new double[_N_]{};
             _minIndexArray[s] = new int[_N_]{};
         }
@@ -27,21 +26,16 @@ namespace SuperTAD::deepBinary
     Detector::~Detector()
     {
         delete _binaryTree;
-        for (int s = 0; s < _N_; s++)
-        {
-            delete [] _table[s];
-            delete [] _minIndexArray[s];
+        for (int s = 0; s < _N_; s++) {
+            delete _table[s];
+            delete _minIndexArray[s];
         }
-        delete [] _table;
-        delete [] _minIndexArray;
-        if (_PRUNE_) {
-            if (_pruner)
-                delete _pruner;
-        }
+        delete _table;
+        delete _minIndexArray;
     }
 
 
-    void Detector::execute(int K)
+    void Detector::execute()
     {
         std::clock_t tTmp;
 
@@ -59,33 +53,31 @@ namespace SuperTAD::deepBinary
         else
             printf("prune deep binary tree\n");
 
+        binary::BasePruner *p;
         if (_PRUNE_) {
-            binary::TreeNode *node = new binary::TreeNode(0, _N_-1, *_data);
-            _nodeList->insert((*_nodeList).begin(), node);
-            for (auto it=_nodeList->begin()+1; it!=_nodeList->end(); it++) {
-                (*it)->_idx++;
-            }
             switch (_PRUNE_METHOD_) {
                 case binary::PruneMethod1:
-                    _pruner = new binary::Pruner1(*_binaryTree);
+                    p = new binary::Pruner1(*_binaryTree);
                     break;
                 case binary::PruneMethod2:
-                    _pruner = new binary::Pruner2(*_binaryTree);
+                    p = new binary::Pruner2(*_binaryTree);
                     break;
                 default:
-                    _pruner = new binary::Pruner2(*_binaryTree);
-
+                    p = new binary::Pruner2(*_binaryTree);
             }
-            _pruner->execute();
-            multi::treeNodeVerbose(*(_pruner->_prunedTree._root), 0);
-            if (_VERBOSE_)
+            p->execute();
+            multi::treeNodeVerbose(*(p->_prunedTree._root), 0);
+            if (_VERBOSE_) {
                 printf("finish pruning deep binary tree\n");
+            }
         }
 
 
         if (!_NO_OUTPUT_) {
-            if (_PRUNE_)
-                Writer::writeTree(_OUTPUT_ + ".deepbinary.pruned", _pruner->_prunedTree._nodeList);
+            if (_PRUNE_) {
+                Writer::writeTree(_OUTPUT_ + ".deepbinary.pruned", p->_prunedTree._nodeList);
+            }
+
             if (_SE_RESULT_PATH_!="") {
                 std::ofstream outfile;
                 if (_APPEND_RESULT_)
@@ -94,12 +86,11 @@ namespace SuperTAD::deepBinary
                     outfile.open(_SE_RESULT_PATH_);
                 outfile << _table[0][_N_-1];
                 if (_PRUNE_)
-                    outfile << "\t" << _pruner->_minHtable[_pruner->_optimalK - 1][_pruner->_tree->_root->_idx];
+                    outfile << "\t" << p->_minHtable[p->_optimalK-1][p->_tree->_root->_idx];
                 outfile << "\n";
                 outfile.close();
             }
         }
-
         return;
     }
 
@@ -162,7 +153,7 @@ namespace SuperTAD::deepBinary
             printf("boundaries:");
             for (int i = 0; i < _boundaries.size(); i++) {
                 printf("(%d, %d)", _boundaries[i].first, _boundaries[i].second);
-                if (i < _boundaries.size()-1)
+                if (i < _boundaries.size()-1) {
                     printf(", ");
             }
             printf("\n");
@@ -173,22 +164,20 @@ namespace SuperTAD::deepBinary
 
     void Detector::binarySplit(int s, int e, bool add)
     {
-        if (add)
-        {
+        if (add) {
             int label;
             if (e-s==0){
                 label = 0;
                 _binaryTree->add(s, e, label);
-            }
-            else {
+            } else {
                 label = 1;
                 _binaryTree->add(s, e, label);
             }
         }
 
-        if (e - s == 0)
+        if (e - s == 0) {
             return;
-        else {
+        } else {
             int i = _minIndexArray[s][e];
             _boundaries.emplace_back(s, i);
             _boundaries.emplace_back(i + 1, e);

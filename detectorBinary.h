@@ -20,19 +20,17 @@ namespace SuperTAD::binary {
 
     class Detector {
     private:
-        Data *_data;
-        Tree *_binaryTree;
-        std::vector<TreeNode *> *_nodeList;
-        double ***_table;
-        int ***_minIndexTableForBold;
-        int ***_minIndexArray;
-        int ***_leftKArray;
+        Data *_data=NULL;
+        Tree *_binaryTree=NULL;
+        std::vector<TreeNode *> *_nodeList=NULL;
+        double ***_table=NULL;
+        int ***_minIndexTableForBold=NULL, ***_minIndexTable=NULL, ***_leftKtable=NULL;
         std::vector<Boundary> _boundaries;
         std::vector<TreeNode*> _trueNodeList;
-        int *_numBins;
-        int *_kTmpIdx;
-        int *_kMinusKtmpIdx;
-        float *_scoreTable;
+//        int *_numBins, *_kTmpIdx, *_kMinusKtmpIdx;
+        int _numBins=0, _kTmpIdx=0, _kMinusKtmpIdx=0;   // split into kTmp nodes and k-kTmp nodes
+        float *_scoreTable=NULL;  // for fast mode
+        bool _breakFlag;
 
     public:
         Detector(SuperTAD::Data &data);
@@ -41,7 +39,7 @@ namespace SuperTAD::binary {
 
         void execute();
 
-        void executeFILTER(std::string result);
+        void executeFilter(std::string result);
 
         void init();
 
@@ -49,13 +47,16 @@ namespace SuperTAD::binary {
 
         void fillTable();
 
-        static bool sortStart(Boundary a, Boundary b);
+        static bool sortByStart(Boundary a, Boundary b);
 
-        void indexKtmp(int k) { *_kTmpIdx = k - 1; }
+//        void setIndexKtmp(int k);
+//        { *_kTmpIdx = k - 1; }
 
-        void indexK(int k, int &kIdx) { kIdx = k - 1; }
+        void setIndex(int k, int &kIdx);
+//        { kIdx = k - 1; }
 
-        void numBins(int s, int e) { *_numBins = e - s + 1; }
+        void setNumBins(int s, int e);
+//        { *_numBins = e - s + 1; }
 
         void backTrace(int k, bool add = false);
 
@@ -67,7 +68,8 @@ namespace SuperTAD::binary {
 
         double minusParent(double d, TreeNode &node);
 
-        int * filterNodes();
+        // filter nodes
+        int *filterNodes();
 
         double getX(TreeNode &node);
 

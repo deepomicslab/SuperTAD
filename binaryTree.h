@@ -54,17 +54,19 @@ namespace SuperTAD::binary {
             _idx = idx;
         }
 
-        // parentVolume
+        // update structure entropy given parent volume
         void updateSE(Data &data, double pV)
         {
             _se = this->getSE(data, pV);
         }
 
+        // update structure entropy given parent node
         void updateSE(Data &data, TreeNode &pNode)
         {
             _se = this->getSE(data, pNode);
         }
 
+        // calculate structure entropy given parent volume and return
         double getSE(Data &data, double pV)
         {
             double se = data.getSE(_val[0], _val[1], pV, _vol);
@@ -75,10 +77,10 @@ namespace SuperTAD::binary {
             return se;
         }
 
+        // calculate structure entropy as node consists of only leaves, given parent node and return
         double getSEasLeaf(Data &data, TreeNode &pNode)
         {
             double se = data.getSE(_val[0], _val[1], pNode._vol, _vol);
-            // save this calculation if leaf only has one bin
 //            if (_val[0] != _val[1]) {
                 for (int i = _val[0]; i <= _val[1]; i++) {
                     double tmp = data.getSE(i, i, _vol);
@@ -89,6 +91,7 @@ namespace SuperTAD::binary {
             return se;
         }
 
+        // calculate structure entropy, given parent node and return
         double getSE(Data &data, TreeNode &pNode)
         {
             double se = data.getSE(_val[0], _val[1], pNode._vol, _vol);
@@ -99,6 +102,7 @@ namespace SuperTAD::binary {
             return se;
         }
 
+        // set volume
         void setVol(Data &data)
         {
             _vol = data.getVol(_val[0], _val[1]);
@@ -135,7 +139,6 @@ namespace SuperTAD::binary {
 
     class Tree {
     private:
-        // ???
         std::stack<TreeNode*> _t;
 
     public:
@@ -146,14 +149,13 @@ namespace SuperTAD::binary {
 
         Tree();
 
-        // cannot find this function when usage
 //        Tree(Data &d);
 
         ~Tree();
 
         void setData(Data &d);
 
-        // problematic function
+        // BUG; deprecated; use insert instead
         void add(int start, int end, int k);
 
         void insert(TreeNode *newNode, TreeNode *parentNode);
@@ -166,7 +168,6 @@ namespace SuperTAD::binary {
 
         double getSE(TreeNode &child, TreeNode &parent);
     };
-
 
     static const int PruneMethod1 = 1;
     static const int PruneMethod2 = 2;
@@ -187,6 +188,7 @@ namespace SuperTAD::binary {
     };
 
 
+    // legacy!!! prune deep binary tree
     class Pruner1 : public BasePruner {
     public:
         Pruner1(Tree &tree, int k=10);
@@ -201,6 +203,8 @@ namespace SuperTAD::binary {
     };
 
 
+    // prune deep binary tree
+    // H(mu, k)=min_k1{H(mu_l, k1)+H(mu_r, k-k2)}
     class Pruner2 : public BasePruner {
     public:
         Pruner2(Tree &tree);
@@ -211,9 +215,8 @@ namespace SuperTAD::binary {
 
         void execute() override;
 
+        // recursive approach for optimal H given k
         double getH(TreeNode &node, int k);
-
-        double getH();
 
         void backTrace(TreeNode &node, int k);
     };

@@ -11,7 +11,8 @@ namespace SuperTAD
     Data::Data(std::string input)
     {
         // Reader::parseMatrix(_contactMat, _INPUT_);
-        Reader::parseInput(_contactArray, input);
+        Reader::parseInput(_contactTable, input);
+//        Reader::parseMatrix2Table(_contactTable, input);
         printf("number of bins is %d\n", _N_);
 
         if (_K_ <= 0)
@@ -19,11 +20,11 @@ namespace SuperTAD
 
         _logVolTable = new double *[_N_];
         _volTable = new double *[_N_];
-        _edgeCountArray = new double *[_N_];
+        _edgeCountTable = new double *[_N_];
         for (int s = 0; s < _N_; s++) {
             _logVolTable[s] = new double[_N_ - s]{};
             _volTable[s] = new double[_N_ - s]{};
-            _edgeCountArray[s] = new double[_N_]{};
+            _edgeCountTable[s] = new double[_N_]{};
         }
         if (_BINARY_ && _FAST_) {
             if (_PENALTY_ < 0) {
@@ -45,7 +46,7 @@ namespace SuperTAD
         _N_ = n;
         printf("initing the data class via 2d array\n");
         printf("number of bins is %d\n", _N_);
-        _contactArray = array;
+        _contactTable = array;
         // printf("countactArray=\n");
         // utils::print2Darray(_contactArray, _N_, _N_);
 
@@ -56,11 +57,11 @@ namespace SuperTAD
 
         _logVolTable = new double *[_N_];
         _volTable = new double *[_N_];
-        _edgeCountArray = new double *[_N_];
+        _edgeCountTable = new double *[_N_];
         for (int s = 0; s < _N_; s++) {
             _logVolTable[s] = new double[_N_ - s]{};
             _volTable[s] = new double[_N_ - s]{};
-            _edgeCountArray[s] = new double[_N_]{};
+            _edgeCountTable[s] = new double[_N_]{};
         }
 
         if (_BINARY_ && _FAST_) {
@@ -82,15 +83,15 @@ namespace SuperTAD
         for (int s=0; s<_N_; s++) {
             delete [] _logVolTable[s];
             delete [] _volTable[s];
-            delete [] _edgeCountArray[s];
+            delete [] _edgeCountTable[s];
             if (!_initByPointer)
-                delete [] _contactArray[s];
+                delete [] _contactTable[s];
         }
         delete [] _logVolTable;
         delete [] _volTable;
-        delete [] _edgeCountArray;
+        delete [] _edgeCountTable;
         if (!_initByPointer)
-            delete [] _contactArray;
+            delete [] _contactTable;
     }
 
 
@@ -109,40 +110,41 @@ namespace SuperTAD
 //    printf("before init: edgeCountArray=\n");
 //    utils::print2Darray(_edgeCountArray, _N_, _N_);
 
-        // edge sum
+        // calculate accumulated sum of contacts for intra and inter(g) given start(i) bin and end(j) bin.
         int i, j, k;
         for (k = 1; k < _N_; k++) {
             for (i = 0; i < _N_ - k; i++) {
                 j = i + k;
-                double intra = _contactArray[i][j];
+                double intra = _contactTable[i][j];
                 if (j - 1 > 0) {
-                    intra += _edgeCountArray[i][j - 1];
+                    intra += _edgeCountTable[i][j - 1];
                 }
                 if (i + 1 < _N_) {
-                    intra += _edgeCountArray[i + 1][j];
+                    intra += _edgeCountTable[i + 1][j];
                 }
                 if (j - 1 > 0 && i + 1 < _N_) {
-                    intra -= _edgeCountArray[i + 1][j - 1];
+                    intra -= _edgeCountTable[i + 1][j - 1];
                 }
 
                 if (std::abs(intra) < _THRESHOLD_ || intra < 0) {
-                    _edgeCountArray[i][j] = 0;
-                } else
-                    _edgeCountArray[i][j] = intra;
+                    _edgeCountTable[i][j] = 0;
+                } else {
+                    _edgeCountTable[i][j] = intra;
+                }
             }
         }
         for (int i = 0; i < _N_; i++) {
             for (int j = i; j < _N_; j++) {
-                double inter = _edgeCountArray[0][j] + _edgeCountArray[i][_N_ - 1] - 2 * _edgeCountArray[i][j];
+                double inter = _edgeCountTable[0][j] + _edgeCountTable[i][_N_ - 1] - 2 * _edgeCountTable[i][j];
                 if (i - 1 > 0)
-                    inter -= _edgeCountArray[0][i - 1];
+                    inter -= _edgeCountTable[0][i - 1];
                 if (j + 1 < _N_)
-                    inter -= _edgeCountArray[j + 1][_N_ - 1];
+                    inter -= _edgeCountTable[j + 1][_N_ - 1];
 
                 if (std::abs(inter) < _THRESHOLD_ || inter < 0) {
-                    _edgeCountArray[j][i] = 0;
+                    _edgeCountTable[j][i] = 0;
                 } else {
-                    _edgeCountArray[j][i] = inter;
+                    _edgeCountTable[j][i] = inter;
                 }
             }
         }

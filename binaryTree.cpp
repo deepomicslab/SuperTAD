@@ -58,7 +58,7 @@ namespace SuperTAD::binary
 
         TreeNode *treeNode = new TreeNode(start, end, *_data);
 
-        // leaf node (only 1 bin)
+        // add leaf nodes (only 1 bin)
         if (k == 0) {
             if (SuperTAD::_DEBUG_)
                 printf("leaf node: (%d, %d)\n", start, end);
@@ -73,9 +73,7 @@ namespace SuperTAD::binary
                 treeNode->_parent = treeExistNode;
                 _t.pop();
             }
-        }
-        // other nodes
-        else {
+        } else {    // add regular nodes
             if (_root == NULL) {
                 _root = treeNode;
                 _t.push(_root);
@@ -129,30 +127,13 @@ namespace SuperTAD::binary
         }
     }
 
-
     BasePruner::BasePruner(Tree &tree)
     {
         _data = tree._data;
         _tree = &tree;
-        _mu = _tree->_nodeList.size()+1;
+        _mu = _tree->_nodeList.size();
         _prunedTree.setData(*_data);
     }
-
-    BasePruner::~BasePruner()
-    {
-        _data = NULL;
-        _tree = NULL;
-    }
-
-//    BasePruner::~BasePruner()
-//    {
-//        for (int i = 0; i < _K; i++) {
-//            delete[] _minHtable[i];
-//            delete[] _minIdxTable[i];
-//        }
-//        delete[] _minHtable;
-//        delete[] _minIdxTable;
-//    }
 
 
     Pruner1::Pruner1(Tree &tree, int k) : BasePruner(tree)
@@ -280,11 +261,11 @@ namespace SuperTAD::binary
     Pruner2::~Pruner2()
     {
         for (int i = 0; i < _N_; i++) {
-            delete [] _minHtable[i];
-            delete [] _minIdxTable[i];
+            delete[] _minHtable[i];
+            delete[] _minIdxTable[i];
         }
-        delete [] _minHtable;
-        delete [] _minIdxTable;
+        delete[] _minHtable;
+        delete[] _minIdxTable;
     }
 
 
@@ -302,10 +283,6 @@ namespace SuperTAD::binary
         double minSE = std::numeric_limits<double>::infinity();
         int minIdx;
 
-        int K = _N_;
-        if (_PRUNE_K_ > 0 && _PRUNE_K_ < _N_) {
-            K = _PRUNE_K_;
-        }
 //        // test
 //        int k=63;
 //        getH(*_tree->_root, k);
@@ -348,9 +325,10 @@ namespace SuperTAD::binary
 //        _optimalSE = se;
 ////        exit(0);
 
+        // aggressive prune mode
         if (_TURBO_PRUNE_) {
 //            std::clock_t tTmp = std::clock();
-            for (int k = 1; k <= K; k++) {
+            for (int k = 1; k <= _N_; k++) {
                 getH(*_tree->_root, k);
                 double tmpMinSE = _minHtable[k - 1][_tree->_root->_idx];
                 printf("========\nk=%d, minSE=%f\n", k, tmpMinSE);
@@ -364,10 +342,9 @@ namespace SuperTAD::binary
                 }
             }
 //            printf("getH for %d consumes %fs\n", _N_, (float)(std::clock() - tTmp)/CLOCKS_PER_SEC);
-        }
-        else {
+        } else {    // general prune mode
             std::clock_t tTmp = std::clock();
-            for (int k=K; k>0; k--) {
+            for (int k=_N_; k>0; k--) {
                 getH(*_tree->_root, k);
                 double tmpMinSE = _minHtable[k - 1][_tree->_root->_idx];
                 printf("========\nk=%d, minSE=%f\n", k, tmpMinSE);
@@ -381,13 +358,8 @@ namespace SuperTAD::binary
         }
         _optimalK = minIdx;
         _optimalSE = minSE;
-        if (_MAX_PRUNE_K_ || K==_N_) {
-            printf("optimal k is %d with minial se %f\n", _optimalK, _optimalSE);
-            backTrace(*_tree->_root, _optimalK);
-        } else {
-            printf("optimal result with k=%d is %f\n", _PRUNE_K_, _minHtable[_PRUNE_K_-1][_tree->_root->_idx]);
-            backTrace(*_tree->_root, _PRUNE_K_);
-        }
+        printf("optimal k is %d with minial se %f\n", _optimalK, _optimalSE);
+        backTrace(*_tree->_root, _optimalK);
     }
 
 
@@ -431,23 +403,6 @@ namespace SuperTAD::binary
 //                        printf("getH(k=%d, id=%d)=%f, k1=%d\n", k - 1, node._idx, minH, minK1);
                     }
                     return minH;
-                }
-            }
-        }
-    }
-
-
-    double Pruner2::getH()
-    {
-        for (int k=0; k<_K; k++) {
-            for (int i=0; i<_mu; i++) {
-                for (int k1=0; k1<i; k1++) {
-//                    double tmp = _minHtable[k1][_mu] + getH(*node._right, k - k1);
-//                    double minH =
-//                    if (tmp < minH) {
-//                        minH = tmp;
-//                        minK1 = k1;
-//                    }
                 }
             }
         }

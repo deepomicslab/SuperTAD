@@ -37,7 +37,7 @@ namespace SuperTAD::multi {
     }
 
 
-    Detector::~Detector ()
+    Detector::~Detector()
     {
         for (int s = 0; s < SuperTAD::_N_; s++) {
             for (int e = s; e < SuperTAD::_N_; e++) {
@@ -81,8 +81,7 @@ namespace SuperTAD::multi {
             if (SuperTAD::_VERBOSE_) {
                 printf("start determine optimal K\n");
                 tTmp = std::clock();
-            }
-            else
+            } else {
                 printf("determine optimal K\n");
 
             for (int k=2; k < SuperTAD::_OPTIMAL_K_ + 1; k++) {
@@ -213,19 +212,15 @@ namespace SuperTAD::multi {
             {
                 double currentVolume = _data->getVol(s, e);
                 double binSum;
-                if (s == 0)
-                {
+                if (s == 0) {
                     binSum = _data->getGtimesLogG(currentVolume) - _data->_sumOfGtimesLogG[e];
-                } else
-                {
-                    binSum = _data->getGtimesLogG(currentVolume) -
-                             (_data->_sumOfGtimesLogG[e] - _data->_sumOfGtimesLogG[s - 1]);
+                } else {
+                    binSum = _data->getGtimesLogG(currentVolume) - (_data->_sumOfGtimesLogG[e] - _data->_sumOfGtimesLogG[s - 1]);
                 }
                 _table[s][e][0][0][e] = binSum / _data->_doubleEdgeSum;
-//                printf("start=%d, end=%d, binSum=%f\n", s, e, _table[s][e][0][0][e]);
-
             }
         }
+
 
         for (int k = 1; k < SuperTAD::_K_; k++) {
             for (int s = 0; s < SuperTAD::_N_; s++) {
@@ -258,8 +253,6 @@ namespace SuperTAD::multi {
                         }
                         _minIndexArray[s][e][k][0][parentEnd] = minIdx;
                         _table[s][e][k][0][parentEnd] = minTmp;
-//                        if (s==10 and parentEnd==16 and k == 1)
-//                            printf("start=%d, end=%d, cluster=%d, parent_end=%d, minTemp=%f\n", s, e, k, parentEnd, minTmp);
                     }
                 }
             }
@@ -307,12 +300,6 @@ namespace SuperTAD::multi {
                                             tmp = _table[s][i][kTmp - 1][h][parentEnd] +
                                                   _table[i + 1][e][k - kTmp - 1][h - 1][e];
                                         }
-//                                        if (h==1 and s==10 and e == 16 and k==2 and parentEnd==52)
-//                                        {
-//                                            printf("i=%d, kTmp=%d, tmp=%f, se=%f\n", i, kTmp, tmp,
-//                                                   _data->getSE(i + 1, e, parentVol));
-//                                            printf("minTmp=%f, minIdx=%d, leftK=%d, part1=%f, part2=%f\n", minTmp, minIdx, leftK, _table[s][e][k - 1][h - 1][e], _data->getSE(s, e, parentVol));
-//                                        }
 
                                         tmp += _data->getSE(i + 1, e, parentVol);
                                         if (tmp <= minTmp) {
@@ -331,10 +318,6 @@ namespace SuperTAD::multi {
                             _minIndexArray[s][e][k - 1][h][parentEnd] = minIdx;
                             _table[s][e][k - 1][h][parentEnd] = minTmp;
                             _leftKArray[s][e][k - 1][h][parentEnd] = leftK;
-//                            if (h==1 and s==10 and e == 16 and k==2 and parentEnd==52){
-//                            printf("h=%d, start=%d, end=%d, cluster=%d, parent_end=%d, minTemp=%f, i=%d, kTmp=%d\n", h, s, e, k, parentEnd, minTmp, minIdx, leftK);
-//                            }
-
                         }
                     }
                 }
@@ -420,7 +403,7 @@ namespace SuperTAD::multi {
     }
 
 
-    void Detector::multiSplit(int start, int end, int k, int h, int parentEnd, bool add)
+    void Detector::multiSplit (int start, int end, int k, int h, int parentEnd, bool add)
     {
         if (k == 1) {
             if (add)
@@ -443,8 +426,7 @@ namespace SuperTAD::multi {
                                start, end, k, h, parentEnd, _table[start][end][k - 1][h][parentEnd]);
                     }
                     multiSplit(start, end, k, h-1, end, add);
-                }
-                else {
+                } else {
 //                    int midPos = _minIndexArray[start][end][indexK(k)][h][parentEnd];
                     int midPos = _minIndexArray[start][end][k-1][h][parentEnd];
                     _boundaries.emplace_back(midPos + 1, 0);

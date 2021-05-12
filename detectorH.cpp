@@ -13,8 +13,15 @@ namespace SuperTAD::multi {
 //        for (int i=0; i < SuperTAD::_K_; i++) {
 //            _kToIdx.emplace(k++, i);
 //        }
-        SuperTAD::_K_ = SuperTAD::_N_/SuperTAD::_MinSize_;
-        printf("set max K to be %d\n", SuperTAD::_K_);
+        if (SuperTAD::_DETERMINE_K_)
+        {
+            SuperTAD::_K_ = SuperTAD::_N_ / SuperTAD::_MinSize_;
+            printf("set max K to be %d\n", SuperTAD::_K_);
+        } else
+        {
+            printf("The optimal K is %d\n", SuperTAD::_K_);
+            _k = SuperTAD::_K_;
+        }
         _table = new double *[SuperTAD::_N_];
         _minIndexArray = new int *[SuperTAD::_N_];
         for (int i=0; i < SuperTAD::_N_; i++) {
@@ -39,9 +46,6 @@ namespace SuperTAD::multi {
 
         double currentVol, parentVol, binSum;
 
-        if (SuperTAD::_VERBOSE_)
-            printf("start k=0\n");
-
         for (int i=1; i < SuperTAD::_N_; i++) {
             parentVol = _data->_doubleEdgeSum;
             currentVol = _data->getVol(0, i);
@@ -53,11 +57,9 @@ namespace SuperTAD::multi {
         if (SuperTAD::_VERBOSE_)
             printf("finish k=0, se=%f\n", _table[SuperTAD::_N_ - 1][0]);
 
-        if (SuperTAD::_VERBOSE_)
-            printf("start calculating h=1\n");
-
         double minSE, tmpSE;
         int minIdx;
+        SuperTAD::_optimalK_ = 0;
         double sumOfLeavesTmp = _table[SuperTAD::_N_ - 1][0];
         for (int a=1; a < SuperTAD::_K_; a++) {
             if (SuperTAD::_VERBOSE_)
@@ -87,7 +89,7 @@ namespace SuperTAD::multi {
             if (SuperTAD::_VERBOSE_)
                 printf("finish k=%d, structure entropy=%f\n", a, minSE);
             if (SuperTAD::_DETERMINE_K_) {
-                if (_table[SuperTAD::_N_ - 1][a] < sumOfLeavesTmp){
+                if (_table[SuperTAD::_N_ - 1][a] - sumOfLeavesTmp < -1e-6){
                     SuperTAD::_optimalK_ = a;
                     sumOfLeavesTmp = minSE;
                 }
@@ -206,6 +208,7 @@ namespace SuperTAD::multi {
         if (SuperTAD::_VERBOSE_) printf("finish k = 0, se=%f\nStart caluclating upper case.\n", _table[N - 1][0]);
         double minSE, tmpSE;
         int minIdx;
+        SuperTAD::_optimalK_ = 0;
         double sumOfLeavesTmp = _table[N-1][0];
         for (int a=1; a < N; a++) {
             for (int b=a; b < N; b++) {
@@ -242,7 +245,7 @@ namespace SuperTAD::multi {
             if (SuperTAD::_VERBOSE_)
                 printf("finish k = %d, structure entropy=%f\n", a, minSE);
             if (SuperTAD::_DETERMINE_K_) {
-                if (_table[N-1][a] < sumOfLeavesTmp){
+                if (_table[N-1][a] - sumOfLeavesTmp < -1e-6){
                     SuperTAD::_optimalK_ = a;
                     sumOfLeavesTmp = minSE;
                 }
@@ -345,7 +348,10 @@ namespace SuperTAD::multi {
         }
 
         if (!SuperTAD::_NO_OUTPUT_)
-            _writer.writeBoundIn8Cols(SuperTAD::_OUTPUT_ + ".multi2D_All", _boundary);
+        {
+            int height = SuperTAD::_HD_ + SuperTAD::_HU_ + 1;
+            _writer.writeBoundIn8Cols(SuperTAD::_OUTPUT_ + ".multi2D_AllH" + std::to_string(height), _boundary);
+        }
     }
 
 }

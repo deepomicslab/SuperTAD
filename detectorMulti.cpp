@@ -207,19 +207,25 @@ namespace SuperTAD::multi {
         else
             printf("fill db table\n");
 
-        for (int s = 0; s < SuperTAD::_N_; s++) {
-            for (int e = s; e < SuperTAD::_N_; e++) {
+        for (int s = 0; s < SuperTAD::_N_; s++)
+        {
+            for (int e = s; e < SuperTAD::_N_; e++)
+            {
                 double currentVolume = _data->getVol(s, e);
                 double binSum;
-                if (s == 0) {
+                if (s == 0)
+                {
                     binSum = _data->getGtimesLogG(currentVolume) - _data->_sumOfGtimesLogG[e];
-                } else {
-                    binSum = _data->getGtimesLogG(currentVolume) - (_data->_sumOfGtimesLogG[e] - _data->_sumOfGtimesLogG[s - 1]);
+                } else
+                {
+                    binSum = _data->getGtimesLogG(currentVolume) -
+                             (_data->_sumOfGtimesLogG[e] - _data->_sumOfGtimesLogG[s - 1]);
                 }
                 _table[s][e][0][0][e] = binSum / _data->_doubleEdgeSum;
+//                printf("start=%d, end=%d, binSum=%f\n", s, e, _table[s][e][0][0][e]);
+
             }
         }
-
 
         for (int k = 1; k < SuperTAD::_K_; k++) {
             for (int s = 0; s < SuperTAD::_N_; s++) {
@@ -252,6 +258,8 @@ namespace SuperTAD::multi {
                         }
                         _minIndexArray[s][e][k][0][parentEnd] = minIdx;
                         _table[s][e][k][0][parentEnd] = minTmp;
+//                        if (s==10 and parentEnd==16 and k == 1)
+//                            printf("start=%d, end=%d, cluster=%d, parent_end=%d, minTemp=%f\n", s, e, k, parentEnd, minTmp);
                     }
                 }
             }
@@ -299,6 +307,12 @@ namespace SuperTAD::multi {
                                             tmp = _table[s][i][kTmp - 1][h][parentEnd] +
                                                   _table[i + 1][e][k - kTmp - 1][h - 1][e];
                                         }
+//                                        if (h==1 and s==10 and e == 16 and k==2 and parentEnd==52)
+//                                        {
+//                                            printf("i=%d, kTmp=%d, tmp=%f, se=%f\n", i, kTmp, tmp,
+//                                                   _data->getSE(i + 1, e, parentVol));
+//                                            printf("minTmp=%f, minIdx=%d, leftK=%d, part1=%f, part2=%f\n", minTmp, minIdx, leftK, _table[s][e][k - 1][h - 1][e], _data->getSE(s, e, parentVol));
+//                                        }
 
                                         tmp += _data->getSE(i + 1, e, parentVol);
                                         if (tmp <= minTmp) {
@@ -317,6 +331,10 @@ namespace SuperTAD::multi {
                             _minIndexArray[s][e][k - 1][h][parentEnd] = minIdx;
                             _table[s][e][k - 1][h][parentEnd] = minTmp;
                             _leftKArray[s][e][k - 1][h][parentEnd] = leftK;
+//                            if (h==1 and s==10 and e == 16 and k==2 and parentEnd==52){
+//                            printf("h=%d, start=%d, end=%d, cluster=%d, parent_end=%d, minTemp=%f, i=%d, kTmp=%d\n", h, s, e, k, parentEnd, minTmp, minIdx, leftK);
+//                            }
+
                         }
                     }
                 }
@@ -324,8 +342,8 @@ namespace SuperTAD::multi {
 
                 if (h == SuperTAD::_H_ - 1 and SuperTAD::_DETERMINE_K_ ) {
 //                    printf("h=%d, SuperTAD::_H_=%d\n", h, SuperTAD::_H_);
-                    if (_table[0][SuperTAD::_N_ - 1][k - 1][h][SuperTAD::_N_ - 1] < _table[0][SuperTAD::_N_ - 1][k - 2][h][
-                        SuperTAD::_N_ - 1]) {
+                    if (_table[0][SuperTAD::_N_ - 1][k - 1][h][SuperTAD::_N_ - 1] - _table[0][SuperTAD::_N_ - 1][k - 2][h][
+                        SuperTAD::_N_ - 1] < -1e-6) {
                         SuperTAD::_optimalK_ = k;
                         printf("--------\noptimalK=%d, table=%f\n", SuperTAD::_optimalK_, _table[0][SuperTAD::_N_ - 1][k - 1][
                             SuperTAD::_H_ - 1][SuperTAD::_N_ - 1]);

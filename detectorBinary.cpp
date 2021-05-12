@@ -352,7 +352,7 @@ namespace SuperTAD::binary {
                 double divisor = log2(SuperTAD::_N_ / (double) k) + (SuperTAD::_N_ * (k - 1) / (double) (k * (
                     SuperTAD::_N_ - 1))) * log2(k);
                 double Tmp = leafSum/divisor;
-                if (Tmp < normOfLeavesTmp){
+                if (Tmp - normOfLeavesTmp < -1e-6){
                     SuperTAD::_optimalK_ = k;
                     normOfLeavesTmp = Tmp;
                     printf("--------\noptimalK=%d, normLeaves=%f, se=%f\n", SuperTAD::_optimalK_, Tmp, _table[0][SuperTAD::_N_ -1][kIdx]);

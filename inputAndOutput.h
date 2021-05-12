@@ -80,7 +80,10 @@ namespace SuperTAD
         template<class T>
         static void writeTreeIn8Cols(std::string filePath, std::vector<T *> &nodeList)
         {
-            filePath += ".tsv";
+            if (_SPARSE_)
+                filePath += "_sparse.tsv";
+            else
+                filePath += ".tsv";
             FILE *outFile = NULL;
             outFile = fopen(filePath.c_str(), "w");
             if (outFile) {

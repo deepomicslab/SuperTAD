@@ -233,7 +233,10 @@ void SuperTAD::Writer::writeBoundaries(std::string path, std::vector<Boundary> &
 
 
 void SuperTAD::Writer::writeBoundIn8Cols(std::string path, std::vector<Boundary> &boundaryList) {
-    path += ".tsv";
+    if (_SPARSE_)
+        path += "_sparse.tsv";
+    else
+        path += ".tsv";
     FILE *outFile = NULL;
     outFile = std::fopen(path.c_str(), "w");
     if (outFile)

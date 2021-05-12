@@ -34,7 +34,6 @@ namespace SuperTAD::deepBinary
         delete _minIndexArray;
     }
 
-
     void Detector::execute()
     {
         std::clock_t tTmp;
@@ -106,18 +105,10 @@ namespace SuperTAD::deepBinary
         else
             printf("fill dp table\n");
 
-//        for (int s = 0; s < _N_; s++)
-//        {
-//            printf("s: %d, _table[s][s]: %f, zero: %d\n", s, _table[s][s], _table[s][s] == 0);
-//            _table[s][s] = 0;
-//        }
-
         double parentVol, tmpSE, minSE;
         int leftE;
         for (int step = 1; step < _N_; step++)
         {
-//            if (_VERBOSE_)
-//                printf("step = %d\n", step);
             for (int s = 0; s < _N_ - step; s++)
             {
                 parentVol = _data->getVol(s, s + step);
@@ -153,7 +144,7 @@ namespace SuperTAD::deepBinary
             printf("boundaries:");
             for (int i = 0; i < _boundaries.size(); i++) {
                 printf("(%d, %d)", _boundaries[i].first, _boundaries[i].second);
-                if (i < _boundaries.size()-1) {
+                if (i < _boundaries.size()-1)
                     printf(", ");
             }
             printf("\n");

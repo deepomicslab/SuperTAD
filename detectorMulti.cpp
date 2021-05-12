@@ -81,7 +81,7 @@ namespace SuperTAD::multi {
             if (SuperTAD::_VERBOSE_) {
                 printf("start determine optimal K\n");
                 tTmp = std::clock();
-            } else {
+            } else
                 printf("determine optimal K\n");
 
             for (int k=2; k < SuperTAD::_OPTIMAL_K_ + 1; k++) {

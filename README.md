@@ -35,6 +35,12 @@ COMMANDS:
             ./SuperTAD multi <input Hi-C matrix> -h <height> [-option values]
         OPTIONS:
             -h <int>: The height of coding tree, default: 2
+    multi_2d    The third mode requires two parameter h1 and h2 to determine the iteractions for dividing and merging
+            ./SuperTAD multi_2d <input Hi-C matrix> [-option values]
+        OPTIONS:
+            --hd <int>: The height of layers for dividing (go down), default: 2
+            --hu <int>: The height of layers for merging (go up), default: 1
+            --pre <string>: The pre-detected result file
         SHARED OPTIONS for binary and multi COMMAND:
             -K <int>: The number of leaves in the coding tree, default: nan (determined by the algorithm)
             --chrom1 <string>: chrom1 label, default: chr1
@@ -42,6 +48,7 @@ COMMANDS:
             --chrom1-start <int>: start pos on chrom1, default: 0
             --chrom2-start <int>: start pos on chrom2, default: the same as --chrom1-start
             -r/--resolution <int>: bin resolution, default: 10000
+            -s/--sparse: If given, apply the modified version for the sparse input matrix
     filter  The nodes filter for optimal coding tree:
             ./SuperTAD filter <input Hi-C matrix> -i <original result> 
         OPTIONS:

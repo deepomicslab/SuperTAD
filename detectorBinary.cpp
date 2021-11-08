@@ -221,7 +221,8 @@ namespace SuperTAD::binary
 
     void Detector::fillTable()
     {
-        std::clock_t t, tVol, tSE, tTmp;
+        std::clock_t t;
+//        , tVol, tSE, tTmp;
         if (SuperTAD::_VERBOSE_)
         {
             printf("start filling dp table\n");
@@ -375,44 +376,44 @@ namespace SuperTAD::binary
                     }
                 }
             }
-        }
 
-        if (SuperTAD::_DEBUG_)
-        {
-            printf("finishing filling upper case where k=%d, _table[0][%d][%d]=%f\n",
-                   k, SuperTAD::_N_ - 1, kIdx, _table[0][SuperTAD::_N_ - 1][kIdx]);
-        }
-
-        if (SuperTAD::_DETERMINE_K_)
-        {
-            backTrace(k);
-            double leafSum = 0;
-            logPV = log2(_data->_doubleEdgeSum);
-            for (int leaf = 0; leaf < _boundaries.size(); leaf++)
+            if (SuperTAD::_DEBUG_)
             {
-                leafSum += _data->getSEwithLogPV(_boundaries[leaf].first, _boundaries[leaf].second,
-                                                 logPV);
-                leafSum += _table[_boundaries[leaf].first][_boundaries[leaf].second][0];
+                printf("finishing filling upper case where k=%d, _table[0][%d][%d]=%f\n",
+                       k, SuperTAD::_N_ - 1, kIdx, _table[0][SuperTAD::_N_ - 1][kIdx]);
             }
-            double divisor =
-                    log2(SuperTAD::_N_ / (double) k) + (SuperTAD::_N_ * (k - 1) / (double) (k * (
-                            SuperTAD::_N_ - 1))) * log2(k);
-            double Tmp = leafSum / divisor;
-            if (Tmp - normOfLeavesTmp < -1e-6)
-            {
-                SuperTAD::_OPTIMAL_K_ = k;
-                normOfLeavesTmp = Tmp;
-                printf("--------\noptimalK=%d, normLeaves=%f, se=%f\n", SuperTAD::_OPTIMAL_K_, Tmp,
-                       _table[0][SuperTAD::_N_ - 1][kIdx]);
-            } else
-            {
-                if (SuperTAD::_VERBOSE_)
-                    printf("finish filling db table\n");
 
-                if (SuperTAD::_DEBUG_)
-                    printf("filling db table consumes %fs\n",
-                           (float) (std::clock() - t) / CLOCKS_PER_SEC);
-                return;
+            if (SuperTAD::_DETERMINE_K_)
+            {
+                backTrace(k);
+                double leafSum = 0;
+                logPV = log2(_data->_doubleEdgeSum);
+                for (int leaf = 0; leaf < _boundaries.size(); leaf++)
+                {
+                    leafSum += _data->getSEwithLogPV(_boundaries[leaf].first, _boundaries[leaf].second,
+                                                     logPV);
+                    leafSum += _table[_boundaries[leaf].first][_boundaries[leaf].second][0];
+                }
+                double divisor =
+                        log2(SuperTAD::_N_ / (double) k) + (SuperTAD::_N_ * (k - 1) / (double) (k * (
+                                SuperTAD::_N_ - 1))) * log2(k);
+                double Tmp = leafSum / divisor;
+                if (Tmp - normOfLeavesTmp < -1e-6)
+                {
+                    SuperTAD::_OPTIMAL_K_ = k;
+                    normOfLeavesTmp = Tmp;
+                    printf("--------\noptimalK=%d, normLeaves=%f, se=%f\n", SuperTAD::_OPTIMAL_K_, Tmp,
+                           _table[0][SuperTAD::_N_ - 1][kIdx]);
+                } else
+                {
+                    if (SuperTAD::_VERBOSE_)
+                        printf("finish filling db table\n");
+
+                    if (SuperTAD::_DEBUG_)
+                        printf("filling db table consumes %fs\n",
+                               (float) (std::clock() - t) / CLOCKS_PER_SEC);
+                    return;
+                }
             }
         }
 

@@ -59,7 +59,7 @@ namespace SuperTAD::multi {
     TreeNode* Tree::add(int start, int end)
     {
         TreeNode *node = new TreeNode(start, end);
-        if (!insert(*node, *_root)) {
+        if (! insert(*node, *_root)) {
             fprintf(stderr, "cannot add node: %s\n", node->verbose().c_str());
         }
         return node;
@@ -105,17 +105,16 @@ namespace SuperTAD::multi {
             newNode.setSE(*_data);
 //            printf("vol=%f, se=%f\n", newNode._vol, newNode._se);
             _nodeList.emplace_back(&newNode);
-//            std::cout << "emplaced node: " << newNode << "\n";
+            std::cout << "emplaced node: " << newNode << "\n";
             return true;
-        } else {
+        } else
             return false;
-        }
     }
 
 
     void Tree::getNodeList(std::vector<TreeNode *> &nl)
     {
-//        nl.emplace_back(_root);
+        nl.emplace_back(_root);
         _root->getChildren(nl);
     }
 

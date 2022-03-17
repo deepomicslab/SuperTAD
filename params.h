@@ -31,7 +31,7 @@ namespace SuperTAD
     extern bool _PRUNE_;
     extern bool _PRE_LOG_;
     extern bool _FILTERING_;
-    extern bool _FAST_;
+    extern bool _FAST_; // used in binary and multi
     extern bool _VERBOSE_;
     extern bool _SPARSE_;
     extern bool _BEDPE_;
@@ -53,6 +53,8 @@ namespace SuperTAD
     extern int _H_;
     extern int _RESOLUTION_;
     extern int _PRUNE_K_;
+    extern int _WINDOW_;
+    extern int _STEP_;
 
     extern double _THRESHOLD_;
 

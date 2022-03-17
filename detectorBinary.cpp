@@ -308,10 +308,6 @@ namespace SuperTAD::binary
                         {
                             minSE2 = std::numeric_limits<double>::infinity();
                             leftI2 = 0;
-                        }
-
-                        if (SuperTAD::_FAST_)
-                        {
 //                            endTmp = (_minIndexTableForBold[s][e][*_kTmpIdx] == -1 ? e : _minIndexTableForBold[s][e][*_kTmpIdx] + SuperTAD::_PENALTY_);
                             endTmp = (_minIndexTableForBold[s][e][_kTmpIdx] == -1 ? e :
                                       _minIndexTableForBold[s][e][_kTmpIdx] + SuperTAD::_PENALTY_);

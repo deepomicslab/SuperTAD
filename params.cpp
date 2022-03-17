@@ -49,8 +49,10 @@ namespace SuperTAD
     int _PENALTY_ = -1;
     int _RESOLUTION_ = 1;
     int _PRUNE_METHOD_ = 0;
-    double _THRESHOLD_ = 1e-13;
+    double _THRESHOLD_ = 1e-6;
     int _PRUNE_K_ = 0;
+    int _STEP_= -999;
+    int _WINDOW_ = 5;
 
     int64_t _CHROM1_START_ = 0;
     int64_t _CHROM2_START_ = 0;

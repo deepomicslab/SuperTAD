@@ -172,7 +172,7 @@ namespace SuperTAD
         for (int s = 0; s < _N_; s++) {
             for (int e = s; e < _N_; e++) {
                 _volTable[s][e - s] = getVol(s, e);
-                if (_volTable[s][e - s] > 0)
+                if (_volTable[s][e - s] > SuperTAD::_THRESHOLD_)
                     _logVolTable[s][e - s] = log2(_volTable[s][e - s]);
                 else
                     _logVolTable[s][e - s] = -1;
@@ -247,7 +247,7 @@ namespace SuperTAD
 //    if (_LOG_VOL_TABLE_)
 //        return _logVolTable[s][e-s] > 0 ? _edgeCountMat(e, s) / _doubleEdgeSum * (logPV - _logVolTable[s][e-s]) : 0;
         if (_PRE_LOG_)
-            return _logVolTable[s][e - s] > 0 ? _edgeCountTable[e][s] / _doubleEdgeSum *
+            return _volTable[s][e - s] > SuperTAD::_THRESHOLD_ ? _edgeCountTable[e][s] / _doubleEdgeSum *
                                                 (logPV - _logVolTable[s][e - s]) : 0;
         else {
             double currentVol = getVol(s, e);

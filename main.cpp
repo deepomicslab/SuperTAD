@@ -13,6 +13,7 @@
 #include "detectorH.h"
 #include "compare.h"
 #include "detectorDeepBinary.h"
+#include "detectorMultiFast.h"
 
 using namespace SuperTAD;
 
@@ -45,6 +46,9 @@ int printUsage(char *argv[], int err)
             "\t\t./SuperTAD multi <input Hi-C matrix> -h <height> [-option values]\n"
             "\t\tOPTIONS:\n"
             "\t\t\t-h <int>: The height of coding tree, default: 2\n"
+            "\t\t\t--no-fast: If not given, run a more efficient implementation of the second mode with discretization and neighbor searching\n"
+            "\t\t\t--step <int>: The number of steps for discretization in Fast mode, default: bin number\n"
+            "\t\t\t--window <int> : The size of the searching window in Fast mode, default: 5 (bp)\n"
 
             "\tmulti_2d\tThe third mode requires two parameter h1 and h2 to determine the iteractions for dividing and merging\n"
             "\t\t./SuperTAD multi_2d <input Hi-C matrix> [-option values]\n"
@@ -197,7 +201,17 @@ int parseArg(int argc, char *argv[], int i)
 
         if (std::string(*(argv+i))==std::string("--no-fast")) {
             _FAST_ = false;
-            printf("disable fast mode\n");
+            printf("disable fast mode in multi mode\n");
+        }
+
+        if (std::string(*(argv + i)) == std::string("--step")) {
+            _STEP_ = atoi(*(argv + ++i));
+            printf("set step for the multi-fast mode to %d\n", _STEP_);
+        }
+
+        if (std::string(*(argv + i)) == std::string("--window")) {
+            _WINDOW_ = atoi(*(argv + ++i));
+            printf("set window size for the multi-fast mode to %d\n", _WINDOW_);
         }
 
         if (std::string(*(argv+i))==std::string("--penalty")) {
@@ -275,6 +289,9 @@ int parseArg(int argc, char *argv[], int i)
 
     if (_FAST_ && _BINARY_)
         printf("enable fast mode for binary mode\n");
+
+    if (_FAST_ && _MULTI_)
+        printf("enable fast mode for multi mode\n");
 
     if (_DEBUG_)
         _VERBOSE_ = true;
@@ -365,6 +382,11 @@ int main (int argc, char *argv[])
             if (_H_ == 1) {
                 multi::DetectorH1 dm(data);
                 dm.execute();
+            } else if (_FAST_) {    // SuperTAD-Fast
+                multifast::Discretization dmf1(data);
+                multi::Tree _multiTree = dmf1.execute();
+                multifast::NeighborSearch dmf2(data, _multiTree);
+                dmf2.execute();
             } else {
                 multi::Detector dm(data);
                 dm.execute();

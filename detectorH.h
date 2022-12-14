@@ -14,24 +14,23 @@
 #include "utils.h"
 #include <ctime>
 #include "inputAndOutput.h"
+#include "partitionAndmerge.h"
 
 namespace SuperTAD::multi {
 
-    class DetectorH1 {
+    class Partition {
     private:
         SuperTAD::Data * _data;
-//        Eigen::MatrixXd * _edgeCount;
         SuperTAD::Writer _writer;
         double **_table;
         int **_minIndexArray;
-//        std::map<int, int> _kToIdx;
         std::vector<Boundary> _boundaries;
-        int _k = 1;
+        int _k = 0;
 
     public:
-        DetectorH1(SuperTAD::Data &data);
+        Partition(SuperTAD::Data &data);
 
-        ~DetectorH1();
+        ~Partition();
 
         std::vector<Boundary> execute(int h=-1);
 
@@ -44,7 +43,7 @@ namespace SuperTAD::multi {
         SuperTAD::Data * _data;
         SuperTAD::Writer _writer;
         std::vector<Boundary> _preBoundaries;
-        std::vector<double> _prenodeSE;
+        std::vector<double> _prenodeSE; // the sum of bin se for each leave
         double **_table;
         int **_minIndexArray;
         int N;

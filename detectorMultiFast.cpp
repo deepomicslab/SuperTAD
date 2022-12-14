@@ -4,7 +4,7 @@
 
 #include "detectorMultiFast.h"
 
-namespace SuperTAD::multifast{
+namespace SuperTAD { namespace multi{
 
     Discretization::Discretization(SuperTAD::Data &data)
     {
@@ -90,7 +90,7 @@ namespace SuperTAD::multifast{
     {
         if (SuperTAD::_VERBOSE_)
             printf("Start filling db table. The step of discretization varies\n");
-        // init the leaves of F (H=0)
+        // init the base case of F (H = 0)
         for (int s = 0; s < SuperTAD::_N_; s++ ){
             for (int e = s; e < SuperTAD::_N_; e++){
                 double currentVolumn = _data->getVol(s, e);
@@ -103,9 +103,12 @@ namespace SuperTAD::multifast{
                 _tableF[s][e][0] /= _data->_doubleEdgeSum;
             }
         }
+        if (SuperTAD::_VERBOSE_)
+            printf("base case with height = 1, se = %f\n", _tableF[0][SuperTAD::_N_-1][0]);
 
         // start to fill table T
         for (int h = 1; h < SuperTAD::_H_; h++) {
+            // initialization
             for (int s = 0; s < SuperTAD::_N_; s++) {
                 for (int e = s; e < SuperTAD::_N_; e++) {
                     _tableF[s][e][h] = std::numeric_limits<double>::infinity();
@@ -113,41 +116,51 @@ namespace SuperTAD::multifast{
                         _tableT[s][e][k][h] = std::numeric_limits<double>::infinity();
                     }
                 }
+            }
+            // upper case, H > 0
+            for (int s = 0; s < SuperTAD::_N_; s++) {
                 for (int i = s; i < SuperTAD::_N_; i++)
                 {
                     for (int e = i; e < SuperTAD::_N_; e++)
                     {
-                        if (std::isnan(_data->_logVolTable[s][e - s]))
+                        if (std::isinf(_data->_logVolTable[s][e - s]))
                         {
                             _tableF[s][e][h] = 0;
                             _tableT[s][e][0][h] = 0;
-                        } else
+                            _tableStepIndexT[s][e][0][h] = 0;
+                            _minIndexT[s][e][0][h] = s;
+                            _sumofgcT[s][e][0][h] = 0;
+                            _minStepF[s][e][h] = 0;
+                        }
+                        else
                         {
-                            double minTmp, sumofg;
+                            double minTmp, sumofg, minTmpF;
                             int stepIndex = 0;
                             if (e == i)
                             {
-                                if (_tablestep[s][e-s] > SuperTAD::_THRESHOLD_)
-                                    stepIndex = int(_data->getG(s, e) / _tablestep[s][e - s]);
+//                                if (_tablestep[s][e - s] > SuperTAD::_THRESHOLD_)
+                                stepIndex = int(_data->getG(s, e) / _tablestep[s][e - s]);
 
-                                _tableT[s][e][stepIndex][h] = _tableF[s][e][h - 1] -
-                                                              (_data->getG(s, e) * _data->_logVolTable[s][e - s] /
-                                                               _data->_doubleEdgeSum);
-                                _minIndexT[s][e][stepIndex][h] = i;
-                                _tableStepIndexT[s][e][stepIndex][h] = stepIndex;
-                                _minStepF[s][e][h] = stepIndex;
-                                _sumofgcT[s][e][stepIndex][h] = _data->getG(s, e);
-                            } else
+                                minTmp = _tableF[s][e][h - 1] - (_data->getG(s, e) *
+                                        _data->_logVolTable[s][e - s] /_data->_doubleEdgeSum);
+                                if (minTmp < _tableT[s][e][stepIndex][h]) {
+                                    _tableT[s][e][stepIndex][h] = minTmp;
+                                    _minIndexT[s][e][stepIndex][h] = i;
+                                    _tableStepIndexT[s][e][stepIndex][h] = stepIndex;
+                                    _sumofgcT[s][e][stepIndex][h] = _data->getG(s, e);
+                                }
+                            }
+                            else
                             {
                                 for (int l = 0; l < SuperTAD::_STEP_ + 1; l++)
                                 {
-                                    if (not std::isinf(_tableT[s][i][l][h]))
+                                    if (not std::isinf(_tableT[s][i][l][h]))    // only consider the real value state in T
                                     {
                                         minTmp = _tableT[s][i][l][h] + _tableF[i + 1][e][h - 1] -
                                                 (_data->getG(i + 1, e) * _data->_logVolTable[i + 1][e-i-1]) / _data->_doubleEdgeSum;
                                         sumofg = _sumofgcT[s][i][l][h] + _data->getG(i + 1, e);
-                                        if (_tablestep[s][e-s] > SuperTAD::_THRESHOLD_)
-                                            stepIndex = int(sumofg / _tablestep[s][e - s]);
+//                                        if (_tablestep[s][e - s] > SuperTAD::_THRESHOLD_)
+                                        stepIndex = int(sumofg / _tablestep[s][e - s]);
 
                                         if (minTmp < _tableT[s][e][stepIndex][h])
                                         {
@@ -155,17 +168,19 @@ namespace SuperTAD::multifast{
                                             _minIndexT[s][e][stepIndex][h] = i;
                                             _tableStepIndexT[s][e][stepIndex][h] = l;
                                             _sumofgcT[s][e][stepIndex][h] = sumofg;
-                                            minTmp = _tableT[s][e][stepIndex][h] +
-                                                     (_sumofgcT[s][e][stepIndex][h] * _data->_logVolTable[s][e-s] /
-                                                      _data->_doubleEdgeSum);
-                                            if (minTmp < _tableF[s][e][h])
+                                            minTmpF = _tableT[s][e][stepIndex][h] + (_sumofgcT[s][e][stepIndex][h] *
+                                                    _data->_logVolTable[s][e-s] / _data->_doubleEdgeSum);
+                                            if (minTmpF < _tableF[s][e][h])
                                             {
-                                                _tableF[s][e][h] = minTmp;
+                                                _tableF[s][e][h] = minTmpF;
                                                 _minStepF[s][e][h] = stepIndex;
+                                                if (SuperTAD::_VERBOSE_ && s == 0 && e == SuperTAD::_N_ - 1)
+                                                    printf("upper case, start = %d end = %d se = %f step = %d i = %d\n", s, e, minTmpF, stepIndex, i);
                                             }
                                         }
                                     }
                                 }
+
                             }
                         }
                     }
@@ -196,32 +211,31 @@ namespace SuperTAD::multifast{
         }
     }
 
-    NeighborSearch::NeighborSearch(SuperTAD::Data &data, SuperTAD::multi::Tree multiTree)
+    NeighborSearch::NeighborSearch(SuperTAD::Data &data, SuperTAD::multi::Tree multiTree, double ***tableF)
     {
         _data = &data;
         _multiTree = multiTree;
-        _Nnodes = _multiTree._nodeList.size();  // containing root
-        printf("#node=%d\n", _Nnodes);
-        for (int i = 0; i < _Nnodes; i++) {
-                printf("(%d, %d)", _multiTree._nodeList[i]->_val[0], _multiTree._nodeList[i]->_val[1]);
-                if (i < _Nnodes-1)
-                    printf(", ");
-            }
-        printf("%d\n", _Nnodes);
+        _tableF = tableF;
+        _nodeList = _multiTree._nodeList;
+        _nodeList.emplace_back(_multiTree._root);
+        std::reverse(_nodeList.begin(), _nodeList.end());
+        _Nnodes = _nodeList.size();  // containing root
+        for (int i = 0; i < _Nnodes; i++)
+            _nodeList[i]->_index = i;
         _table = new double ****[_Nnodes];
         _minIndex = new int ****[_Nnodes];
         for (int u = 0; u < _Nnodes; u++) {
-            _table[u] = new double ***[SuperTAD::_WINDOW_];
-            _minIndex[u] = new int ***[SuperTAD::_WINDOW_];
-            for (int s = 0; s < SuperTAD::_WINDOW_; s++) {
-                _table[u][s] = new double **[SuperTAD::_WINDOW_];
-                _minIndex[u][s] = new int **[SuperTAD::_WINDOW_];
-                for (int e = 0; e < SuperTAD::_WINDOW_; e++) {
+            _table[u] = new double ***[2 * SuperTAD::_WINDOW_ + 1];
+            _minIndex[u] = new int ***[2 * SuperTAD::_WINDOW_ + 1];
+            for (int s = 0; s < 2 * SuperTAD::_WINDOW_ + 1; s++) {
+                _table[u][s] = new double **[2 * SuperTAD::_WINDOW_ + 1];
+                _minIndex[u][s] = new int **[2 * SuperTAD::_WINDOW_ + 1];
+                for (int e = 0; e < 2 * SuperTAD::_WINDOW_ + 1; e++) {
                     _table[u][s][e] = new double *[_Nnodes];
                     _minIndex[u][s][e] = new int *[_Nnodes];
                     for (int c = 0; c < _Nnodes; c++) {
-                        _table[u][s][e][c] = new double [SuperTAD::_WINDOW_]{};
-                        _minIndex[u][s][e][c] = new int [SuperTAD::_WINDOW_]{};
+                        _table[u][s][e][c] = new double [2 * SuperTAD::_WINDOW_ + 1]{};
+                        _minIndex[u][s][e][c] = new int [2 * SuperTAD::_WINDOW_ + 1]{};
                     }
                 }
             }
@@ -231,8 +245,8 @@ namespace SuperTAD::multifast{
     NeighborSearch::~NeighborSearch()
     {
         for (int u = 0; u < _Nnodes; u++) {
-            for (int s = 0; s < SuperTAD::_WINDOW_; s++) {
-                for (int e = 0; e < SuperTAD::_WINDOW_; e++) {
+            for (int s = 0; s < 2 * SuperTAD::_WINDOW_ + 1; s++) {
+                for (int e = 0; e < 2 * SuperTAD::_WINDOW_ + 1; e++) {
                     for (int c = 0; c < _Nnodes; c++) {
                         delete []_table[u][s][e][c];
                         delete []_minIndex[u][s][e][c];
@@ -252,7 +266,7 @@ namespace SuperTAD::multifast{
 
     void NeighborSearch::execute()
     {
-        _multiTree.getNodeList(_nodeList);  // preorder traversal, including root.
+        printf("wwwwwwwwwwwwwwwwwwwwwwww");
         _Nnodes = _nodeList.size();
         for (int i = 0; i < _Nnodes; i++) {
             printf("(%d, %d)", _nodeList[i]->_val[0], _nodeList[i]->_val[1]);
@@ -260,8 +274,7 @@ namespace SuperTAD::multifast{
                 printf(", ");
         }
         printf("%d\n", _Nnodes);
-
-
+        NeighborSearch::fillTable();
 
     }
 
@@ -269,6 +282,127 @@ namespace SuperTAD::multifast{
     {
         if (SuperTAD::_VERBOSE_)
             printf("Start filling db table in the neighbour searching step.\n");
+
+        // initialization
+        for (int s = 0; s < _Nnodes; s++) {
+            for (int i = 0; i < 2 * SuperTAD::_WINDOW_ + 1; i++) {
+                for (int j = 0; j < 2 * SuperTAD::_WINDOW_ + 1; j++) {
+                    for (int e = 0; e < _Nnodes; e++) {
+                        for (int p = 0; p < 2 * SuperTAD::_WINDOW_ + 1; p++) {
+                            _table[s][i][j][e][p] = std::numeric_limits<double>::infinity();
+
+                        }
+                    }
+                }
+            }
+        }
+
+
+        int s, e;   //the start and end (bin) of each node
+        int start, end; // the indicated bin after embedding window
+        int child_s, child_e;   // the start and end (bin) of child node
+        int child_e_win, child_end; // win_e_index, the indicated bin of child bound after embedding window
+        int child_s_win, child_start;
+        for (int i = 0; i < _Nnodes; i ++ )
+        {
+            s = _nodeList[i]->_val[0];
+            e = _nodeList[i]->_val[1];
+            for (int s_win = -SuperTAD::_WINDOW_; s_win < SuperTAD::_WINDOW_ + 1; s_win ++)
+            {
+                start = s + s_win;
+                for (int e_win = -SuperTAD::_WINDOW_; e_win < SuperTAD::_WINDOW_+1; e_win ++)
+                {
+                    end = e + e_win;
+                    // init for leaf se
+                    if (_nodeList[i]->_children.size() == 0 && start > -1 && end < SuperTAD::_N_ && start <= end)
+                        _table[i][mapWin(s_win)][mapWin(e_win)][0][0] = _tableF[start][end][0];
+                    else
+                        _table[i][mapWin(s_win)][mapWin(e_win)][0][0] = std::numeric_limits<double>::infinity();
+
+                    for (int m = 0; m < _nodeList[i]->_children.size(); m++)    // child node index
+                    {
+                        child_s = _nodeList[i]->_children[m]->_val[0];
+                        child_e = _nodeList[i]->_children[m]->_val[1];
+                        for (int c_e = - SuperTAD::_WINDOW_; c_e < SuperTAD::_WINDOW_+1; c_e ++)
+                        {
+                            if (_nodeList[i]->_children.size() == m + 1)
+                            {
+                                child_end = end;
+                                child_e_win = 0;
+                            } else
+                            {
+                                child_end = child_e + c_e;
+                                child_e_win = c_e;
+                            }
+
+                            for (int c_s = -SuperTAD::_WINDOW_; c_s < SuperTAD::_WINDOW_ + 1; c_s ++)
+                            {
+                                if (m == 0)
+                                {
+                                    child_start = start;
+                                    child_s_win = 0;
+                                } else
+                                {
+                                    child_start = child_s + c_s;
+                                    child_s_win = c_s;
+                                }
+                                if (child_start <= child_end && child_start > -1 && child_end < SuperTAD::_N_ && start < end && start > -1 && end < SuperTAD::_N_)
+                                {
+                                    if (m == 0)
+                                    {
+                                        _table[i][mapWin(s_win)][mapWin(e_win)][0][mapWin(child_e_win)] = _data->getSE(child_start, child_end, _data->getVol(start, end));
+                                        if (_nodeList[i]->_children[m]->_children.size() == 0){
+                                            _table[i][mapWin(s_win)][mapWin(e_win)][0][mapWin(child_e_win)] +=
+                                                    _table[_nodeList[i]->_children[m]->_index][mapWin(child_s_win)][mapWin(child_e_win)][0][0];
+                                        } else{
+                                            _table[i][mapWin(s_win)][mapWin(e_win)][0][mapWin(child_e_win)] +=
+                                                    _table[_nodeList[i]->_children[m]->_index][mapWin(child_s_win)][mapWin(child_e_win)][_nodeList[i]->_children[m]->_children.size()-1][mapWin(0)];
+                                        }
+                                        _minIndex[i][mapWin(s_win)][mapWin(e_win)][0][mapWin(child_e_win)] = child_s_win;
+                                    } else
+                                    {
+                                        double minTmp = _table[i][mapWin(s_win)][mapWin(e_win)][m-1][mapWin(child_s_win)]
+                                                + _data->getSE(child_start, child_end, _data->getVol(start, end));
+                                        if (_nodeList[i]->_children[m]->_children.size() == 0)
+                                            minTmp += _table[_nodeList[i]->_children[m]->_index][mapWin(child_s_win)][mapWin(child_e_win)][0][0];
+                                        else
+                                            minTmp += _table[_nodeList[i]->_children[m]->_index][mapWin(child_s_win)][mapWin(child_e_win)][_nodeList[i]->_children[m]->_children.size()-1][mapWin(0)];
+
+                                        if (minTmp < _table[i][mapWin(s_win)][mapWin(e_win)][m][mapWin(child_e_win)])
+                                        {
+                                            _table[i][mapWin(s_win)][mapWin(e_win)][m][mapWin(child_e_win)] = minTmp;
+                                            _minIndex[i][mapWin(s_win)][mapWin(e_win)][m][mapWin(child_e_win)] = child_s_win;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        if (SuperTAD::_VERBOSE_)
+            printf("final se after neighborSearch is %f", _table[_Nnodes-1][mapWin(0)][mapWin(0)][_multiTree._root->_children.size()-1][mapWin(0)]);
     }
-}
+
+//    void ::multiSplit(int start, int end, int l, int h)
+//    {
+//        int mid_pos = _minIndexT[start][end][l][h];
+//        printf("start = %d, end= %d, l=%d, h=%d, mid=%d\n", start, end, l, h, mid_pos);
+//        if (mid_pos == end) {
+//            _multiTree.add(start, end);
+//            if (h > 1) {
+//                multiSplit(start, end, _minStepF[start][end][h-1], h-1);
+//            }
+//        }
+//        else {
+//            _multiTree.add(mid_pos+1, end);
+//            multiSplit(start, mid_pos, _tableStepIndexT[start][end][l][h], h);
+//            if (h > 1) {
+//                multiSplit(mid_pos+1, end, _minStepF[mid_pos+1][end][h-1], h-1);
+//            }
+//        }
+//    }
+} }
 

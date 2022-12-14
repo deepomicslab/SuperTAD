@@ -19,7 +19,8 @@ namespace SuperTAD::multi {
     struct TreeNode {
         int _val[2];
         double _info=0, _g=0, _vol=0, _se=0;
-        std::set<TreeNode*> _children;
+        int _index = 0;
+        std::vector<TreeNode*> _children;
         TreeNode *_parent=NULL;
 
         TreeNode(int start, int end) {
@@ -28,11 +29,9 @@ namespace SuperTAD::multi {
         }
 
         ~TreeNode() {
-            while (!_children.empty()) {
-                auto it = _children.begin();
-                delete *it;
-                _children.erase(it);
-            }
+            for (auto i : _children)
+                delete i;
+            _children.clear();
         }
 
         TreeNode& operator=(const TreeNode &copy) {
@@ -51,16 +50,18 @@ namespace SuperTAD::multi {
         }
 
         bool hasOverLapChild(const TreeNode &t) const {
-            for (auto it=_children.begin(); it!=_children.end(); it++) {
-                if ((_val[0]-t._val[1])*(_val[1]-t._val[0]) < 0)
+            for (auto i : _children)
+            {
+                if ((i->_val[0] - t._val[1]) * (i->_val[1] - t._val[0]) < 0)
                     return true;
             }
             return false;
         }
 
         bool hasBiggerChild(const TreeNode &t) const {
-            for (auto it=_children.begin(); it!=_children.end(); it++) {
-                if ((*it)->_val[0] <= t._val[0] && (*it)->_val[1] >= t._val[1])
+            for (auto i : _children)
+            {
+                if (i->_val[0] <= t._val[0] && i->_val[1] >= t._val[0])
                     return true;
             }
             return false;
@@ -69,7 +70,7 @@ namespace SuperTAD::multi {
         std::string verbose(int numHeadingSpace=0) const {
             std::stringstream iss;
             iss << "self=(" << _val[0] << ", " << _val[1] << ")";
-            iss << ", info=" << _info << ", len(children)=" << _children.size ();
+            iss << ", info=" << _info << ", len(children)=" << _children.size();
             if (_parent) {
                 iss << ", parent=(" << _parent->_val[0] << ", " << _parent->_val[1] << ")";
             }
@@ -79,13 +80,6 @@ namespace SuperTAD::multi {
             iss << ", vol=" << _vol;
             iss << ", se=" << _se;
             return iss.str();
-        }
-
-        void getChildren(std::vector<TreeNode*> &nl) const {
-            for (auto it=_children.begin(); it!=_children.end(); it++) {
-                nl.emplace_back(*it);
-                (*it)->getChildren(nl);
-            }
         }
 
         void setG(Data &data)
@@ -120,8 +114,7 @@ namespace SuperTAD::multi {
         for (int i=0; i<numHeadingSpace; i++)
             std::cout << " ";
         std::cout << node << "\n";
-        for (auto it=node._children.begin(); it!=node._children.end(); it++)
-            treeNodeVerbose(**it, numHeadingSpace+2);
+        std::reverse(node._children.begin(), node._children.end());
     }
 
 
@@ -132,7 +125,7 @@ namespace SuperTAD::multi {
     public:
         Data *_data;
         TreeNode *_root = NULL;
-        std::vector<TreeNode*> _nodeList;  // NOT containing root
+        std::vector<TreeNode*> _nodeList;  // Not containing root
 
         Tree();
 
@@ -148,9 +141,6 @@ namespace SuperTAD::multi {
 
 //        std::vector<TreeNode*> &nodeList() { return _nodeList; }
 
-        void getNodeList(std::vector<TreeNode *> &nl);
-
-        double getSE();
     };
 }
 

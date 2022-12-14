@@ -33,6 +33,10 @@ namespace SuperTAD
             second = e;
             size = e - s + 1;
         };
+
+        bool operator==(const Boundary& a) const {
+            return a.first == first && a.second == second;
+        }
     };
 
     namespace utils

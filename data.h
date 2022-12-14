@@ -23,15 +23,13 @@ namespace SuperTAD
 {
     class Data {
     private:
-        std::string _chrom1, _chrom2;
-        std::map<int, std::pair<int64_t, int64_t>> _chrom1Idx2Interval, _chrom2Idx2Interval;
         double **_contactTable=NULL;
         bool _initByPointer=false;
 
     public:
         double **_edgeCountTable=NULL;  // upper triangular is intra cluster conductance; lower triangular is inter clusters conductance
-        double _edgeSum, _doubleEdgeSum, **_logVolTable=NULL, **_volTable=NULL;
-        std::vector<double> _sumOfGtimesLogG;
+        double _edgeSum, _doubleEdgeSum, **_logVolTable=NULL;
+        std::vector<double> _sumOfGtimesLogG;   // the sum of glog(g) of bins
 
         Data(std::string input);
 
@@ -58,11 +56,8 @@ namespace SuperTAD
         // calculate and return  structure entropy given s, e, volumes of parent and current nodes; se=g/edge_sum*log2(V_p/V)
         double getSE(int s, int e, double parentVol, double currentVol);
 
-        // calculate and return  structure entropy given s, e, log of volumes of parent and current nodes; se=g/edge_sum*log2(V_p/V)
-        double getSEwithLogs(int s, int e, double logPV, double logCV);
-
-        // calculate and return  structure entropy given s, e, log(volume of parent node)-log(volume of current node); se=g/edge_sum*logDiff
-        double getSEwithLogDiff(int s, int e, double logDiff);
+        // calculate and return  structure entropy given s, e, ps, pe
+        double getSE(int s, int e, int ps, int pe);
 
         // calculate and return  g*log(g)
         double getGtimesLogG(double binG);

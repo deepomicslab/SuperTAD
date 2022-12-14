@@ -78,7 +78,7 @@ namespace SuperTAD::utils {
 
     std::string version()
     {
-        return "SuperTAD v1.1";
+        return "SuperTAD v2.0";
     }
 
 }

@@ -4,7 +4,7 @@
 
 #include "detectorMulti.h"
 
-namespace SuperTAD::multi {
+namespace SuperTAD { namespace multi {
 
     Detector::Detector(SuperTAD::Data &data)
     {
@@ -101,11 +101,10 @@ namespace SuperTAD::multi {
 
                 double leafSum = 0;
                 int curS, curE;
-                for (int leaf = 0; leaf < _boundaries.size(); leaf++) {
-                    curS = _boundaries[leaf].first;
-                    curE = _boundaries[leaf].second;
-//                    leafSum += _data->getSE(curS, curE, 2 * _data->_edgeSum);
-                    leafSum += _data->getSE(curS, curE, _data->_doubleEdgeSum);
+                for (auto & _boundarie : _boundaries) {
+                    curS = _boundarie.first;
+                    curE = _boundarie.second;
+                    leafSum += _data->getSE(curS, curE, 0, SuperTAD::_N_-1);
                     leafSum += _table[curS][curE][0][0][curE];
                 }
                 sumOfLeaves.emplace_back(leafSum);
@@ -118,11 +117,11 @@ namespace SuperTAD::multi {
             if (SuperTAD::_VERBOSE_){
                 printf("--------\n");
                 printf("sumOfEntropy:\n");
-                for (int i=0; i<sumOfEntropy.size(); i++)
-                    printf("(%d, %f)\n", sumOfEntropy[i].first, sumOfEntropy[i].second);
+                for (auto & i : sumOfEntropy)
+                    printf("(%d, %f)\n", i.first, i.second);
                 printf("normLeaves:\n");
-                for (int i=0; i<normLeaves.size(); i++)
-                    printf("(%d, %f)\n", normLeaves[i].first, normLeaves[i].second);
+                for (auto & normLeave : normLeaves)
+                    printf("(%d, %f)\n", normLeave.first, normLeave.second);
             }
 
 //            if (_H_ == 1 || _H_ == 2) {
@@ -161,16 +160,6 @@ namespace SuperTAD::multi {
             backTrace(SuperTAD::_K_, SuperTAD::_H_, true);
         }
 
-//        _multiTree.getNodeList(_nodeList);
-//        if (SuperTAD::_VERBOSE_) {
-//            printf("nodes:");
-//            for (int i = 0; i < _nodeList.size(); i++) {
-//                printf("(%d, %d)", _nodeList[i]->_val[0], _nodeList[i]->_val[1]);
-//                if (i < _nodeList.size()-1)
-//                    printf(", ");
-//            }
-//            printf("\n");
-//        }
         if (SuperTAD::_VERBOSE_) {
             printf("nodes:");
             for (int i = 0; i < _multiTree._nodeList.size(); i++) {
@@ -181,16 +170,8 @@ namespace SuperTAD::multi {
             printf("\n");
         }
 
-        if (!SuperTAD::_NO_OUTPUT_) {
-//            _writer.writeTree(SuperTAD::_OUTPUT_ + ".multi", _nodeList);
-            _writer.writeTree(SuperTAD::_OUTPUT_ + ".multi", _multiTree._nodeList);
-            if (_SE_RESULT_PATH_ != "") {
-                std::ofstream outfile;
-                outfile.open(_SE_RESULT_PATH_, std::ios_base::app); // append instead of overwrite
-                outfile <<  _table[0][SuperTAD::_N_ - 1][kOpt - 1][SuperTAD::_H_ - 1][SuperTAD::_N_ - 1] << "\n";
-                outfile.close();
-            }
-        }
+        _writer.writeTree(SuperTAD::_OUTPUT_ + ".multi", _multiTree._nodeList);
+
     }
 
 
@@ -198,52 +179,44 @@ namespace SuperTAD::multi {
     {
         std::clock_t t;
         if (SuperTAD::_VERBOSE_) {
-            if (SuperTAD::_DEBUG_)
-                t = std::clock();
+            t = std::clock();
 
             printf("start filling db table\n");
         }
-        else
-            printf("fill db table\n");
-
+        double binSum;
         for (int s = 0; s < SuperTAD::_N_; s++)
         {
             for (int e = s; e < SuperTAD::_N_; e++)
             {
-                double currentVolume = _data->getVol(s, e);
-                double binSum;
+                binSum = _data->getVol(s, e) * _data->_logVolTable[s][e-s];
                 if (s == 0) {
-                    binSum = _data->getGtimesLogG(currentVolume) - _data->_sumOfGtimesLogG[e];
+                    binSum -= _data->_sumOfGtimesLogG[e];
                 } else {
-                    binSum = _data->getGtimesLogG(currentVolume) - (_data->_sumOfGtimesLogG[e] - _data->_sumOfGtimesLogG[s - 1]);
+                    binSum -= _data->_sumOfGtimesLogG[e] - _data->_sumOfGtimesLogG[s - 1];
                 }
                 _table[s][e][0][0][e] = binSum / _data->_doubleEdgeSum;
             }
         }
 
-
+        int minIdx;
+        double minTmp, tmp;
         for (int k = 1; k < SuperTAD::_K_; k++) {
             for (int s = 0; s < SuperTAD::_N_; s++) {
                 for (int parentEnd = s; parentEnd < SuperTAD::_N_; parentEnd++) {
                     for (int e = s; e < parentEnd + 1; e++) {
 
-//                        if (e-s+1 < k)
-//                            continue;
-
-                        double parentVol = _data->getVol(s, parentEnd);
-                        double minTmp = std::numeric_limits<double>::infinity();
-                        int minIdx = 0;
+                        minTmp = std::numeric_limits<double>::infinity();
+                        minIdx = 0;
                         for (int i = s; i < e; i++) {
-                            double tmp;
                             if (k - 1 == 0) {
                                 tmp = _table[s][i][k - 1][0][i];
-                                tmp += _data->getSE(s, i, parentVol);
+                                tmp += _data->getSE(s, i, s, parentEnd);
                             }
                             else {
                                 tmp = _table[s][i][k - 1][0][parentEnd];
                             }
 
-                            tmp += _data->getSE(i + 1, e, parentVol);
+                            tmp += _data->getSE(i + 1, e, s, parentEnd);
 
                             tmp += _table[i + 1][e][0][0][e];
                             if (tmp <= minTmp) {
@@ -258,6 +231,7 @@ namespace SuperTAD::multi {
             }
         }
 
+        int leftK;
         for (int h = 1; h < SuperTAD::_H_; h++) {
             initH(h);
             for (int k = 2; k < SuperTAD::_K_ + 1; k++) {
@@ -265,43 +239,25 @@ namespace SuperTAD::multi {
                     for (int parentEnd = s; parentEnd < SuperTAD::_N_; parentEnd++) {
                         for (int e = s; e < parentEnd + 1; e++) {
 
-//                            if (e-s+1 < k)
-//                                continue;
-
-                            double minTmp, currentVol, parentVol;
-                            int minIdx, leftK;
                             if (e - s + 1 >= k) {
-//                                minTmp = _table[start][end][indexK(cluster)][height - 1][end];
                                 minTmp = _table[s][e][k - 1][h - 1][e];
-                                parentVol = _data->getVol(s, parentEnd);
-                                minTmp += _data->getSE(s, e, parentVol);
+                                minTmp += _data->getSE(s, e, s, parentEnd);
                                 minIdx = s;
                                 leftK = 0;
                                 for (int kTmp = 1; kTmp < k; kTmp++) {
                                     for (int i = s; i < e; i++) {
 
-//                                        if (i-s+1 < kTmp)
-//                                            continue;
-//
-//                                        if (e-i+1 < k-kTmp)
-//                                            continue;
-
-                                        double tmp;
                                         if (kTmp == 1) {
-//                                            tmp = _table[start][mid][indexK(binaryK)][height - 1][mid] +
-//                                                  _table[mid + 1][end][indexK(cluster - binaryK)][height - 1][end];
                                             tmp = _table[s][i][kTmp - 1][h - 1][i] +
                                                   _table[i + 1][e][k - kTmp - 1][h - 1][e];
-                                            tmp += _data->getSE(s, i, parentVol);
+                                            tmp += _data->getSE(s, i, s, parentEnd);
                                         }
                                         else {
-//                                            tmp = _table[start][mid][indexK(binaryK)][height][parentEnd] +
-//                                                  _table[mid + 1][end][indexK(cluster - binaryK)][height - 1][end];
                                             tmp = _table[s][i][kTmp - 1][h][parentEnd] +
                                                   _table[i + 1][e][k - kTmp - 1][h - 1][e];
                                         }
 
-                                        tmp += _data->getSE(i + 1, e, parentVol);
+                                        tmp += _data->getSE(i + 1, e, s, parentEnd);
                                         if (tmp <= minTmp) {
                                             minTmp = tmp;
                                             minIdx = i;
@@ -321,34 +277,30 @@ namespace SuperTAD::multi {
                         }
                     }
                 }
-//                printf("h=%d, k=%d, table=%f\n", h, k, _table[0][_N_-1][k-1][h][_N_-1]);
+                if (SuperTAD::_VERBOSE_)
+                    printf("--------\nh=%d, optimalK=%d, table=%f\n", h, k, _table[0][SuperTAD::_N_ - 1][k - 1][
+                            SuperTAD::_H_ - 1][SuperTAD::_N_ - 1]);
 
                 if (h == SuperTAD::_H_ - 1 and SuperTAD::_DETERMINE_K_ ) {
-//                    printf("h=%d, SuperTAD::_H_=%d\n", h, SuperTAD::_H_);
                     if (_table[0][SuperTAD::_N_ - 1][k - 1][h][SuperTAD::_N_ - 1] - _table[0][SuperTAD::_N_ - 1][k - 2][h][
-                        SuperTAD::_N_ - 1] < -1e-6) {
+                        SuperTAD::_N_ - 1] < - SuperTAD::_THRESHOLD_) {
                         SuperTAD::_OPTIMAL_K_ = k;
-                        printf("--------\noptimalK=%d, table=%f\n", SuperTAD::_OPTIMAL_K_, _table[0][SuperTAD::_N_ - 1][k - 1][
-                            SuperTAD::_H_ - 1][SuperTAD::_N_ - 1]);
+
                     } else {
-                        printf("--------\nno more optimalK=%d, table=%f\n", SuperTAD::_OPTIMAL_K_, _table[0][
-                            SuperTAD::_N_ - 1][k - 1][SuperTAD::_H_ - 1][SuperTAD::_N_ - 1]);
+                        printf("--------\nthe optimalK=%d, table=%f\n", SuperTAD::_OPTIMAL_K_, _table[0][
+                            SuperTAD::_N_ - 1][k - 2][SuperTAD::_H_ - 1][SuperTAD::_N_ - 1]);
                         if (SuperTAD::_VERBOSE_)
                             printf("finish filling db table\n");
-
-                        if (SuperTAD::_DEBUG_)
-                            printf("filling db table consumes %fs\n", (float)(std::clock() - t)/CLOCKS_PER_SEC);
                         return;
+
                     }
                 }
             }
         }
 
         if (SuperTAD::_VERBOSE_)
-            printf("finish filling db table\n");
+            printf("finish filling db table, consumes %fs\n", (float)(std::clock() - t)/CLOCKS_PER_SEC);
 
-        if (SuperTAD::_DEBUG_)
-            printf("filling db table consumes %fs\n", (float)(std::clock() - t)/CLOCKS_PER_SEC);
     }
 
 
@@ -455,4 +407,4 @@ namespace SuperTAD::multi {
         }
     }
 
-}
+} }

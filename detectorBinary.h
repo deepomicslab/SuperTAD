@@ -27,9 +27,8 @@ namespace SuperTAD::binary {
         int ***_minIndexTableForBold=NULL, ***_minIndexTable=NULL, ***_leftKtable=NULL;
         std::vector<Boundary> _boundaries;
         std::vector<TreeNode*> _trueNodeList;
-//        int *_numBins, *_kTmpIdx, *_kMinusKtmpIdx;
         int _numBins=0, _kTmpIdx=0, _kMinusKtmpIdx=0;   // split into kTmp nodes and k-kTmp nodes
-        float *_scoreTable=NULL;  // for fast mode
+        float *_scoreTable=NULL;  // for tree pruning
         bool _breakFlag;
 
     public:
@@ -49,14 +48,9 @@ namespace SuperTAD::binary {
 
         static bool sortByStart(Boundary a, Boundary b);
 
-//        void setIndexKtmp(int k);
-//        { *_kTmpIdx = k - 1; }
+        void setIndex(int k, int &kIdx) { kIdx = k - 1; };
 
-        void setIndex(int k, int &kIdx);
-//        { kIdx = k - 1; }
-
-        void setNumBins(int s, int e);
-//        { *_numBins = e - s + 1; }
+        void setNumBins(int s, int e) { _numBins = e - s + 1;};
 
         void backTrace(int k, bool add = false);
 

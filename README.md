@@ -1,8 +1,13 @@
 # SuperTAD
 
-You may find a more detailed introduction to SuperTAD [here](https://supertad.deepomics.org)
+The C++ package, SuperTAD, provides robust detection for the hierarchical structure of TADs from Hi-C contact maps. 
+The package SuperTAD finds the global optimal result with no user-defined parameters.
 
-## Install  
+More details can be found in the manuscript "SuperTAD: robust detection of hierarchical topologically associated 
+domains with optimized structural information" 
+[(https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02234-6).](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02234-6)
+
+## Installation  
 use git:  
 ```
 git clone https://github.com/deepomicslab/SuperTAD SuperTAD

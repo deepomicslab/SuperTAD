@@ -8,18 +8,6 @@
 namespace SuperTAD::binary
 {
 
-//    std::ostream& operator<<(std::ostream &os, const TreeNode &node)
-//    {
-//        os << "idx=" << node._idx << ", ";
-//        os << "self=(" << node._val[0] << ", " << node._val[1] << ")";
-//        if (node._left != NULL && node._right != NULL) {
-//            os << ", left=(" << node._left->_val[0] << ", " << node._left->_val[1] << ")";
-//            os << ", right=(" << node._right->_val[0] << ", " << node._right->_val[1] << ")";
-//        }
-//        return os;
-//    }
-
-
     Tree::Tree()
     {
         _root = NULL;
@@ -29,17 +17,10 @@ namespace SuperTAD::binary
     }
 
 
-//    Tree::Tree(Data &d)
-//    {
-//        Tree();
-//        _data = &d;
-//    }
-
-
     Tree::~Tree()
     {
-        for (int i = 0; i < _nodeList.size(); i++) {
-            delete _nodeList[i];
+        for (auto & i : _nodeList) {
+            delete i;
         }
         delete _root;
     }
@@ -182,14 +163,17 @@ namespace SuperTAD::binary
     double Pruner1::getH(TreeNode &node, int k)
     {
         if (k == 1) {
-            double tmp = node.getSE(*(_tree->_data), *(_tree->_root));
+            double tmp = _data->getSE(node._val[0], node._val[1], _tree->_root->_val[0], _tree->_root->_val[1]);
             // if leaf node is bin
             if (node._left == NULL || node._right == NULL) {
                 // no extra op
             } else { // if leaf node is bin (NOT node contains bin(s))
-                for (int i = node._val[0]; i <= node._val[1]; i++) {
-                    tmp += _data->getSE(i, i, node._vol);
-                }
+                tmp += (_data->getVol(node._val[0], node._val[1]) * _data->_logVolTable[node._val[0]][node._val[1] - node._val[0]]) / _data->_doubleEdgeSum;
+
+                if (node._val[0] == 0)
+                    tmp -= _data->_sumOfGtimesLogG[node._val[1]] / _data->_doubleEdgeSum;
+                else
+                    tmp -= (_data->_sumOfGtimesLogG[node._val[1]] - _data->_sumOfGtimesLogG[node._val[0] - 1]) / _data->_doubleEdgeSum;
 //                std::cout << "k=" << k << ", current node chosen:" << no  de << ", se=" << tmp << "\n";
                 _minHtable[k-1][node._idx] = tmp;
             }
@@ -287,48 +271,6 @@ namespace SuperTAD::binary
     {
         double minSE = std::numeric_limits<double>::infinity();
         int minIdx;
-
-//        // test
-//        int k=63;
-//        getH(*_tree->_root, k);
-//        double tmpMinSE = _minHtable[k - 1][_tree->_root->_idx];
-//        printf("========\nk=%d, minSE=%f\n", k, tmpMinSE);
-//        backTrace(*_tree->_root, k);
-//        _prunedTree._root->setVol(*_data);
-//        std::cout << "prunedTree.root:" << *_prunedTree._root << "\n";
-//        double se=0;
-//        printf("root vol=%f\n", _prunedTree._root->_vol);
-//        std::ofstream file;
-//        file.open("../data/test/edge_graph_3421.txt.deepbinary.pruned.tsv.test.log.tsv");
-//        file << "start\tend\tvol\tse\n";
-//        for (auto it:_prunedTree._nodeList) {
-//            file << it->_val[0] << "\t" << it->_val[1] << "\t" << it->_vol << "\t" << it->_se << "\n";
-//            std::cout << *it << "\n";
-//            double tmp=_data->getSE(it->_val[0],it->_val[1], _prunedTree._root->_vol, it->_vol);
-//            printf("se=%f\n", tmp);
-//            se += tmp;
-//            printf("\n");
-//        }
-//        printf("\n");
-//        for (auto it:_prunedTree._nodeList) {
-////            file << it->_val[0] << "\t" << it->_val[1] << "\t" << it->_vol << "\t" << it->_se << "\n";
-////            std::cout << *it << "\n";
-////            double tmp=_data->getSE(it->_val[0],it->_val[1], _prunedTree._root->_vol, it->_vol);
-////            printf("se=%f\n", tmp);
-////            se += tmp;
-//            double tmp;
-//            for (int i=it->_val[0]; i<=it->_val[1]; i++) {
-//                tmp = _data->getSE(i, i, it->_vol);
-//                printf("se of bin %d=%f\n", i, tmp);
-//                file << i << "\t" << i << "\t" << it->_vol << "\t" << tmp << "\n";
-//                se += tmp;
-//            }
-//        }
-//        file.close();
-//        printf("final se=%f\n", se);
-//        _optimalK = k;
-//        _optimalSE = se;
-////        exit(0);
 
         // aggressive prune mode
         if (_TURBO_PRUNE_) {

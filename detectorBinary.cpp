@@ -37,15 +37,9 @@ namespace SuperTAD::binary
                 }
             }
         }
-//        printf("db table size=%d\n", size);
         _boundaries.reserve(SuperTAD::_K_);
         _binaryTree = new Tree();
         _binaryTree->setData(*_data);
-//        _binaryTree = new Tree(*_data);
-
-//        _numBins = new int(0);
-//        _kTmpIdx = new int(0);
-//        _kMinusKtmpIdx = new int(0);
     }
 
 
@@ -72,10 +66,6 @@ namespace SuperTAD::binary
         delete _table;
         delete _minIndexTable;
         delete _leftKtable;
-
-//        delete _numBins;
-//        delete _kTmpIdx;
-//        delete _kMinusKtmpIdx;
     }
 
 
@@ -89,59 +79,36 @@ namespace SuperTAD::binary
         std::vector<double> sumOfLeaves;
         std::vector<IntDoublePair> normLeaves;
 
-        double entropy, leafSum, parentVol, currentVol, divisor, logPV;
+        double binSum, se;
         if (SuperTAD::_DETERMINE_K_)
         {
-            if (SuperTAD::_VERBOSE_)
-            {
-                printf("start determine optimal K\n");
-                tTmp = std::clock();
-            } else
-                printf("determine K\n");
-
             if (SuperTAD::_OPTIMAL_K_ < SuperTAD::_K_)
                 SuperTAD::_K_ = SuperTAD::_OPTIMAL_K_;
 
-            if (SuperTAD::_VERBOSE_)
-                printf("--------\n");
-
-//            sort(normLeaves.begin(), normLeaves.end(), utils::cmpIntDoublePairBySecond);
-            printf("optimal K is %d\n", SuperTAD::_K_);
-
-            if (SuperTAD::_VERBOSE_)
-                printf("finish determine optimal K\n");
-
-            if (SuperTAD::_DEBUG_)
-                printf("determining optimal K consumes %fs\n", (float) (std::clock() - tTmp) / CLOCKS_PER_SEC);
+            printf("Determine the optimal K as %d\n", SuperTAD::_K_);
 
             backTrace(SuperTAD::_K_, true);
         } else
         {
             printf("K=%d\n", SuperTAD::_K_);
-//            setIndexKtmp(SuperTAD::_K_);
+
             setIndex(SuperTAD::_K_, _kTmpIdx);
 
-//            entropy = _table[0][SuperTAD::_N_ - 1][*_kTmpIdx];
-            entropy = _table[0][SuperTAD::_N_ - 1][_kTmpIdx];
-            sumOfEntropy.emplace_back(entropy);
+            se = _table[0][SuperTAD::_N_ - 1][_kTmpIdx];
+            sumOfEntropy.emplace_back(se);
 
             backTrace(SuperTAD::_K_, true);
-            leafSum = 0;
-//            for (int leaf = 0; leaf < _boundary.size(); leaf++) {
-//                leafSum += _data->getSE(_boundary[leaf].first, _boundary[leaf].second, _data->_doubleEdgeSum);
-//                leafSum += _table[_boundary[leaf].first][_boundary[leaf].second][0];
-//            }
-            logPV = log2(_data->_doubleEdgeSum);
+            binSum = 0;
+
             for (int leaf = 0; leaf < _boundaries.size(); leaf++)
             {
-                leafSum += _data->getSEwithLogPV(_boundaries[leaf].first, _boundaries[leaf].second, logPV);
-                leafSum += _table[_boundaries[leaf].first][_boundaries[leaf].second][0];
+                binSum += _data->getSE(_boundaries[leaf].first, _boundaries[leaf].second, 0, SuperTAD::_N_-1);
+                binSum += _table[_boundaries[leaf].first][_boundaries[leaf].second][0];
             }
-            sumOfLeaves.emplace_back(leafSum);
-            double divisor =
-                    log2(SuperTAD::_N_ / (double) SuperTAD::_K_) + (SuperTAD::_N_ * (SuperTAD::_K_ - 1) / (double) (
+            sumOfLeaves.emplace_back(binSum);
+            double divisor = log2(SuperTAD::_N_ / (double) SuperTAD::_K_) + (SuperTAD::_N_ * (SuperTAD::_K_ - 1) / (double) (
                             SuperTAD::_K_ * (SuperTAD::_N_ - 1))) * log2(SuperTAD::_K_);
-            normLeaves.emplace_back(SuperTAD::_K_, leafSum / divisor);
+            normLeaves.emplace_back(SuperTAD::_K_, binSum / divisor);
         }
         _nodeList = &_binaryTree->_nodeList;
         if (SuperTAD::_VERBOSE_)
@@ -156,10 +123,9 @@ namespace SuperTAD::binary
             printf("\n");
         }
 
-        if (!SuperTAD::_NO_OUTPUT_)
-            SuperTAD::Writer::writeTree(SuperTAD::_OUTPUT_ + ".binary.original", *_nodeList);
+        SuperTAD::Writer::writeTree(SuperTAD::_OUTPUT_ + ".binary.original", *_nodeList);
 
-        if (SuperTAD::_FILTERING_)
+        if (SuperTAD::_PRUNE_)
             filter();
     }
 
@@ -172,38 +138,19 @@ namespace SuperTAD::binary
             return a.first < b.first;
     }
 
-
-    void Detector::setIndex(int k, int &idx)
-    {
-        idx = k - 1;
-    }
-
-
-//    void Detector::setIndexKtmp(int k)
-//    {
-//        _kTmpIdx = k-1;
-//    }
-
-
-    void Detector::setNumBins(int s, int e)
-    {
-        _numBins = e - s + 1;
-    }
-
-
     void Detector::executeFilter(std::string result)
     {
         SuperTAD::Reader::parseBoundariesIn8ColsFormat(_boundaries, result);
         sort(_boundaries.begin(), _boundaries.end(),
              Detector::sortByStart);    //sort boundaries in the increasing of start pos
         binary::TreeNode *newNode;
-        int s, e, k;
+        int s, e;
         s = 0;
         e = SuperTAD::_N_ - 1;
-        k = 1;
 
         // add root
-        _binaryTree->add(s, e, k);
+        newNode = new binary::TreeNode(s, e);
+        _binaryTree->_root = newNode;
 
         // construct coding tree
         for (int i = 0; i < _boundaries.size(); i++)
@@ -212,9 +159,7 @@ namespace SuperTAD::binary
             _binaryTree->insert(newNode, &_binaryTree->root());
         }
         _nodeList = &_binaryTree->_nodeList;
-//        for (int i=0;i<_nodeList->size();i++){
-//            printf("%d, %d, %d, %d, %d\n", i, (*_nodeList)[i]->_val[0], (*_nodeList)[i]->_val[1], (*_nodeList)[i]->_parent->_val[0], (*_nodeList)[i]->_parent->_val[1]);
-//        }
+
         filter();
     }
 
@@ -222,68 +167,50 @@ namespace SuperTAD::binary
     void Detector::fillTable()
     {
         std::clock_t t;
-//        , tVol, tSE, tTmp;
         if (SuperTAD::_VERBOSE_)
         {
             printf("start filling dp table\n");
             t = std::clock();
-        } else
-            printf("fill dp table\n");
+        }
 
+        double binSum;
         for (int s = 0; s < SuperTAD::_N_; s++)
         {
             for (int e = s; e < SuperTAD::_N_; e++)
             {
-                double currentVol = _data->getVol(s, e);
-                double binSum;
+                binSum = _data->getVol(s, e) * _data->_logVolTable[s][e-s];
                 if (s == 0)
                 {
-                    binSum = _data->getGtimesLogG(currentVol) - _data->_sumOfGtimesLogG[e];
+                    binSum -= _data->_sumOfGtimesLogG[e];
                 } else
                 {
-                    binSum = _data->getGtimesLogG(currentVol) -
-                             (_data->_sumOfGtimesLogG[e] - _data->_sumOfGtimesLogG[s - 1]);
+                    binSum -= _data->_sumOfGtimesLogG[e] - _data->_sumOfGtimesLogG[s - 1];
                 }
-                _table[s][e][0] = binSum / (2. * _data->_edgeSum);
+                _table[s][e][0] = binSum / (_data->_doubleEdgeSum);
             }
         }
 
-        if (SuperTAD::_DEBUG_)
-            printf("start filling upper cases\n");
-
         int kIdx, k, s, e, leftI, leftK, leftI2, endTmp;
-        double minSE, tmpSE, parentVol, logPV, currentVol, minSE2, logPdC;
-        _breakFlag = false; // for fast mode
+        double minSE, tmpSE, minSE2;
+        _breakFlag = false; // for restricting the searching area based on identified boundaries, under testing
         double normOfLeavesTmp = std::numeric_limits<double>::infinity();
 
         for (k = 2; k <= SuperTAD::_K_; k++)
         {
             if (_breakFlag)
-            {
-                if (SuperTAD::_DEBUG_)
-                    printf("break at loop k; s=%d, e=%d, k=%d\n", s, e, k);
-                break;
-            }
+            {}
 
             setIndex(k, kIdx);
 
             for (s = 0; s < SuperTAD::_N_; s++)
             {
                 if (_breakFlag)
-                {
-                    if (SuperTAD::_DEBUG_)
-                        printf("break at loop s; s=%d, e=%d, k=%d\n", s, e, k);
-                    break;
-                }
+                {}
 
                 for (e = s; e < SuperTAD::_N_; e++)
                 {
                     if (_breakFlag)
-                    {
-                        if (SuperTAD::_DEBUG_)
-                            printf("break at loop e; s=%d, e=%d, k=%d\n", s, e, k);
-                        break;
-                    }
+                    {}
 
                     setNumBins(s, e);
                     if (_numBins < k)
@@ -299,23 +226,19 @@ namespace SuperTAD::binary
                      */
                     for (int kTmp = 1; kTmp < k; kTmp++)
                     {
-//                        setIndexKtmp(kTmp);
                         setIndex(kTmp, _kTmpIdx);
-//                        indexK(k-kTmp, *_kMinusKtmpIdx);
                         setIndex(k - kTmp, _kMinusKtmpIdx);
 
-                        if (SuperTAD::_FAST_)
-                        {
-                            minSE2 = std::numeric_limits<double>::infinity();
-                            leftI2 = 0;
-//                            endTmp = (_minIndexTableForBold[s][e][*_kTmpIdx] == -1 ? e : _minIndexTableForBold[s][e][*_kTmpIdx] + SuperTAD::_PENALTY_);
-                            endTmp = (_minIndexTableForBold[s][e][_kTmpIdx] == -1 ? e :
-                                      _minIndexTableForBold[s][e][_kTmpIdx] + SuperTAD::_PENALTY_);
-                        } else
-                            endTmp = e;
-
-                        if (endTmp > e)
-                            endTmp = e;
+//                        if (SuperTAD::_FAST_)
+//                        {
+//                            minSE2 = std::numeric_limits<double>::infinity();
+//                            leftI2 = 0;
+////                            endTmp = (_minIndexTableForBold[s][e][*_kTmpIdx] == -1 ? e : _minIndexTableForBold[s][e][*_kTmpIdx] + SuperTAD::_PENALTY_);
+//                            endTmp = (_minIndexTableForBold[s][e][_kTmpIdx] == -1 ? e :
+//                                      _minIndexTableForBold[s][e][_kTmpIdx] + SuperTAD::_PENALTY_);
+//                            if (endTmp > e) endTmp = e;
+//                        } else
+                        endTmp = e;
 
                         for (int i = s; i < endTmp; i++)
                         {
@@ -327,21 +250,14 @@ namespace SuperTAD::binary
                                 continue;
 
                             tmpSE = _table[s][i][_kTmpIdx] + _table[i + 1][e][_kMinusKtmpIdx];
-                            parentVol = _data->getVol(s, e);
-                            logPV = _data->_logVolTable[s][e - s];
 
                             // H_l(s,e,i)
-                            if (SuperTAD::_PRE_LOG_)
-                                tmpSE += _data->getSEwithLogPV(s, i, logPV);
-                            else
-                                tmpSE += _data->getSE(s, i, parentVol);
+                            tmpSE += _data->getSE(s, i, s, e);
 
                             // H_r(s,e,i)
-                            if (SuperTAD::_PRE_LOG_)
-                                tmpSE += _data->getSEwithLogPV(i + 1, e, logPV);
-                            else
-                                tmpSE += _data->getSE(i + 1, e, parentVol);
+                            tmpSE += _data->getSE(i + 1, e, s, e);
 
+//                            if (tmpSE - minSE < -SuperTAD::_THRESHOLD_)
                             if (tmpSE < minSE)
                             {
                                 minSE = tmpSE;
@@ -349,77 +265,64 @@ namespace SuperTAD::binary
                                 leftK = kTmp;
                             }
 
-                            if (SuperTAD::_FAST_ && tmpSE < minSE2)
-                            {
-                                minSE2 = tmpSE;
-                                leftI2 = i;
-                            }
+//                            if (SuperTAD::_FAST_ && tmpSE < minSE2)
+//                            {
+//                                minSE2 = tmpSE;
+//                                leftI2 = i;
+//                            }
                         }
 
-                        if (SuperTAD::_FAST_)
-                            _minIndexTableForBold[s][e][_kTmpIdx] = leftI2;
+//                        if (SuperTAD::_FAST_)
+//                            _minIndexTableForBold[s][e][_kTmpIdx] = leftI2;
                     }
                     _minIndexTable[s][e][kIdx] = leftI;
                     _table[s][e][kIdx] = minSE;
                     _leftKtable[s][e][kIdx] = leftK;
 
-                    if (k == SuperTAD::_K_ && s == 0 && e == SuperTAD::_N_ - 1)
-                    {
-                        if (SuperTAD::_DEBUG_)
-                            printf("already obtain optimal solution for minS(1, %d, %d); stop here\n",
-                                   SuperTAD::_N_, SuperTAD::_K_);
-                        _breakFlag = true;
-                    }
+//                    if (k == SuperTAD::_K_ && s == 0 && e == SuperTAD::_N_ - 1)
+//                    {
+//                        if (SuperTAD::_DEBUG_)
+//                            printf("already obtain optimal solution for minS(1, %d, %d); stop here\n",
+//                                   SuperTAD::_N_, SuperTAD::_K_);
+//                        _breakFlag = true;
+//                    }
                 }
             }
 
-            if (SuperTAD::_DEBUG_)
+            if (SuperTAD::_VERBOSE_)
             {
-                printf("finishing filling upper case where k=%d, _table[0][%d][%d]=%f\n",
+                printf("finish filling upper case where k=%d, _table[0][%d][%d]=%f\n",
                        k, SuperTAD::_N_ - 1, kIdx, _table[0][SuperTAD::_N_ - 1][kIdx]);
             }
 
             if (SuperTAD::_DETERMINE_K_)
             {
                 backTrace(k);
+
                 double leafSum = 0;
-                logPV = log2(_data->_doubleEdgeSum);
+
                 for (int leaf = 0; leaf < _boundaries.size(); leaf++)
                 {
-                    leafSum += _data->getSEwithLogPV(_boundaries[leaf].first, _boundaries[leaf].second,
-                                                     logPV);
+                    leafSum += _data->getSE(_boundaries[leaf].first, _boundaries[leaf].second, 0, SuperTAD::_N_-1);
                     leafSum += _table[_boundaries[leaf].first][_boundaries[leaf].second][0];
                 }
-                double divisor =
-                        log2(SuperTAD::_N_ / (double) k) + (SuperTAD::_N_ * (k - 1) / (double) (k * (
+                double divisor = log2(SuperTAD::_N_ / (double) k) + (SuperTAD::_N_ * (k - 1) / (double) (k * (
                                 SuperTAD::_N_ - 1))) * log2(k);
                 double Tmp = leafSum / divisor;
-                if (Tmp - normOfLeavesTmp < -1e-6)
+                if (SuperTAD::_VERBOSE_)
+                    printf("--------\noptimalK=%d, normLeaves=%f, se=%f\n", k, Tmp, _table[0][SuperTAD::_N_ - 1][kIdx]);
+                if (Tmp - normOfLeavesTmp < - SuperTAD::_THRESHOLD_)
                 {
                     SuperTAD::_OPTIMAL_K_ = k;
                     normOfLeavesTmp = Tmp;
-                    printf("--------\noptimalK=%d, normLeaves=%f, se=%f\n", SuperTAD::_OPTIMAL_K_, Tmp,
-                           _table[0][SuperTAD::_N_ - 1][kIdx]);
                 } else
-                {
-                    if (SuperTAD::_VERBOSE_)
-                        printf("finish filling db table\n");
-
-                    if (SuperTAD::_DEBUG_)
-                        printf("filling db table consumes %fs\n",
-                               (float) (std::clock() - t) / CLOCKS_PER_SEC);
-                    return;
-                }
+                    break;
             }
         }
 
         if (SuperTAD::_VERBOSE_)
-            printf("finish filling dp table\n");
+            printf("finish filling dp table, consumes %fs\n", (float) (std::clock() - t) / CLOCKS_PER_SEC);
 
-        if (SuperTAD::_DEBUG_)
-            printf("filling dp table consumes %fs\n", (float) (std::clock() - t) / CLOCKS_PER_SEC);
-
-        return;
     }
 
 
@@ -427,7 +330,19 @@ namespace SuperTAD::binary
     {
         init();
 
-        binarySplit(0, SuperTAD::_N_ - 1, k, add);
+        if (add){
+            binary::TreeNode *newNode = new binary::TreeNode(0, SuperTAD::_N_-1);
+            _binaryTree->_root = newNode;
+        }
+
+        setIndex(k, _kTmpIdx);
+        int i = _minIndexTable[0][SuperTAD::_N_-1][_kTmpIdx];
+        int kTmp = _leftKtable[0][SuperTAD::_N_-1][_kTmpIdx];
+
+        _boundaries.emplace_back(i + 1, -1);
+        binarySplit(0, i, kTmp, add, 1);
+
+        binarySplit(i + 1, SuperTAD::_N_-1, k - kTmp, add, 1);
 
         _boundaries.emplace_back(0, 0);
 
@@ -441,18 +356,6 @@ namespace SuperTAD::binary
                 _boundaries[i].second = _boundaries[i + 1].first - 1;
         }
 
-        if (SuperTAD::_VERBOSE_)
-        {
-            printf("boundaries:");
-            for (int i = 0; i < _boundaries.size(); i++)
-            {
-                printf("(%d, %d)", _boundaries[i].first, _boundaries[i].second);
-                if (i < _boundaries.size() - 1)
-                    printf(", ");
-            }
-            printf("\n");
-        }
-
     }
 
 
@@ -464,11 +367,13 @@ namespace SuperTAD::binary
 
     void Detector::binarySplit(int s, int e, int k, bool add, int lv)
     {
-//        setIndexKtmp(k);
         setIndex(k, _kTmpIdx);
 
         if (add)
-            _binaryTree->add(s, e, _kTmpIdx);
+        {
+            binary::TreeNode *newNode = new binary::TreeNode(s, e);
+            _binaryTree->insert(newNode, &_binaryTree->root());
+        }
 
         if (k == 1)
             return;
@@ -499,8 +404,7 @@ namespace SuperTAD::binary
 
         if (node._parent != NULL)   //  calculate se
         {
-            node._se = _data->getSE(s, e, _data->getVol(node._parent->_val[0], node._parent->_val[1]),
-                                    _data->getVol(s, e));
+            node._se = _data->getSE(s, e,node._parent->_val[0], node._parent->_val[1]);
         }
 
         if (node._left != NULL)
@@ -559,14 +463,10 @@ namespace SuperTAD::binary
         {
             printf("start filtering\n");
             tTmp = std::clock();
-        } else
-            printf("filtering nodes.\n");
-
+        }
         calculateD(_binaryTree->root());
         calculateDensity(_binaryTree->root());
 
-        if (SuperTAD::_VERBOSE_)
-        { printf("finish calculating D and density for each node.\n"); }
         int *label1;    //  label from 1000 times random experiments
         label1 = filterNodes();
         for (int i = 0; i < _nodeList->size(); i++)
@@ -593,8 +493,7 @@ namespace SuperTAD::binary
             printf("filtering consumes %fs\n", (float) (std::clock() - tTmp) / CLOCKS_PER_SEC);
         printf("%d TAD candidates filtered into %d true TADs\n", _nodeList->size(), _trueNodeList.size());
 
-        if (!SuperTAD::_NO_OUTPUT_)
-            SuperTAD::Writer::writeTree(SuperTAD::_OUTPUT_ + ".binary.filter", _trueNodeList);
+        SuperTAD::Writer::writeTree(SuperTAD::_OUTPUT_ + ".binary.filter", _trueNodeList);
     }
 
 

@@ -54,47 +54,25 @@ namespace SuperTAD::binary {
             _idx = idx;
         }
 
-        // update structure entropy given parent volume
-        void updateSE(Data &data, double pV)
-        {
-            _se = this->getSE(data, pV);
-        }
-
-        // update structure entropy given parent node
-        void updateSE(Data &data, TreeNode &pNode)
-        {
-            _se = this->getSE(data, pNode);
-        }
-
-        // calculate structure entropy given parent volume and return
-        double getSE(Data &data, double pV)
-        {
-            double se = data.getSE(_val[0], _val[1], pV, _vol);
-            if (_left)
-                se += _left->getSE(data, _vol);
-            if (_right)
-                se += _right->getSE(data, _vol);
-            return se;
-        }
-
         // calculate structure entropy as node consists of only leaves, given parent node and return
         double getSEasLeaf(Data &data, TreeNode &pNode)
         {
-            double se = data.getSE(_val[0], _val[1], pNode._vol, _vol);
-//            if (_val[0] != _val[1]) {
-                for (int i = _val[0]; i <= _val[1]; i++) {
-                    double tmp = data.getSE(i, i, _vol);
-//                    printf("se of bin %d=%f\n", i, tmp);
-                    se += tmp;
-                }
-//            }
+            double se = data.getSE(_val[0], _val[1], pNode._val[0], pNode._val[1]);
+
+            se += (data.getVol(_val[0], _val[1]) * data._logVolTable[_val[0]][_val[1]-_val[0]]) / data._doubleEdgeSum;
+
+            if (_val[0] == 0)
+                se -= data._sumOfGtimesLogG[_val[1]] / data._doubleEdgeSum;
+            else
+                se -= (data._sumOfGtimesLogG[_val[1]] - data._sumOfGtimesLogG[_val[0]-1]) / data._doubleEdgeSum;
+
             return se;
         }
 
         // calculate structure entropy, given parent node and return
         double getSE(Data &data, TreeNode &pNode)
         {
-            double se = data.getSE(_val[0], _val[1], pNode._vol, _vol);
+            double se = data.getSE(_val[0], _val[1], pNode._val[0], pNode._val[1]);
             if (_left)
                 se += _left->getSE(data, *this);
             if (_right)
@@ -145,11 +123,8 @@ namespace SuperTAD::binary {
         Data *_data;
         TreeNode *_root;
         std::vector<TreeNode*> _nodeList;
-//        std::vector<TreeNode> _nodeList;
 
         Tree();
-
-//        Tree(Data &d);
 
         ~Tree();
 
@@ -160,13 +135,9 @@ namespace SuperTAD::binary {
 
         void insert(TreeNode *newNode, TreeNode *parentNode);
 
-//        std::vector<TreeNode*> &nodeList() { return _nodeList; }
-
         TreeNode &root() { return *_root; }
 
-//        TreeNode *getNode(int idx);
-
-        double getSE(TreeNode &child, TreeNode &parent);
+//        double getSE(TreeNode &child, TreeNode &parent);
     };
 
     static const int PruneMethod1 = 1;

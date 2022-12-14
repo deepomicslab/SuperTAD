@@ -22,20 +22,16 @@ namespace SuperTAD::multi {
     class Detector {
     private:
         SuperTAD::Data *_data = NULL;
-//        Eigen::MatrixXd * _edgeCount;
         SuperTAD::Writer _writer;
         double *****_table = NULL;
         int *****_minIndexArray = NULL;
         int *****_leftKArray = NULL;
-//        std::map<int, int> _kToIdx;
         std::vector<Boundary> _boundaries;
 
     public:
-//        std::vector<multi::TreeNode*> _nodeList;
         multi::Tree _multiTree;
-        Detector(SuperTAD::Data &data);
+        explicit Detector(SuperTAD::Data &data);
         ~Detector ();
-//        int indexK(int k) { return _kToIdx.find(k)->second; }
 
         void execute();
         void initK();

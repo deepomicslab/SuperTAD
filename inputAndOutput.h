@@ -88,10 +88,6 @@ namespace SuperTAD
             FILE *outFile = NULL;
             outFile = fopen(filePath.c_str(), "w");
             if (outFile) {
-                if (_VERBOSE_)
-                    printf("start writing tree into %s\n", filePath.c_str());
-                else
-                    printf("write tree into %s\n", filePath.c_str());
 
                 int bin1Idx, bin1Start, bin1End, bin2Idx, bin2Start, bin2End;
                 for (int i = 0; i < nodeList.size(); i++) {
@@ -106,8 +102,7 @@ namespace SuperTAD
                 }
                 fclose(outFile);
 
-                if (_VERBOSE_)
-                    printf("finish writing tree\n");
+                printf("start writing tree into %s\n", filePath.c_str());
 
             }
             else

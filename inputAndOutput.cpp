@@ -44,8 +44,6 @@ void SuperTAD::Reader::parseInput(double **&table, std::string path)
             if (file.is_open()) {
                 if (SuperTAD::_VERBOSE_)
                     printf("start parsing input from %s\n", path.c_str());
-                else
-                    printf("parse input\n");
 
                 SuperTAD::_N_ = 0;
                 std::string line;

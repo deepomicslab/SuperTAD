@@ -43,9 +43,8 @@ namespace SuperTAD::deepBinary
         backTrace(true);
 
         _nodeList = &_binaryTree->_nodeList;
-        if (!_NO_OUTPUT_) {
-            Writer::writeTree(_OUTPUT_ + ".deepbinary", *_nodeList);
-        }
+
+        Writer::writeTree(_OUTPUT_ + ".deepbinary", *_nodeList);
 
         if (_VERBOSE_)
             printf("start pruning deep binary tree\n");
@@ -71,25 +70,23 @@ namespace SuperTAD::deepBinary
             }
         }
 
-
-        if (!_NO_OUTPUT_) {
-            if (_PRUNE_) {
-                Writer::writeTree(_OUTPUT_ + ".deepbinary.pruned", p->_prunedTree._nodeList);
-            }
-
-            if (_SE_RESULT_PATH_!="") {
-                std::ofstream outfile;
-                if (_APPEND_RESULT_)
-                    outfile.open(_SE_RESULT_PATH_, std::ios_base::app); // append instead of overwrite
-                else
-                    outfile.open(_SE_RESULT_PATH_);
-                outfile << _table[0][_N_-1];
-                if (_PRUNE_)
-                    outfile << "\t" << p->_minHtable[p->_optimalK-1][p->_tree->_root->_idx];
-                outfile << "\n";
-                outfile.close();
-            }
+        if (_PRUNE_) {
+            Writer::writeTree(_OUTPUT_ + ".deepbinary.pruned", p->_prunedTree._nodeList);
         }
+
+//        if (_SE_RESULT_PATH_!="") {
+//            std::ofstream outfile;
+//            if (_APPEND_RESULT_)
+//                outfile.open(_SE_RESULT_PATH_, std::ios_base::app); // append instead of overwrite
+//            else
+//                outfile.open(_SE_RESULT_PATH_);
+//            outfile << _table[0][_N_-1];
+//            if (_PRUNE_)
+//                outfile << "\t" << p->_minHtable[p->_optimalK-1][p->_tree->_root->_idx];
+//            outfile << "\n";
+//            outfile.close();
+//        }
+
         return;
     }
 

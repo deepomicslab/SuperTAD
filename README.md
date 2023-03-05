@@ -32,37 +32,47 @@ make
 ## Usage  
 ```
 COMMANDS:
-    binary  The first mode requires no user-defined parameters, run the nodes filtering by default
-            ./SuperTAD binary <input Hi-C matrix> [-option values]
-        OPTIONS:
-            --no-filter: If given, do not filter TADs after TAD detection
-    multi   The second mode requires a parameter h to determine the number of layers
-            ./SuperTAD multi <input Hi-C matrix> -h <height> [-option values]
-        OPTIONS:
-            -h <int>: The height of coding tree, default: 2
-    multi_2d    The third mode requires two parameter h1 and h2 to determine the iteractions for dividing and merging
-            ./SuperTAD multi_2d <input Hi-C matrix> [-option values]
-        OPTIONS:
-            --hd <int>: The height of layers for dividing (go down), default: 2
-            --hu <int>: The height of layers for merging (go up), default: 1
-            --pre <string>: The pre-detected result file
-        SHARED OPTIONS for binary and multi COMMAND:
-            -K <int>: The number of leaves in the coding tree, default: nan (determined by the algorithm)
-            --chrom1 <string>: chrom1 label, default: chr1
-            --chrom2 <string>: chrom2 label, default: the same as chrom1
-            --chrom1-start <int>: start pos on chrom1, default: 0
-            --chrom2-start <int>: start pos on chrom2, default: the same as --chrom1-start
-            -r/--resolution <int>: bin resolution, default: 10000
-            -s/--sparse: If given, apply the modified version for the sparse input matrix
-    filter  The nodes filter for optimal coding tree:
-            ./SuperTAD filter <input Hi-C matrix> -i <original result> 
-        OPTIONS:
-            -i <string>: The list of TAD candidates
-    compare The symmetric metric overlapping ratio to assess the agreement between two results
-            ./SuperTAD compare <result1> <result2>
+	binary	The first mode requires no user-defined parameters, run the nodes filtering by default
+		./SuperTAD binary <input Hi-C matrix> [-option values]
+		OPTIONS:
+			--no-filter: If given, do not filter TADs after TAD detection
+	multi	The second mode requires a parameter h to determine the number of layers
+		./SuperTAD multi <input Hi-C matrix> -h <height> [-option values]
+		OPTIONS:
+			-h <int>: The height of coding tree, default: 2
+			--fast: If given, run a more efficient implementation of the second mode with discretization and neighbor searching, SuperTAD-Fast
+			--step <int>: The number of steps for discretization in SuperTAD-Fast, default: the number of bins
+			--window <int> : The size of the searching window in SuperTAD-Fast, default: 5 (bin)
+	multi_2d	The third mode requires two parameter h1 and h2 to determine the iteractions for dividing and merging
+		./SuperTAD multi_2d <input Hi-C matrix> [-option values]
+		OPTIONS:
+			--hd <int>: The height of layers for dividing (go down), default: 2
+			--hu <int>: The height of layers for merging (go up), default: 1
+			--pre <string>: The pre-detected result file
+	deepbinary	The fouth mode requires no user-defined parameters, an updated version of binary
+		./SuperTAD deepbinary <input Hi-C matrix> [-option values]
+		OPTIONS:
+			-p/--prune: whether prune binary tree into subtrees; must be set along -k
+			-k <int>: number of subtrees to be pruned into; must be set along --prune
+	    SHARED OPTIONS for binary and multi COMMAND:
+		-K <int>: The number of leaves in the coding tree; default: nan (determined by the algorithm)
+		--maxbin <int>: The maximum number of bins in a TAD; default: 10000000 (10 Mb)/resolution
+		--chrom1 <string>: chrom1 label, default: chr1
+		--chrom2 <string>: chrom2 label, default: the same as chrom1
+		--chrom1-start <int>: start pos on chrom1, default: 0
+		--chrom2-start <int>: start pos on chrom2, default: the same as --chrom1-start
+		-r/--resolution <int>: bin resolution, default: 10000
+		-s/--sparse: If given, apply the Bayesian corrected version for the sparse input matrix
+		--bayes: the factor of pseudo count, default: 1 * log(N); must be set along -s
+	filter	The nodes filter for optimal coding tree:
+		./SuperTAD filter <input Hi-C matrix> -i <original result> 
+		OPTIONS:
+			-i <string>: The list of TAD candidates
+	compare	The symmetric metric overlapping ratio to assess the agreement between two results
+		./SuperTAD compare <result1> <result2>
 GLOBAL OPTIONS:
-    -w <string>: Working directory path, default: the directory where the input Hi-C matrix is located
-    -v/--verbose: Print verbose
+	-w <string>: Working directory path, default: the directory where the input file is located
+	-v/--verbose: Print verbose
 ```
 
 ## Input and Output

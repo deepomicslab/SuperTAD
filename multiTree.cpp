@@ -51,20 +51,37 @@ namespace SuperTAD::multi {
         if (!parent._children.empty()) {
             for (auto & i : parent._children)
             {
-                if (insert(newNode, *i))
-                    return true;
+                if (i->_val[0] <= newNode._val[0] && i->_val[1] >= newNode._val[1])
+                    if(insert(newNode, *i))
+                        return true;
             }
-
         }
-        else if (parent._val[0] <= newNode._val[0] && parent._val[1] >= newNode._val[0]) {
+        if (parent._val[0] <= newNode._val[0] && parent._val[1] >= newNode._val[0]) {
             newNode._parent = &parent;
+            parent._children.emplace_back(&newNode);
             newNode.setVol(*_data);
             newNode.setSE(*_data);
-//            printf("vol=%f, se=%f\n", newNode._vol, newNode._se);
+//            printf("start=%d, end=%d, vol=%f, se=%f\n", newNode._val[0], newNode._val[1], newNode._vol, newNode._se);
             _nodeList.emplace_back(&newNode);
 //            std::cout << "emplaced node: " << newNode << "\n";
             return true;
         }
         return false;
+    }
+
+    void Tree::preOrderTraversal(multi::TreeNode &node)
+    {
+        _nodeList.emplace_back(&node);
+//        printf("start %d, end %d, %d children\n", node._val[0], node._val[1], node._children.size());
+        for (int i=node._children.size()-1; i>=0; i--)
+        {
+            preOrderTraversal(*node._children[i]);
+        }
+    }
+
+    void Tree::getPreOrder()
+    {
+        _nodeList.clear();
+        preOrderTraversal(*_root);
     }
 }

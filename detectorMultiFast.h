@@ -21,21 +21,22 @@ namespace SuperTAD { namespace multi {
     private:
         SuperTAD::Data *_data = NULL;
         double ****_tableT = NULL;
-        double ***_tableF = NULL;
+
         int ***_minStepF = NULL;    // the searching result for each value in F
         int ****_minIndexT = NULL;  // the searching result for each value in T
         int ****_tableStepIndexT = NULL;    // the table storing the step index for each value in T
         double **_tablestep = NULL; // the table storing the step size given start and end
-        double ****_sumofgcT = NULL;    // the table storing the sum of gc
+        double ****_sumofgcT = NULL;    // the table storing the sum of gc (accurate value)
 
         std::vector<Boundary> _boundaries;
 
     public:
+        double ***_tableF = NULL;   // Will be used in NeighborSearching
         multi::Tree _multiTree;
         Discretization(SuperTAD::Data &data);
         ~Discretization();
-        multi::Tree execute();
-        double ***acquireF() {return _tableF;};
+
+        void execute();
         void fillTable();
         void multiSplit(int start, int end, int l, int h);
     };
@@ -52,11 +53,12 @@ namespace SuperTAD { namespace multi {
         int *****_minIndex = NULL;
 
     public:
-        NeighborSearch(SuperTAD::Data &data, multi::Tree multiTree, double ***tableF);
+        NeighborSearch(SuperTAD::Data &data, multi::Tree *multiTree, double ***tableF);
         ~NeighborSearch();
         void execute();
         void fillTable();
         int mapWin(int index) { return index + SuperTAD::_WINDOW_;};
+        void multiSplit(multi::TreeNode &Node, int s_win, int e_win);
     };
 } }
 

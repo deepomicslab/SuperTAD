@@ -48,9 +48,9 @@ int printUsage(char *argv[], int err)
             "\t\t./SuperTAD multi <input Hi-C matrix> -h <height> [-option values]\n"
             "\t\tOPTIONS:\n"
             "\t\t\t-h <int>: The height of coding tree, default: 2\n"
-            "\t\t\t--no-fast: If not given, run a more efficient implementation of the second mode with discretization and neighbor searching\n"
-            "\t\t\t--step <int>: The number of steps for discretization in Fast mode, default: the number of bins\n"
-            "\t\t\t--window <int> : The size of the searching window in Fast mode, default: 5 (bin)\n"
+            "\t\t\t--fast: If given, run a more efficient implementation of the second mode with discretization and neighbor searching, SuperTAD-Fast\n"
+            "\t\t\t--step <int>: The number of steps for discretization in SuperTAD-Fast, default: the number of bins\n"
+            "\t\t\t--window <int> : The size of the searching window in SuperTAD-Fast, default: 5 (bin)\n"
 
             "\tmulti_2d\tThe third mode requires two parameter h1 and h2 to determine the iteractions for dividing and merging\n"
             "\t\t./SuperTAD multi_2d <input Hi-C matrix> [-option values]\n"
@@ -132,7 +132,7 @@ int parseArg(int argc, char *argv[], int i)
         if (std::string(*(argv + i)) == std::string("-v") || std::string(*(argv + i)) == std::string("--verbose")) {
             _VERBOSE_ = true;
             setbuf(stdout, NULL);
-            printf("print verbose\n");
+            printf("Print verbose\n");
         }
 
         if (std::string(*(argv + i)) == std::string("-s") || std::string(*(argv + i)) == std::string("--sparse")) {
@@ -178,23 +178,23 @@ int parseArg(int argc, char *argv[], int i)
 
         if (std::string(*(argv + i)) == std::string("-i")) {    // for filter mode
             _PRE_RESULT_ = std::string(*(argv + ++i));
-            printf("the input result for nodes filtering: %s\n", _PRE_RESULT_.c_str());
+            printf("The input result for nodes filtering: %s\n", _PRE_RESULT_.c_str());
         }
 
-        if (std::string(*(argv+i))==std::string("--no-fast")) { // for multi mode, disabling multi-fast
-            _FAST_ = false;
-            printf("Disable fast mode in multi mode\n");
+        if (std::string(*(argv+i))==std::string("--fast")) { // for multi mode, run multi-fast
+            _FAST_ = true;
+            printf("Run SuperTAD-Fast\n");
         }
 
         if (std::string(*(argv + i)) == std::string("--step")) {    // for SuperTAD-Fast
             _STEP_ = atoi(*(argv + ++i));
-            printf("Set step for the multi-fast mode to %d\n", _STEP_);
+            printf("Set step for the SuperTAD-Fast to %d\n", _STEP_);
         }
 
         if (std::string(*(argv + i)) == std::string("--window")) {  // for SuperTAD-Fast
             _WINDOW_ = atoi(*(argv + ++i));
             _WINDOW_ = int(_WINDOW_ / 2);
-            printf("Set window size for the multi-fast mode to %d\n", 2*_WINDOW_+1);
+            printf("Set window size for the SuperTAD-Fast mode to %d\n", 2*_WINDOW_+1);
         }
 
         if (std::string(*(argv+i))==std::string("--penalty")) { // to add an extra searching area for the boundary if
@@ -262,7 +262,7 @@ int parseArg(int argc, char *argv[], int i)
 
         if (std::string(*(argv + i)) == std::string("--v1") ) { // for running version1.0 where K is kept
             _V1_ = true;
-            printf("Run version1.0 where K is kept\n");
+            printf("Run version1.0 where the number of leaves K is kept\n");
         }
 
         i++;
@@ -275,12 +275,6 @@ int parseArg(int argc, char *argv[], int i)
         _WORK_DIR_ = _INPUT_.substr(0, pos);
         _OUTPUT_ = _WORK_DIR_ + "/" + _INPUT_.substr(pos + 1);
     }
-
-    if (_FAST_ && _BINARY_) // discarding k
-        printf("Enable fast mode for binary mode\n");
-
-    if (_FAST_ && _MULTI_)  // SuperTAD-Fast
-        printf("Enable fast mode for multi mode\n");
 
     if (_DEBUG_)
         _VERBOSE_ = true;
@@ -370,10 +364,13 @@ int main (int argc, char *argv[])
                 multi::PartitionV2 dm(data);
                 dm.execute(-1);
             } else if (_FAST_){
-//                multi::Discretization dm(data);
-//                multi::Tree _multitree;
-                multi::MultiV2 dm(data);
+                multi::Discretization dm(data);
                 dm.execute();
+
+                multi::NeighborSearch dn(data, &dm._multiTree, dm._tableF);
+                dn.execute();
+
+
             } else if (_V1_ or not _DETERMINE_K_){
                 multi::Detector dm(data);
                 dm.execute();

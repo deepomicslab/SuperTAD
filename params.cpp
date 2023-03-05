@@ -23,7 +23,7 @@ namespace SuperTAD
     bool _COMPARE_ = false;
     bool _DEEPBINARY_ = false;
     bool _PRUNE_ = true;
-    bool _FAST_ = true; // if multi mode, default run SuperTAD-Fast
+    bool _FAST_ = false; // if multi mode, true: run SuperTAD-Fast
     bool _VERBOSE_ = false;
     bool _SPARSE_ = false;
     bool _BEDPE_ = false;
@@ -45,7 +45,7 @@ namespace SuperTAD
     int _RESOLUTION_ = 1;
     double _THRESHOLD_ = 1e-6;
     int _STEP_= -999;
-    int _WINDOW_ = 5;
+    int _WINDOW_ = 2;
     double _BAYESFACTOR_ = 1;   // for bayesian corrected version, default 1
 
     int64_t _CHROM1_START_ = 0;

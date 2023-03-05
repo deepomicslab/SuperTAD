@@ -139,6 +139,10 @@ namespace SuperTAD::multi {
 
         bool insert(TreeNode &newNode, TreeNode &parent);
 
+        void preOrderTraversal(TreeNode &node);
+
+        void getPreOrder();
+
 //        std::vector<TreeNode*> &nodeList() { return _nodeList; }
 
     };

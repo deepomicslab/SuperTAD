@@ -94,7 +94,7 @@ namespace SuperTAD::multi {
 
         void setSE(Data &data)
         {
-            _se = data.getSE(_val[0], _val[1], _parent->_vol, _vol);
+            _se = data.getSE(_val[0], _val[1], _parent->_val[0], _parent->_val[1]);
         }
     };
 

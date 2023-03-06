@@ -342,8 +342,6 @@ int main (int argc, char *argv[])
 
     if (_VERBOSE_)
         t = std::clock();
-    Data data(_INPUT_);
-    data.init();
 
     if (_BINARY_ || _MULTI_ || _FILTER_ || _MULTI_H_ || _DEEPBINARY_){
         Data data(_INPUT_);
@@ -363,13 +361,13 @@ int main (int argc, char *argv[])
             if (_H_ == 1){
                 multi::PartitionV2 dm(data);
                 dm.execute(-1);
-            } else if (_FAST_){
+            } else if (_FAST_){ // SuperTAD-Fast
+
                 multi::Discretization dm(data);
                 dm.execute();
 
                 multi::NeighborSearch dn(data, &dm._multiTree, dm._tableF);
                 dn.execute();
-
 
             } else if (_V1_ or not _DETERMINE_K_){
                 multi::Detector dm(data);

@@ -47,15 +47,6 @@ namespace SuperTAD
         // calculate and return volume of node(s, e)
         double getVol(int s, int e);
 
-        // calculate and return  structure entropy given s and e; se=g/edge_sum*log2(V_p/V)
-        double getSE(int s, int e, double parentVol);
-
-        // calculate and return  structure entropy given s and e and parent volume; se=g/edge_sum*log2(V_p/V)
-        double getSEwithLogPV(int s, int e, double logPV);
-
-        // calculate and return  structure entropy given s, e, volumes of parent and current nodes; se=g/edge_sum*log2(V_p/V)
-        double getSE(int s, int e, double parentVol, double currentVol);
-
         // calculate and return  structure entropy given s, e, ps, pe
         double getSE(int s, int e, int ps, int pe);
 

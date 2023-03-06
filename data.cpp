@@ -196,24 +196,6 @@ namespace SuperTAD
             return _edgeCountTable[e][e];
     }
 
-
-    double Data::getSE(int s, int e, double parentVol)
-    {
-        double currentVol = getVol(s, e);
-        if (currentVol > 0 && parentVol >= currentVol)
-            return _edgeCountTable[e][s] / _doubleEdgeSum * log2(parentVol / currentVol);
-        return 0;
-    }
-
-
-    double Data::getSE(int s, int e, double parentVol, double currentVol)
-    {
-        // g / edge_sum * log2(V_p / V)
-        if (currentVol > SuperTAD::_THRESHOLD_)
-            return _edgeCountTable[e][s] / _doubleEdgeSum * log2(parentVol / currentVol);
-        return 0;
-    }
-
     double Data::getSE(int s, int e, int ps, int pe)
     {
         if (getVol(s, e) > SuperTAD::_THRESHOLD_)

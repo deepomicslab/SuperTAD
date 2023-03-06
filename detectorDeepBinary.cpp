@@ -102,19 +102,18 @@ namespace SuperTAD::deepBinary
         else
             printf("fill dp table\n");
 
-        double parentVol, tmpSE, minSE;
+        double tmpSE, minSE;
         int leftE;
         for (int step = 1; step < _N_; step++)
         {
             for (int s = 0; s < _N_ - step; s++)
             {
-                parentVol = _data->getVol(s, s + step);
                 minSE = std::numeric_limits<double>::infinity();
                 for (int i = s; i < s + step; i++)
                 {
                     tmpSE = _table[s][i] + _table[i + 1][s + step];
-                    tmpSE += _data->getSE(s, i, parentVol);
-                    tmpSE += _data->getSE(i + 1, s + step, parentVol);
+                    tmpSE += _data->getSE(s, i, s, s+step);
+                    tmpSE += _data->getSE(i + 1, s + step, s, s+step);
                     if (tmpSE < minSE)
                     {
                         minSE = tmpSE;

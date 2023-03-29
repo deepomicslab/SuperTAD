@@ -152,9 +152,14 @@ namespace SuperTAD
         _doubleEdgeSum = 2. * _edgeSum; // the volume of graph
 
         // calculate volTble and logTable
+        double volume;
         for (int s = 0; s < _N_; s++) {
             for (int e = s; e < _N_; e++) {
-                _logVolTable[s][e - s] = log2(getVol(s, e));
+                volume = getVol(s, e);
+                if (volume > 0)
+                    _logVolTable[s][e - s] = log2(getVol(s, e));
+                else
+                    _logVolTable[s][e - s] = 0;
             }
         }
 

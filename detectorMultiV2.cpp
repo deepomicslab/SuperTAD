@@ -109,11 +109,9 @@ namespace SuperTAD::multi
                         else
                             tmpSE = _table[s][i][0][p];
                         // rightmost domain
-                        if (i + 1 == s + l)
-                            tmpSE += _data->getSE(i + 1, i + 1, s, p);
-                        else
+                        tmpSE += _data->getSE(i + 1, s+l, s, p);
+                        if (i+1 != s+l)
                         {
-                            tmpSE += _data->getSE(i + 1, s + l, s, p);
                             tmpSE += (_data->getVol(i + 1, s + l) * _data->_logVolTable[i + 1][s + l - i - 1]) /
                                      _data->_doubleEdgeSum;
                             tmpSE -= (_data->_sumOfGtimesLogG[s + l] - _data->_sumOfGtimesLogG[i]) /

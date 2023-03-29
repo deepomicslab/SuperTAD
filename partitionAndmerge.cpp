@@ -43,10 +43,12 @@ namespace SuperTAD::multi
             // upper case
             for (int j = std::max(i-SuperTAD::_MAX_SIZE_, 0); j < i; j++)
             {
-                tmpSE = _table[j];
-                tmpSE += _data->getSE(j+1, i, 0, SuperTAD::_N_-1);
-                binSum = _data->getVol(j+1, i) * _data->_logVolTable[j+1][i-j-1] - (_data->_sumOfGtimesLogG[i] - _data->_sumOfGtimesLogG[j]);
-                tmpSE += binSum / _data->_doubleEdgeSum;
+                tmpSE = _table[j] + _data->getSE(j+1, i, 0, SuperTAD::_N_-1);
+                if (j+1 != i)
+                {
+                    binSum = _data->getVol(j+1, i) * _data->_logVolTable[j+1][i-j-1] - (_data->_sumOfGtimesLogG[i] - _data->_sumOfGtimesLogG[j]);
+                    tmpSE += binSum / _data->_doubleEdgeSum;
+                }
 
                 if (tmpSE - _table[i] < -SuperTAD::_THRESHOLD_)
                 {
@@ -54,7 +56,7 @@ namespace SuperTAD::multi
                     _minIndexArray[i] = j;
                 }
             }
-//            if (SuperTAD::_VERBOSE_) printf("finish calculating upper case. se of %d is %f with %d\n", i, _table[i], _minIndexArray[i]);
+//            if (SuperTAD::_VERBOSE_) printf("finish i = %d, se is %f with %d\n", i, _table[i], _minIndexArray[i]);
         }
 
         if (SuperTAD::_VERBOSE_)
@@ -113,13 +115,18 @@ namespace SuperTAD::multi
         {
             start = it->first - 1;
             end = it->second - 1;
-            binSum = _data->getVol(start, end) * _data->_logVolTable[start][end - start];
-            if (start == 0)
-                binSum -= _data->_sumOfGtimesLogG[end];
+            if (start == end)
+                _prenodeSE.emplace_back(0);
             else
-                binSum -= (_data->_sumOfGtimesLogG[end] - _data->_sumOfGtimesLogG[start - 1]);
-            _prenodeSE.emplace_back(binSum / _data->_doubleEdgeSum);
+            {
+                binSum = _data->getVol(start, end) * _data->_logVolTable[start][end - start];
+                if (start == 0)
+                    binSum -= _data->_sumOfGtimesLogG[end];
+                else
+                    binSum -= (_data->_sumOfGtimesLogG[end] - _data->_sumOfGtimesLogG[start - 1]);
+                _prenodeSE.emplace_back(binSum / _data->_doubleEdgeSum);
 //            printf("start=%d, end=%d, prenodeSE=%f\n", start, end, binSum/_data->_doubleEdgeSum);
+            }
         }
 
         int nodeStart, nodeEnd;
@@ -140,7 +147,7 @@ namespace SuperTAD::multi
             }
             _minIndexArray[i] = -1;
 
-            if (SuperTAD::_VERBOSE_) printf("finish calculating base case. #node=%d, se of %d is %f\n", N, i, _table[i]);
+//            if (SuperTAD::_VERBOSE_) printf("finish calculating base case. #node=%d, se of %d is %f\n", N, i, _table[i]);
             // upper case
             for (int j = 0; j < i; j++)
             {
@@ -162,7 +169,7 @@ namespace SuperTAD::multi
                 }
 
             }
-            if (SuperTAD::_VERBOSE_) printf("finish calculating upper case. se of %d is %f with %d\n", i, _table[i], _minIndexArray[i]);
+//            if (SuperTAD::_VERBOSE_) printf("finish calculating upper case. se of %d is %f with %d\n", i, _table[i], _minIndexArray[i]);
 
         }
 

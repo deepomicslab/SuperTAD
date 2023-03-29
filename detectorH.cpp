@@ -160,13 +160,19 @@ namespace SuperTAD::multi {
         for (std::vector<Boundary>::iterator it = _preBoundaries.begin(); it != _preBoundaries.end(); ++it) {
             start = it->first-1;
             end = it->second-1;
-            binSum = _data->getVol(start, end) * _data->_logVolTable[start][end-start];
-            if (start == 0)
-                binSum -= _data->_sumOfGtimesLogG[end];
+            if (start == end)
+                _prenodeSE.emplace_back(0);
             else
-                binSum -= (_data->_sumOfGtimesLogG[end] - _data->_sumOfGtimesLogG[start-1]);
-            _prenodeSE.emplace_back(binSum / _data->_doubleEdgeSum);
+            {
+                binSum = _data->getVol(start, end) * _data->_logVolTable[start][end-start];
+                if (start == 0)
+                    binSum -= _data->_sumOfGtimesLogG[end];
+                else
+                    binSum -= (_data->_sumOfGtimesLogG[end] - _data->_sumOfGtimesLogG[start-1]);
+                _prenodeSE.emplace_back(binSum / _data->_doubleEdgeSum);
 //            printf("start=%d, end=%d, prenodeSE=%f\n", start, end, binSum/_data->_doubleEdgeSum);
+            }
+
         }
         if (SuperTAD::_VERBOSE_) printf("Start calculating base case. #node=%d\n", N);
         // base case
@@ -312,6 +318,7 @@ namespace SuperTAD::multi {
                 _preboundForMerge = _tmpbound;
                 _boundary.insert(_boundary.end(), _preboundForMerge.begin(),
                                  _preboundForMerge.end());  // record the layers during merging
+                _writer.writeBoundIn8Cols(SuperTAD::_OUTPUT_ + ".multi2D_MergeH" + std::to_string(SuperTAD::_HU_-i+1), _preboundForMerge);
             } else
                 break;
         }
@@ -350,6 +357,7 @@ namespace SuperTAD::multi {
                 }
             }
             _boundary.insert(_boundary.end(), _bounDiviResult.begin(), _bounDiviResult.end());   // record the layers during dividing
+            _writer.writeBoundIn8Cols(SuperTAD::_OUTPUT_ + ".multi2D_PartitionH" + std::to_string(SuperTAD::_HD_-i+1), _bounDiviResult);
             _preboundForDivi = _bounDiviResult;
         }
 

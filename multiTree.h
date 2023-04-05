@@ -29,9 +29,10 @@ namespace SuperTAD::multi {
         }
 
         ~TreeNode() {
-            for (auto i : _children)
-                delete i;
-            _children.clear();
+            if (! _children.empty()){
+                for (auto i : _children)
+                    i = nullptr;
+            }
         }
 
         TreeNode& operator=(const TreeNode &copy) {

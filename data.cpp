@@ -74,13 +74,22 @@ namespace SuperTAD
         for (int s=0; s<_N_; s++) {
             delete [] _logVolTable[s];
             delete [] _edgeCountTable[s];
-            if (!_initByPointer)
+            _logVolTable[s] = nullptr;
+            _edgeCountTable[s] = nullptr;
+            if (!_initByPointer){
                 delete [] _contactTable[s];
+                _contactTable[s] = nullptr;
+            }
+
         }
         delete [] _logVolTable;
         delete [] _edgeCountTable;
-        if (!_initByPointer)
+        _logVolTable = nullptr;
+        _edgeCountTable = nullptr;
+        if (!_initByPointer){
             delete [] _contactTable;
+            _contactTable = nullptr;
+        }
     }
 
 

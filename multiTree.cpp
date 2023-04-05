@@ -23,9 +23,13 @@ namespace SuperTAD::multi {
 
     Tree::~Tree()
     {
-        for (auto & i : _nodeList)
+        for (auto & i : _nodeList){
             delete i;
+            i = nullptr;
+        }
+        _nodeList.clear();
         delete _root;
+        _root = nullptr;
     }
 
 

@@ -118,8 +118,8 @@ namespace SuperTAD::binary
 
     BasePruner::~BasePruner()
     {
-        _data = NULL;
-        _tree = NULL;
+        _data = nullptr;
+        _tree = nullptr;
     }
 
     Pruner1::Pruner1(Tree &tree, int k) : BasePruner(tree)
